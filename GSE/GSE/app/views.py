@@ -6,14 +6,17 @@ from django.http import HttpResponse
 def index(request):
     return render(request, "home.html")
 
-def index(request):
+def discover(request):
     return render(request, "discover.html")
 
-def index(request):
-    return render(request, "home.html")
+def myEvents(request):
+    return render(request, "myEvents.html")
 
-def index(request):
-    return render(request, "home.html")
+def organise(request):
+    return render(request, "organise.html")
 
-def index(request):
-    return render(request, "home.html")
+def signIn(request):
+    return render(request, "signIn.html")
+
+def signUp(request):
+    return render(request, "signUp.html")
