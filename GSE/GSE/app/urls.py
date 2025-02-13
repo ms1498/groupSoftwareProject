@@ -9,4 +9,5 @@ urlpatterns = [
     path("organise", views.organise, name="organise"),
     path("signIn", views.signIn, name="signIn"),
     path("signUp", views.signUp, name="signUp"),
+    path("qrgen", views.qrgen, name="QR code")
 ]
