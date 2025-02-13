@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+
+{% block title %}Home{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="text-center mb-4">New Event</h2>
+    <form class="row g-3" action="/action_page.php" method="POST" enctype="multipart/form-data">
+      
+      <!-- Event Name -->
+      <div class="col-md-6">
+        <label for="event-name" class="form-label">Event Name:</label>
+        <input type="text" class="form-control" id="event-name" placeholder="Enter name" name="event_name" required>
+      </div>
+
+      <!-- Event Date -->
+      <div class="col-md-6">
+        <label for="event-date" class="form-label">Event Date:</label>
+        <input type="datetime-local" class="form-control" id="event-date" name="event_date" required>
+      </div>
+
+      <!-- Event Category -->
+      <div class="col-md-6">
+        <label for="category" class="form-label">Select Category:</label>
+        <select class="form-select" id="category" name="category">
+          <option selected disabled>Choose a category</option>
+          <option value="HTML">HTML</option>
+          <option value="CSS">CSS</option>
+          <option value="JavaScript">JavaScript</option>
+        </select>
+      </div>
+
+      <!-- Event Description -->
+      <div class="col-12">
+        <label for="event-description" class="form-label">Event Description:</label>
+        <textarea class="form-control" id="event-description" placeholder="Enter event details" name="event_description" rows="3"></textarea>
+      </div>
+
+      <!-- Image Upload -->
+      <div class="col-12">
+        <label for="event-image" class="form-label">Upload Event Image:</label>
+        <input class="form-control" type="file" id="event-image" name="event_image" accept="image/*">
+        <small class="text-muted">Accepted formats: JPG, PNG, GIF</small>
+      </div>
+
+      <!-- Submit Button -->
+      <div class="col-12 text-center">
+        <button type="submit" class="btn btn-primary px-4">Submit</button>
+      </div>
+
+    </form>
+</div>
+{% endblock %}
