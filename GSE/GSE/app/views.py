@@ -3,6 +3,18 @@ from django.template import loader
 from django.http import HttpResponse
 
 import os
+<<<<<<< Updated upstream
+=======
+
+def serve_events_txt(request):
+    file_path = os.path.join(os.path.dirname(__file__), 'templates', 'events.txt')
+    try:
+        with open(file_path, 'r') as file:
+            content = file.read()
+        return HttpResponse(content, content_type="text/plain")
+    except FileNotFoundError:
+        return HttpResponse("File not found", status=404)
+>>>>>>> Stashed changes
 
 def serve_events_txt(request):
     file_path = os.path.join(os.path.dirname(__file__), 'templates', 'events.txt')
