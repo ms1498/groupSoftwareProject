@@ -16,6 +16,8 @@ class Moderator(models.Model):
     user = models.OneToOneField(User)
 
 class Event(models.Model):
+    startKey = models.CharField(max_length=7)
+    endKey = models.CharField(max_length=7, null=True)
     eventType = models.CharField(max_length=50)
     organiser = models.ForeignKey(SocietyRepresentative, on_delete=models.CASCADE)
     eventDate = models.DateField()
