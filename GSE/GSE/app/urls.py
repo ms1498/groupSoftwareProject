@@ -13,4 +13,5 @@ urlpatterns = [
     path("sign-in", views.signIn, name="signIn"),
     path("sign-up", views.signUp, name="signUp"),
     path('events-data/', serve_events_txt, name='serve_events_txt'),
+    path("qrgen", views.qrgen, name="QR code")
 ]
