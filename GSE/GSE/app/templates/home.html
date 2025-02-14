@@ -1,8 +1,18 @@
 {% extends 'base.html' %}
-<head>
 
-</head>
+{% block content %}
 
-<body>
-uhrbfehufjweles;fdlv
-</body>
+    {% if user.is_authenticated %}
+        <p>Currently logged in as: {{ user.username }} :3!</p>
+        <p>Yay, you're logged in :></p>
+    {% else %}
+        <p>You're not logged in >:C</p>
+    {% endif %}
+
+    {% if user.is_authenticated and user.groups.all.0.name == "moderator" %}
+        <p>Welcome, Admin! You have access to this secret panel teehee</p>
+    {% else %}
+        <p></p>
+    {% endif %}
+
+{% endblock %}
