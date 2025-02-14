@@ -1,9 +1,21 @@
 from django.shortcuts import render, redirect
 from django.template import loader
-from django.http import HttpResponse
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import Group
+from django.http import HttpResponse, HttpRequest
 from .forms import SignInForm, SignupForm
+from mysite.qrgen import get_qrcode_from_response
+
+import os
+
+def serve_events_txt(request):
+    file_path = os.path.join(os.path.dirname(__file__), 'templates', 'events.txt')
+    try:
+        with open(file_path, 'r') as file:
+            content = file.read()
+        return HttpResponse(content, content_type="text/plain")
+    except FileNotFoundError:
+        return HttpResponse("File not found", status=404)
 
 def index(request):
     return render(request, "home.html")
@@ -11,14 +23,14 @@ def index(request):
 def discover(request):
     return render(request, "discover.html")
 
-def myEvents(request):
-    return render(request, "myEvents.html")
+def my_events(request):
+    return render(request, "my-events.html")
 
 def organise(request):
     return render(request, "organise.html")
 
-#authentication section
-def signInUser(request):
+# Authentication section
+def sign_in(request):
     """
      Takes the username and password and validates whether it matches a user in the system, if so it logs them in.
      @param     user's request
@@ -40,7 +52,7 @@ def signInUser(request):
         form = SignInForm()
     return render(request, 'sign-in.html', {'form': form})
 
-def signOutUser(request):
+def sign_out(request):
     """
      Logs the user out of the current session and redirects them to the homepage.
      @param     user's request
@@ -50,7 +62,7 @@ def signOutUser(request):
     logout(request)
     return redirect('/app')
 
-def signUpUser(request):
+def sign_up(request):
     """
      Allows the user to sign-up and make an account on the webpage.
      @param     user's request
@@ -68,3 +80,13 @@ def signUpUser(request):
     else:
         form = SignupForm()
     return render(request, 'sign-up.html', {'form': form})
+
+def qrgen(request:HttpRequest) -> None:
+    """Accepts a GET request with a 'url' argument, that argument will be processed into a QR code and a jpeg image returned to the frontend.\n
+    @param: request - HttpRequest\n
+    @author: Seth Mallinson"""
+    code_image = get_qrcode_from_response(request)
+    if code_image != None:
+        return HttpResponse(code_image, content_type="image/jpeg")
+    else:
+        return HttpResponse("Invalid request. The qrgen expects a GET request with a 'url' parameter.")

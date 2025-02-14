@@ -4,7 +4,7 @@
 
 {% if user.is_authenticated %}
         <p>Currently logged in as: {{ user.username }} :3!</p>
-        <a href="{% url 'signOut' %}">
+        <a href="{% url 'sign-out' %}">
             <button>Sign Out</button>
         </a>        
     {% else %}
@@ -17,7 +17,7 @@
             {{ form.as_p }}
             <button type="submit">Sign In</button>
         </form>
-        <a href="{% url 'signUp' %}">
+        <a href="{% url 'sign-up' %}">
             <button>Sign Up</button>
         </a>        
     {% endif %}
