@@ -15,6 +15,10 @@ class SocietyRepresentative(models.Model):
 class Moderator(models.Model):
     user = models.OneToOneField(User)
 
+class Location(models.Model):
+    name = models.CharField(max_length=50, primary_key=True)
+    address = models.CharField(max_length=255)
+
 class Event(models.Model):
     startKey = models.CharField(max_length=7)
     endKey = models.CharField(max_length=7, null=True)
@@ -26,7 +30,4 @@ class Event(models.Model):
     expectedAttendance = models.IntegerField(null=True)
     actualAttendance = models.IntegerField(null=True)
     maximumAttendance = models.IntegerField(null=True)
-
-class Location(models.Model):
-    name = models.CharField(max_length=50, primary_key=True)
-    address = models.CharField(max_length=255)
+    approved = models.BooleanField(default=False)
