@@ -21,8 +21,10 @@ def signIn(request):
 def signUp(request):
     return render(request, "signUp.html")
 
-def qrgen(request:HttpRequest):
-    """Accepts a GET request with a 'url' argument, that argument will be processed into a QR code and a jpeg image returned to the frontend."""
+def qrgen(request:HttpRequest) -> None:
+    """Accepts a GET request with a 'url' argument, that argument will be processed into a QR code and a jpeg image returned to the frontend.\n
+    @param: request - HttpRequest\n
+    @author: Seth Mallinson"""
     code_image = get_qrcode_from_response(request)
     if code_image != None:
         return HttpResponse(code_image, content_type="image/jpeg")
