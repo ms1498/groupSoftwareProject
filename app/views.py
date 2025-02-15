@@ -1,3 +1,4 @@
+from pathlib import Path
 from django.shortcuts import render, redirect
 from django.template import loader
 from django.contrib.auth import authenticate, login, logout
@@ -9,9 +10,9 @@ from mysite.qrgen import get_qrcode_from_response
 import os
 
 def serve_events_txt(_request: HttpRequest) -> HttpResponse:
-    file_path = os.path.join(os.path.dirname(__file__), "templates", "events.txt")
+    file_path = Path.parent("templates/events.txt")
     try:
-        with open(file_path, "r") as file:
+        with file_path.open("r") as file:
             content = file.read()
         return HttpResponse(content, content_type="text/plain")
     except FileNotFoundError:
