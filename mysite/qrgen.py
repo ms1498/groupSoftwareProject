@@ -1,8 +1,12 @@
-import io
+from __future__ import annotations
+from typing import TYPE_CHECKING
+from io import BytesIO
 import qrcode
-from django.http import HttpRequest
 
-def get_qrcode_from_response(request:HttpRequest) -> bytes | None:
+if TYPE_CHECKING:
+    from django.http import HttpRequest
+
+def get_qrcode_from_response(request: HttpRequest) -> bytes | None:
     """Validates then encapsulates the request's GET parameter in a QR code and returns this as a jpeg image, stored as bytes.
 
     @param: request - HttpRequest\n
@@ -29,7 +33,7 @@ def get_qrcode_from_response(request:HttpRequest) -> bytes | None:
     img = qr.make_image(fill_color="black", back_color="white", format="jpeg")
 
     # save the image, but to memory rather than an actual file location.
-    with io.BytesIO() as stream:
+    with BytesIO() as stream:
         img.save(stream, format="jpeg")
         img_data = stream.getvalue()
     
