@@ -9,7 +9,7 @@ from mysite.qrgen import get_qrcode_from_response
 
 import os
 
-def serve_events_txt(_request: HttpRequest) -> HttpResponse:
+def serve_events_txt(request: HttpRequest) -> HttpResponse:
     file_path = Path.parent("templates/events.txt")
     try:
         with file_path.open("r") as file:
@@ -18,20 +18,20 @@ def serve_events_txt(_request: HttpRequest) -> HttpResponse:
     except FileNotFoundError:
         return HttpResponse("File not found", status=404)
 
-def index(_request: HttpRequest) -> HttpResponse:
+def index(request: HttpRequest) -> HttpResponse:
     return render(request, "home.html")
 
-def discover(_request: HttpRequest) -> HttpResponse:
+def discover(request: HttpRequest) -> HttpResponse:
     return render(request, "discover.html")
 
-def my_events(_request: HttpRequest) -> HttpResponse:
+def my_events(request: HttpRequest) -> HttpResponse:
     return render(request, "my-events.html")
 
-def organise(_request: HttpRequest) -> HttpResponse:
+def organise(request: HttpRequest) -> HttpResponse:
     return render(request, "organise.html")
 
 # Authentication section
-def sign_in(_request: HttpRequest) -> HttpResponse:
+def sign_in(request: HttpRequest) -> HttpResponse:
     """Takes the username and password and validates whether it matches a user in the system, if so it logs them in.
 
     @param     user's request
