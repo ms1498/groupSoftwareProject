@@ -36,7 +36,7 @@ def sign_in(request: HttpRequest) -> HttpResponse:
     @return    renders home + session logged in if successful, keeps rendering sign-in page if unsuccessful
     @author    Maisie Marks
     """
-    if request.method != "POST":
+    if request.method == "POST":
         form = SignInForm(request.POST)
         if form.is_valid():
             username = form.cleaned_data["username"]
