@@ -9,7 +9,7 @@ from mysite.qrgen import get_qrcode_from_response
 
 import os
 
-def serve_events_txt(request: HttpRequest) -> HttpResponse:
+def serve_events_txt(_request: HttpRequest) -> HttpResponse:
     file_path = Path.parent("templates/events.txt")
     try:
         with file_path.open("r") as file:
@@ -75,7 +75,7 @@ def sign_up(request: HttpRequest) -> HttpResponse:
         if form.is_valid() == True :
             user = form.save()
             group = Group.objects.get(name="student")
-            user.groups.add(group)      
+            user.groups.add(group)
             login(request, user)
             return redirect("home")
     else:
