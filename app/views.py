@@ -8,29 +8,29 @@ from mysite.qrgen import get_qrcode_from_response
 
 import os
 
-def serve_events_txt(request):
-    file_path = os.path.join(os.path.dirname(__file__), 'templates', 'events.txt')
+def serve_events_txt(_request: HttpRequest) -> HttpResponse:
+    file_path = os.path.join(os.path.dirname(__file__), "templates", "events.txt")
     try:
-        with open(file_path, 'r') as file:
+        with open(file_path, "r") as file:
             content = file.read()
         return HttpResponse(content, content_type="text/plain")
     except FileNotFoundError:
         return HttpResponse("File not found", status=404)
 
-def index(request):
+def index(_request: HttpRequest) -> HttpResponse:
     return render(request, "home.html")
 
-def discover(request):
+def discover(_request: HttpRequest) -> HttpResponse:
     return render(request, "discover.html")
 
-def my_events(request):
+def my_events(_request: HttpRequest) -> HttpResponse:
     return render(request, "my-events.html")
 
-def organise(request):
+def organise(_request: HttpRequest) -> HttpResponse:
     return render(request, "organise.html")
 
 # Authentication section
-def sign_in(request):
+def sign_in(_request: HttpRequest) -> HttpResponse:
     """Takes the username and password and validates whether it matches a user in the system, if so it logs them in.
 
     @param     user's request
@@ -52,7 +52,7 @@ def sign_in(request):
         form = SignInForm()
     return render(request, 'sign-in.html', {'form': form})
 
-def sign_out(request):
+def sign_out(request: HttpRequest) -> HttpResponse:
     """Logs the user out of the current session and redirects them to the homepage.
 
     @param     user's request
@@ -62,7 +62,7 @@ def sign_out(request):
     logout(request)
     return redirect('/app')
 
-def sign_up(request):
+def sign_up(request: HttpRequest) -> HttpResponse:
     """Allows the user to sign-up and make an account on the webpage.
 
     @param     user's request
@@ -81,7 +81,7 @@ def sign_up(request):
         form = SignUpForm()
     return render(request, 'sign-up.html', {'form': form})
 
-def qrgen(request:HttpRequest) -> None:
+def qrgen(request:HttpRequest) -> HttpResponse:
     """Accepts a GET request with a 'url' argument, that argument will be processed into a QR code and a jpeg image returned to the frontend.
 
     @param: request - HttpRequest
