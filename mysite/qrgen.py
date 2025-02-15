@@ -1,7 +1,6 @@
-from django.http import HttpRequest
-import qrcode
-from PIL import Image
 import io
+import qrcode
+from django.http import HttpRequest
 
 def get_qrcode_from_response(request:HttpRequest) -> bytes | None:
     """Validates then encapsulates the request's GET parameter in a QR code and returns this as a jpeg image, stored as bytes.

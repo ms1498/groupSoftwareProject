@@ -1,13 +1,11 @@
 from pathlib import Path
 from django.shortcuts import render, redirect
-from django.template import loader
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import Group
 from django.http import HttpResponse, HttpRequest
-from .forms import SignInForm, SignUpForm
 from mysite.qrgen import get_qrcode_from_response
+from .forms import SignInForm, SignUpForm
 
-import os
 
 def serve_events_txt(_request: HttpRequest) -> HttpResponse:
     file_path = Path.parent("templates/events.txt")
