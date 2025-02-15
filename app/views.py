@@ -41,17 +41,17 @@ def sign_in(request: HttpRequest) -> HttpResponse:
     if request.method == "POST":
         form = SignInForm(request.POST)
         if form.is_valid() == True:
-            username = form.cleaned_data['username']
-            password = form.cleaned_data['password']
+            username = form.cleaned_data["username"]
+            password = form.cleaned_data["password"]
             user = authenticate(request, username=username, password=password)
             if user != None:
                 login(request, user)
-                return redirect('home')
+                return redirect("home")
             else:
-                return render(request, 'sign-in.html', {'form': form, 'error': 'Invalid username or password'})
+                return render(request, "sign-in.html", {"form": form, "error": "Invalid username or password"})
     else:
         form = SignInForm()
-    return render(request, 'sign-in.html', {'form': form})
+    return render(request, "sign-in.html", {"form": form})
 
 def sign_out(request: HttpRequest) -> HttpResponse:
     """Logs the user out of the current session and redirects them to the homepage.
@@ -61,7 +61,7 @@ def sign_out(request: HttpRequest) -> HttpResponse:
     @author    Maisie Marks
     """
     logout(request)
-    return redirect('/app')
+    return redirect("/app")
 
 def sign_up(request: HttpRequest) -> HttpResponse:
     """Allows the user to sign-up and make an account on the webpage.
@@ -74,13 +74,13 @@ def sign_up(request: HttpRequest) -> HttpResponse:
         form = SignUpForm(request.POST)
         if form.is_valid() == True :
             user = form.save()
-            group = Group.objects.get(name='student')
+            group = Group.objects.get(name="student")
             user.groups.add(group)      
             login(request, user)
-            return redirect('home')
+            return redirect("home")
     else:
         form = SignUpForm()
-    return render(request, 'sign-up.html', {'form': form})
+    return render(request, "sign-up.html", {"form": form})
 
 def qrgen(request:HttpRequest) -> HttpResponse:
     """Accepts a GET request with a 'url' argument, that argument will be processed into a QR code and a jpeg image returned to the frontend.
