@@ -23,7 +23,7 @@ def discover(request: HttpRequest) -> HttpResponse:
     return render(request, "discover.html")
 
 def my_events(request: HttpRequest) -> HttpResponse:
-    return render(request, "my-events.html")
+    return render(request, "my_events.html")
 
 def organise(request: HttpRequest) -> HttpResponse:
     return render(request, "organise.html")
@@ -43,12 +43,12 @@ def sign_in(request: HttpRequest) -> HttpResponse:
             password = form.cleaned_data["password"]
             user = authenticate(request, username=username, password=password)
             if user is None:
-                return render(request, "sign-in.html", {"form": form, "error": "Invalid username or password"})
+                return render(request, "sign_in.html", {"form": form, "error": "Invalid username or password"})
             login(request, user)
             return redirect("home")
     else:
         form = SignInForm()
-    return render(request, "sign-in.html", {"form": form})
+    return render(request, "sign_in.html", {"form": form})
 
 def sign_out(request: HttpRequest) -> HttpResponse:
     """Logs the user out of the current session and redirects them to the homepage.
@@ -77,7 +77,7 @@ def sign_up(request: HttpRequest) -> HttpResponse:
             return redirect("home")
     else:
         form = SignUpForm()
-    return render(request, "sign-up.html", {"form": form})
+    return render(request, "sign_up.html", {"form": form})
 
 def qrgen(request: HttpRequest) -> HttpResponse:
     """Accepts a GET request with a 'url' argument, that argument will be processed into a QR code and a jpeg image returned to the frontend.
