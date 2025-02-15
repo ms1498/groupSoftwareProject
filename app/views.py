@@ -38,17 +38,16 @@ def sign_in(request: HttpRequest) -> HttpResponse:
     @return    renders home + session logged in if successful, keeps rendering sign-in page if unsuccessful
     @author    Maisie Marks
     """
-    if request.method == "POST":
+    if request.method != "POST":
         form = SignInForm(request.POST)
-        if form.is_valid() == True:
+        if form.is_valid():
             username = form.cleaned_data["username"]
             password = form.cleaned_data["password"]
             user = authenticate(request, username=username, password=password)
-            if user != None:
-                login(request, user)
-                return redirect("home")
-            else:
+            if user is None:
                 return render(request, "sign-in.html", {"form": form, "error": "Invalid username or password"})
+            login(request, user)
+            return redirect("home")
     else:
         form = SignInForm()
     return render(request, "sign-in.html", {"form": form})
@@ -72,7 +71,7 @@ def sign_up(request: HttpRequest) -> HttpResponse:
     """
     if request.method == "POST":
         form = SignUpForm(request.POST)
-        if form.is_valid() == True :
+        if form.is_valid():
             user = form.save()
             group = Group.objects.get(name="student")
             user.groups.add(group)
@@ -82,14 +81,13 @@ def sign_up(request: HttpRequest) -> HttpResponse:
         form = SignUpForm()
     return render(request, "sign-up.html", {"form": form})
 
-def qrgen(request:HttpRequest) -> HttpResponse:
+def qrgen(request: HttpRequest) -> HttpResponse:
     """Accepts a GET request with a 'url' argument, that argument will be processed into a QR code and a jpeg image returned to the frontend.
 
     @param: request - HttpRequest
     @author: Seth Mallinson
     """
     code_image = get_qrcode_from_response(request)
-    if code_image != None:
-        return HttpResponse(code_image, content_type="image/jpeg")
-    else:
+    if code_image is None:
         return HttpResponse("Invalid request. The qrgen expects a GET request with a 'url' parameter.")
+    return HttpResponse(code_image, content_type="image/jpeg")
