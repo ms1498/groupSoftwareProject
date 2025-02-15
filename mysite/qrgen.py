@@ -4,10 +4,12 @@ from PIL import Image
 import io
 
 def get_qrcode_from_response(request:HttpRequest) -> bytes | None:
-    """Validates then encapsulates the request's GET parameter in a QR code and returns this as a jpeg image, stored as bytes.\n
+    """Validates then encapsulates the request's GET parameter in a QR code and returns this as a jpeg image, stored as bytes.
+
     @param: request - HttpRequest\n
     @returns: Either a bytes object, or None if the request was invalid.\n
-    @author: Seth Mallinson"""
+    @author: Seth Mallinson
+    """
 
     qr = qrcode.QRCode(
         version=1,
