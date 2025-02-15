@@ -28,7 +28,7 @@ def get_qrcode_from_response(request: HttpRequest) -> bytes | None:
         qr.make(fit=True)
     except:
         return None
-    
+
     # this image should be in a jpeg format that can just be sent to the server and embedded, I think...
     img = qr.make_image(fill_color="black", back_color="white", format="jpeg")
 
@@ -36,7 +36,7 @@ def get_qrcode_from_response(request: HttpRequest) -> bytes | None:
     with BytesIO() as stream:
         img.save(stream, format="jpeg")
         img_data = stream.getvalue()
-    
+
     # a temp test to check that the data formed a coherent image
     #img.save("./test_valid.jpeg", format="jpeg")
     #with open("./test_raw.jpeg", "wb") as file:
