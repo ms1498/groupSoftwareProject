@@ -1,10 +1,12 @@
 from django.urls import path
-from .views import serve_events_txt
 from . import views
+from . import queries
 
 urlpatterns = [
     path("", views.index, name="home"),
-    path("events-data", serve_events_txt, name="serve_events_txt"),
+    path("events-data", queries.serve_events, name="serve-events"),
+    path("submit-event/post", queries.submit_event, name="submitting-event"),
+    path("submit-event", views.submit_event, name="submit-event"),
     path("discover", views.discover, name="discover"),
     path("my-events", views.my_events, name="my-events"),
     path("organise", views.organise, name="organise"),

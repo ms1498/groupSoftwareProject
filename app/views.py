@@ -13,29 +13,7 @@ from .forms import SignInForm, SignupForm
 from mysite.qrgen import get_qrcode_from_response
 
 
-def serve_events(request:HttpRequest) -> HttpResponse:
-    if request.method == "GET":
-        data = serializers.serialize("json", Event.objects.all())
-        file_path = os.path.join(os.path.dirname(__file__), 'templates', 'events.txt')
-        try:
-            with open(file_path, 'r') as file:
-                content = file.read()
-            return HttpResponse(content, content_type="text/plain")
-        except FileNotFoundError:
-            return HttpResponse("File not found", status=404)
-    else:
-        return HttpResponse("Invalid request - should be GET", status=400)
-    
-def submit_event(request:HttpRequest) -> HttpResponse:
-    """Include a json description of the event in the request body and it will be saved to the database."""
-    if request.method == "POST":
-        try:
-            event:Event = serializers.deserialize("json", str(request.body))[0]
-            event.save()
-        except:
-            return HttpResponse("Invalid request - bad message body. A JSON definition of the event is expected. Got: " + str(request.body), status=400)
-    else:
-        return HttpResponse("Invalid request - should be POST", status=400)
+
 
 def index(request):
     return render(request, "home.html")
@@ -45,6 +23,11 @@ def discover(request):
 
 def my_events(request):
     return render(request, "my-events.html")
+
+def submit_event(request:HttpRequest):
+    response = render(request, "submit-event.html")
+    response["X-Content-Type-Options"] = "nosniff"
+    return response
 
 def organise(request):
     return render(request, "organise.html")
