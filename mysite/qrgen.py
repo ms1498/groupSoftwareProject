@@ -1,18 +1,13 @@
-from __future__ import annotations
-from typing import TYPE_CHECKING
-from io import BytesIO
+from django.http import HttpRequest
 import qrcode
+from PIL import Image
+import io
 
-if TYPE_CHECKING:
-    from django.http import HttpRequest
-
-def get_qrcode_from_response(request: HttpRequest) -> bytes | None:
-    """Validates then encapsulates the request's GET parameter in a QR code and returns this as a jpeg image, stored as bytes.
-
+def get_qrcode_from_response(request:HttpRequest) -> bytes | None:
+    """Validates then encapsulates the request's GET parameter in a QR code and returns this as a jpeg image, stored as bytes.\n
     @param: request - HttpRequest\n
     @returns: Either a bytes object, or None if the request was invalid.\n
-    @author: Seth Mallinson
-    """
+    @author: Seth Mallinson"""
 
     qr = qrcode.QRCode(
         version=1,
@@ -28,15 +23,15 @@ def get_qrcode_from_response(request: HttpRequest) -> bytes | None:
         qr.make(fit=True)
     except:
         return None
-
+    
     # this image should be in a jpeg format that can just be sent to the server and embedded, I think...
     img = qr.make_image(fill_color="black", back_color="white", format="jpeg")
 
     # save the image, but to memory rather than an actual file location.
-    with BytesIO() as stream:
+    with io.BytesIO() as stream:
         img.save(stream, format="jpeg")
         img_data = stream.getvalue()
-
+    
     # a temp test to check that the data formed a coherent image
     #img.save("./test_valid.jpeg", format="jpeg")
     #with open("./test_raw.jpeg", "wb") as file:
