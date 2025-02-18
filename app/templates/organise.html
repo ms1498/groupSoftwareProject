@@ -24,17 +24,21 @@
 
         <h2 class="text-center mb-4">New Event</h2>
 
-        <form action="/action_page.php" method="POST" enctype="multipart/form-data">
+        {% if errors %}
+          {{ errors }}
+        {% endif %}
+        <form method="POST" enctype="multipart/form-data">
+	  {% csrf_token %}
           <!-- Event Name -->
           <div class="mb-3">
             <label for="event-name" class="form-label">Event Name:</label>
-            <input type="text" class="form-control" id="event-name" placeholder="Enter name" name="event_name" required>
+            <input type="text" class="form-control" id="event-name" placeholder="Enter name" name="name" required>
           </div>
 
           <!-- Event Date -->
           <div class="mb-3">
             <label for="event-date" class="form-label">Event Date:</label>
-            <input type="datetime-local" class="form-control" id="event-date" name="event_date" required>
+            <input type="datetime-local" class="form-control" id="event-date" name="date" required>
           </div>
 
           <!-- Event Category -->
@@ -62,13 +66,13 @@
           <!-- Event Description -->
           <div class="mb-3">
             <label for="event-description" class="form-label">Event Description:</label>
-            <textarea class="form-control" id="event-description" placeholder="Enter event details" name="event_description" rows="3"></textarea>
+            <textarea class="form-control" id="event-description" placeholder="Enter event details" name="description" rows="3"></textarea>
           </div>
 
           <!-- Image Upload -->
           <div class="mb-3">
             <label for="event-image" class="form-label">Upload Event Image:</label>
-            <input class="form-control" type="file" id="event-image" name="event_image" accept="image/*">
+            <input class="form-control" type="file" id="event-image" name="image" accept="image/*">
             <small class="text-muted">Accepted formats: JPG, PNG, GIF</small>
           </div>
 

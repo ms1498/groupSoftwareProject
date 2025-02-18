@@ -11,7 +11,7 @@ from app.models import Event
 # backend imports
 from .forms import SignInForm, SignUpForm
 from mysite.qrgen import get_qrcode_from_response
-from .forms import SignInForm, SignUpForm
+from .forms import SignInForm, SignUpForm, CreateEventForm
 
 import os
 
@@ -45,6 +45,18 @@ def submit_event(request:HttpRequest) -> HttpResponse:
     return response
 
 def organise(request: HttpRequest) -> HttpResponse:
+    """Take data from the event creation form, and uses it to create and save an event.
+
+    @author    Tricia Sibley
+    """
+    if request.method == "POST":
+        form = CreateEventForm(request.POST)
+        if form.is_valid():
+            form.save()
+        else:
+            return render(request, "organise.html", {"form": form, "errors": form.errors})
+    else:
+        form = CreateEventForm()
     return render(request, "organise.html")
 
 # Authentication section

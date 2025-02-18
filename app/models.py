@@ -10,7 +10,7 @@ class Developer(models.Model):
 
 class SocietyRepresentative(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    societyName = models.CharField(max_length=50)
+    society_name = models.CharField(max_length=50)
 
 class Moderator(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
@@ -24,9 +24,9 @@ class Event(models.Model):
     end_key = models.CharField(max_length=7, null=True)
     category = models.CharField(max_length=50)
     organiser = models.ForeignKey(SocietyRepresentative, on_delete=models.CASCADE, null=True)
-    date = models.DateField()
-    time = models.TimeField()
+    date = models.DateTimeField()
     location = models.ForeignKey(Location, on_delete=models.CASCADE, null=True)
+    name = models.CharField(max_length=50)
     expected_attendance = models.IntegerField(null=True)
     actual_attendance = models.IntegerField(null=True)
     maximum_attendance = models.IntegerField(null=True)
