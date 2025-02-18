@@ -15,15 +15,6 @@ from .forms import SignInForm, SignUpForm, CreateEventForm
 
 import os
 
-def serve_events_txt(request):
-    file_path = os.path.join(os.path.dirname(__file__), 'templates', 'events.txt')
-    try:
-        with open(file_path, 'r') as file:
-            content = file.read()
-        return HttpResponse(content, content_type="text/plain")
-    except FileNotFoundError:
-        return HttpResponse("File not found", status=404)
-
 def index(request: HttpRequest) -> HttpResponse:
     return render(request, "home.html")
 
@@ -32,17 +23,6 @@ def discover(request: HttpRequest) -> HttpResponse:
 
 def my_events(request: HttpRequest) -> HttpResponse:
     return render(request, "my_events.html")
-
-def submit_event(request:HttpRequest) -> HttpResponse:
-    response = render(request, "submit-event.html")
-    response["X-Content-Type-Options"] = "nosniff"
-    return response
-
-
-def submit_event(request:HttpRequest) -> HttpResponse:
-    response = render(request, "submit-event.html")
-    response["X-Content-Type-Options"] = "nosniff"
-    return response
 
 def organise(request: HttpRequest) -> HttpResponse:
     """Take data from the event creation form, and uses it to create and save an event.
@@ -110,13 +90,3 @@ def sign_up(request: HttpRequest) -> HttpResponse:
         form = SignUpForm()
     return render(request, "sign_up.html", {"form": form})
 
-def qrgen(request: HttpRequest) -> HttpResponse:
-    """Accepts a GET request with a 'url' argument, that argument will be processed into a QR code and a jpeg image returned to the frontend.
-
-    @param: request - HttpRequest
-    @author: Seth Mallinson
-    """
-    code_image = get_qrcode_from_response(request)
-    if code_image is None:
-        return HttpResponse("Invalid request. The qrgen expects a GET request with a 'url' parameter.")
-    return HttpResponse(code_image, content_type="image/jpeg")
