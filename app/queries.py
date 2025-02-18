@@ -17,13 +17,7 @@ from mysite.qrgen import get_qrcode_from_response
 def serve_events(request:HttpRequest) -> HttpResponse:
     if request.method == "GET":
         data = serializers.serialize("json", Event.objects.all())
-        file_path = os.path.join(os.path.dirname(__file__), 'templates', 'events.txt')
-        try:
-            with open(file_path, 'r') as file:
-                content = file.read()
-            return HttpResponse(content, content_type="text/plain")
-        except FileNotFoundError:
-            return HttpResponse("File not found", status=404)
+        return HttpResponse(data, content_type="text/plain")
     else:
         return HttpResponse("Invalid request - should be GET", status=400)
     
@@ -44,6 +38,7 @@ def submit_event(request:HttpRequest) -> HttpResponse:
 
     if request.method == "POST":
         try:
+            next(serializers.deserialize("json", "[" + str(request.body)[2:-1] + "]")).save()
             data = json.loads(str(request.body)[2:-1])
             event:Event = Event()
             event.start_key = data["startKey"]

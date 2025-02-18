@@ -18,18 +18,21 @@
         event.preventDefault();
         console.log("making json")
         const json = {
-            "startKey": "aaaaa",
-            "endKey": "aaaaa",
-            "eventType": "racist",
-            "organiser": "idk",
-            "eventDate": "0001-01-01",
-            "eventTime": "00:00:00",
-            "eventLocation": "aaaaa",
-            "expectedAttendance": 1,
-            "actualAttendance": 2,
-            "maximumAttendance": 3,
-            "approved": false
+            "pk":"6",
+            "model": "app.event",
+            "fields": {
+                "start_key": "aaaaa",
+                "end_key": "aaaaa",
+                "event_type": "racist",
+                "event_date": "0001-01-01",
+                "event_time": "00:00:00",
+                "expected_attendance": 1,
+                "actual_attendance": 2,
+                "maximum_attendance": 3,
+                "approved": false
+            }
         };
+        console.log("json constructed")
         baseOfUrl = window.location.href.substring(0, window.location.href.indexOf("?"));
         baseOfUrl = window.location.href;
         fetch(baseOfUrl + "/post", { method: "POST", headers: {"Content-Type": "application/json", "X-CSRFToken": CSRF_TOKEN }, body: JSON.stringify(json), credentials:"same-origin"});
