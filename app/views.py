@@ -9,7 +9,7 @@ from django.http import HttpResponse, HttpRequest
 # model imports
 from app.models import Event
 # backend imports
-from .forms import SignInForm, SignupForm
+from .forms import SignInForm, SignUpForm
 from mysite.qrgen import get_qrcode_from_response
 from .forms import SignInForm, SignUpForm
 
@@ -33,18 +33,17 @@ def discover(request: HttpRequest) -> HttpResponse:
 def my_events(request: HttpRequest) -> HttpResponse:
     return render(request, "my_events.html")
 
-def submit_event(request:HttpRequest):
+def submit_event(request:HttpRequest) -> HttpResponse:
     response = render(request, "submit-event.html")
     response["X-Content-Type-Options"] = "nosniff"
     return response
 
 
-def submit_event(request:HttpRequest):
+def submit_event(request:HttpRequest) -> HttpResponse:
     response = render(request, "submit-event.html")
     response["X-Content-Type-Options"] = "nosniff"
     return response
 
-def organise(request):
 def organise(request: HttpRequest) -> HttpResponse:
     return render(request, "organise.html")
 

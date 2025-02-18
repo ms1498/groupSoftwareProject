@@ -2,7 +2,7 @@ console.log("running script");
 let form = document.getElementById("temp");
 form.addEventListener("submit", (event) => {
 
-    console.log("making json")
+    console.log("making json");
     const json = {
         "startKey": "aaaaa",
         "endKey": "aaaaa",
@@ -17,6 +17,6 @@ form.addEventListener("submit", (event) => {
         "approved": false
     };
 
-    fetch(window.location.href + "/post", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(json) })
+    fetch(window.location.href + "/post", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(json) });
 });
 console.log("event listener added");

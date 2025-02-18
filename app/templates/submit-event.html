@@ -1,26 +1,28 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<form id="temp">
+<form id="temp" >
     {% csrf_token %}
     
     <button type="submit">send json event</button>
 </form>
 
-<script type="text/javascript" src="../static/js/tempEventSubmission.js"></script>
-{% endblock %}
-<!-- <script>
+<script>
+    var CSRF_TOKEN = "{{ csrf_token }}";
+</script>
+
+<script>
     console.log("running script");
     let form = document.getElementById("temp");
     form.addEventListener("submit", (event) => {
-
+        event.preventDefault();
         console.log("making json")
         const json = {
             "startKey": "aaaaa",
             "endKey": "aaaaa",
             "eventType": "racist",
             "organiser": "idk",
-            "eventDate": "01-01-0001",
+            "eventDate": "0001-01-01",
             "eventTime": "00:00:00",
             "eventLocation": "aaaaa",
             "expectedAttendance": 1,
@@ -28,8 +30,12 @@
             "maximumAttendance": 3,
             "approved": false
         };
-
-        fetch(window.location.href + "/post", { method: "POST", headers: {"Content-Type": "application/json"}, body: JSON.stringify(json)})
+        baseOfUrl = window.location.href.substring(0, window.location.href.indexOf("?"));
+        baseOfUrl = window.location.href;
+        fetch(baseOfUrl + "/post", { method: "POST", headers: {"Content-Type": "application/json", "X-CSRFToken": CSRF_TOKEN }, body: JSON.stringify(json), credentials:"same-origin"});
     });
     console.log("event listener added");
-</script> -->
+</script>
+
+<!-- <script type="text/javascript" src="../static/js/tempEventSubmission.js"></script> -->
+{% endblock %}
