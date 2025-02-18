@@ -15,7 +15,7 @@ from mysite.qrgen import get_qrcode_from_response
 
 
 def serve_events(request:HttpRequest) -> HttpResponse:
-    """Returns a list of all events that match arbitrary criteria. Use a 'filters' parameter in the URL to specify a list[str] of comma separated conditions, for example ?filters=pk=1,event_location="forum"
+    """Returns a list of all events that match arbitrary criteria. Use a 'filters' parameter in the URL to specify a list[str] of comma separated conditions, for example ?filters=pk=1,location="forum"
     @param user's request
     @return a json list of events
     @author Seth Mallinson"""
