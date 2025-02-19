@@ -69,7 +69,7 @@ def sign_out(request: HttpRequest) -> HttpResponse:
     @author    Maisie Marks
     """
     logout(request)
-    return redirect("/app")
+    return redirect("home")
 
 def sign_up(request: HttpRequest) -> HttpResponse:
     """Allows the user to sign-up and make an account on the webpage.
