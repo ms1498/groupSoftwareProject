@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% extends 'base.html' %}
 
 {% block title %}Home{% endblock %}
 
@@ -92,15 +92,15 @@
 <script>
   $(document).ready(function() {
         $.ajax({
-            url: "/events-data/",  // Django route
+            url: '/events-data/',  // Django route
             dataType: "text",
             success: function(filecontent) {
                 console.log("File loaded successfully:", filecontent);
-                var lines = filecontent.split("\n");
+                var lines = filecontent.split('\n');
                 $.each(lines, function(index, eventName) {
                     eventName = eventName.trim();
-                    if (eventName !== "") {
-                        var button = "<button class="btn btn-primary w-100 my-1">" + eventName + "</button>";
+                    if (eventName !== '') {
+                        var button = '<button class="btn btn-primary w-100 my-1">' + eventName + '</button>';
                         $("#textfile-buttons").append(button);
                     }
                 });
