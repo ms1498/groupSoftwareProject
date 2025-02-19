@@ -1,20 +1,19 @@
+import os
+#django imports
 from pathlib import Path
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import Group
+from django.core import serializers
 from django.http import HttpResponse, HttpRequest
-from mysite.qrgen import get_qrcode_from_response
+# model imports
+from app.models import Event
+# backend imports
 from .forms import SignInForm, SignUpForm
+from mysite.qrgen import get_qrcode_from_response
+from .forms import SignInForm, SignUpForm, CreateEventForm
 
-
-def serve_events_txt(_request: HttpRequest) -> HttpResponse:
-    file_path = Path.parent("templates/events.txt")
-    try:
-        with file_path.open("r") as file:
-            content = file.read()
-        return HttpResponse(content, content_type="text/plain")
-    except FileNotFoundError:
-        return HttpResponse("File not found", status=404)
+import os
 
 def index(request: HttpRequest) -> HttpResponse:
     return render(request, "home.html")
@@ -26,6 +25,18 @@ def my_events(request: HttpRequest) -> HttpResponse:
     return render(request, "my_events.html")
 
 def organise(request: HttpRequest) -> HttpResponse:
+    """Take data from the event creation form, and uses it to create and save an event.
+
+    @author    Tricia Sibley
+    """
+    if request.method == "POST":
+        form = CreateEventForm(request.POST)
+        if form.is_valid():
+            form.save()
+        else:
+            return render(request, "organise.html", {"form": form, "errors": form.errors})
+    else:
+        form = CreateEventForm()
     return render(request, "organise.html")
 
 # Authentication section
@@ -79,13 +90,3 @@ def sign_up(request: HttpRequest) -> HttpResponse:
         form = SignUpForm()
     return render(request, "sign_up.html", {"form": form})
 
-def qrgen(request: HttpRequest) -> HttpResponse:
-    """Accepts a GET request with a 'url' argument, that argument will be processed into a QR code and a jpeg image returned to the frontend.
-
-    @param: request - HttpRequest
-    @author: Seth Mallinson
-    """
-    code_image = get_qrcode_from_response(request)
-    if code_image is None:
-        return HttpResponse("Invalid request. The qrgen expects a GET request with a 'url' parameter.")
-    return HttpResponse(code_image, content_type="image/jpeg")
