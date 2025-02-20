@@ -33,3 +33,7 @@ class Event(models.Model):
     approved = models.BooleanField(default=False)
     description = models.CharField(max_length=500, null=True)
     image = models.ImageField(blank=True)
+
+class Booking(models.Model):
+    student = models.ForeignKey(Student, on_delete=models.CASCADE)
+    event = models.ForeignKey(Event, on_delete=models.CASCADE)
