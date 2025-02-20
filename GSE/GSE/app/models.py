@@ -31,3 +31,7 @@ class Event(models.Model):
     actualAttendance = models.IntegerField(null=True)
     maximumAttendance = models.IntegerField(null=True)
     approved = models.BooleanField(default=False)
+
+class Booking(models.Model):
+    student = models.ForeignKey(Student, on_delete=models.CASCADE)
+    event = models.ForeignKey(Event, on_delete=models.CASCADE)
