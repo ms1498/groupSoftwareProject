@@ -1,23 +1,36 @@
 <head>
     <style>
-        .searcher {
-            color: #ffffff;
-            background-color: #3586fd;
-            border: 2px solid #3c5376;
-            width: 150px;
-            border-radius: 6px;
-            transition: background-color 0.3s ease-in-out;
-            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+        /* Navbar Styling */
+        .navbar-custom {
+            background-color: #3c5376 !important;
+            padding: 10px 20px;
+            border-radius: 0 0 10px 10px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
         }
+
+        /* Input and Dropdown Styling */
+        .searcher {
+            color: #ffffff !important;
+            background-color: #3586fd !important;
+            border: 2px solid #3c5376 !important;
+            min-width: 150px !important; 
+            border: #ffffff;
+            border-radius: 6px !important;
+            transition: background-color 0.3s ease-in-out !important;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1) !important;
+        }
+
         .searcher:hover {
             background-color: #0d6efd;
         }
+
         .event-card {
             border: 2px solid #3c5376;
             border-radius: 10px;
             padding: 20px;
             box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
         }
+
         .event-image {
             background-color: #3c5376;
             border-radius: 10px;
@@ -28,96 +41,139 @@
             font-weight: bold;
             color: #ffffff;
         }
+
+        /* Popup modal */
+        .popup {
+            position: fixed;
+            top: 10%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80%;
+            height: auto;
+            background: white;
+            display: none; /* Initially hidden */
+            z-index: 1000;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        .popup img {
+            width: 100%;
+            height: auto;
+            object-fit: contain;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Popup close button */
+        .popup-close {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 24px;
+            color: black;
+            background: none;
+            border: none;
+            cursor: pointer;
+        }
+
+        /* Image hover effects */
+        img {
+            transition: border 0.3s ease, box-shadow 0.3s ease;
+        }
+
     </style>
-    <!-- CoreUI CSS -->
-    <!--<link href="https://cdn.jsdelivr.net/npm/@coreui/coreui@4.6.1/dist/css/coreui.min.css" rel="stylesheet">-->
 </head>
+
+<script>
+    // Function to show the popup when an image is clicked
+    function showPopup(card) {
+        const popup = document.getElementById('popup' + card);
+        popup.style.display = 'block';
+    }
+
+    // Function to hide the popup
+    function exitPopup(card) {
+        const popup = document.getElementById('popup' + card);
+        popup.style.display = 'none';
+    }
+</script>
+
 {% extends "base.html" %}
 
 {% block content %}
 <body>
-    <!-- Search and Filters -->
-    <!--<div class="bg-primary flex-wrap p-4 text-center text-white rounded-bottom shadow w-100" style="background-color: #3c5376 !important;">-->
-        <div class="d-flex flex-wrap justify-content-center bg-primary w-100">
+    <!-- Navbar (One Line) -->
+    <div class="container-fluid navbar-custom text-white">
+        <div class="d-flex flex-nowrap justify-content-between align-items-center">
 
-            <div class="col-auto">
-                <input type="text" placeholder="Search events..." class="form-control">
-            </div>
+            <!-- Search Bar (Expands) -->
+            <input type="text" placeholder="Search events..." class="form-control flex-grow-1 mx-2">
 
-            <div class="col-auto">
-                <select class="form-select searcher" id="category" name="category">
-                    <option selected disabled>Category</option>
-                    <option value="poverty">End Poverty</option>
-                    <option value="hunger">End Hunger</option>
-                    <option value="health">Good Health</option>
-                    <option value="education">Quality Education</option>
-                    <option value="equality">Gender Equality</option>
-                    <option value="water">Clean Water and Sanitation</option>
-                    <option value="energy">Clean Energy</option>
-                    <option value="growth">Economic Growth</option>
-                    <option value="inequality">Reducing Inequalities</option>
-                    <option value="cities">Sustainable Cities and Communities</option>
-                    <option value="consumption">Responsible Consumption</option>
-                    <option value="planet">Protect the Planet</option>
-                    <option value="peace">Peace and Justice</option>
-                    <option value="other">Other</option>
-                </select>
-            </div>
-            
-            <!-- Fixed Date Pickers -->
-            <div class="col-auto">
-                <input type="date" class="form-control" id="start-date">
-            </div>
-            <div class="text-center mt-3">
-                <p id="selected-dates" class="text-white"></p>
-            </div>
+            <!-- Date Picker -->
+            <input type="date" class="form-control flex-grow-1 mx-2" id="start-date">
 
-            <div class="col-auto">
-                <select class="form-select searcher" id="category" name="category">
-                    <option selected disabled>Society</option>
-                    {% for Society in Society %}
-                        <option value="{{ Society }}">{{ Society }}</option>
-                    {% endfor %}
-                </select>
-            </div>
-            <div class="col-auto">
-                <button type="submit" class="searcher">Search</button>
-            </div>
-        </div>
-    <!--</div>-->
+            <!-- Category Dropdown -->
+            <select class="form-select searcher mx-2" id="category" name="category">
+                <option selected disabled>Category</option>
+                <option value="poverty">End Poverty</option>
+                <option value="hunger">End Hunger</option>
+                <option value="health">Good Health</option>
+                <option value="education">Quality Education</option>
+                <option value="equality">Gender Equality</option>
+                <option value="water">Clean Water and Sanitation</option>
+                <option value="energy">Clean Energy</option>
+                <option value="growth">Economic Growth</option>
+                <option value="inequality">Reducing Inequalities</option>
+                <option value="cities">Sustainable Cities and Communities</option>
+                <option value="consumption">Responsible Consumption</option>
+                <option value="planet">Protect the Planet</option>
+                <option value="peace">Peace and Justice</option>
+                <option value="other">Other</option>
+            </select>
 
-    <!-- Event Cards -->
-    <div class="container py-4">
-        <div class="row justify-content-center mb-3">
-            <div class="col-md-8">
-                <div class="event-card row">
-                    <div class="col-md-8">
-                        <h2 style="color: #0d6efd;">Event Title</h2>
-                        <p class="mb-2"><strong>Date:</strong> Event Date</p>
-                        <p>Event description goes here...</p>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="event-image">Image</div>
-                    </div>
-                </div>
-            </div>
-        </div>
+            <!-- Society Dropdown -->
+            <select class="form-select searcher mx-2" id="society" name="society">
+                <option selected disabled>Society</option>
+                {% for Society in Society %}
+                    <option value="{{ Society }}">{{ Society }}</option>
+                {% endfor %}
+            </select>
 
-        <div class="row justify-content-center">
-            <div class="col-md-8">
-                <div class="event-card row">
-                    <div class="col-md-8">
-                        <h2 style="color: #0d6efd;">Event Title</h2>
-                        <p class="mb-2"><strong>Date:</strong> Event Date</p>
-                        <p>Event description goes here...</p>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="event-image">Image</div>
-                    </div>
-                </div>
-            </div>
+            <!-- Search Button -->
+            <button type="submit" class="btn searcher">Search</button>
         </div>
     </div>
+
+    <!-- Event Cards -->
+
+    {% for event in events %}
+        <div class="container py-4">
+            <div class="row justify-content-center mb-3" onclick="showPopup('{{ forloop.counter }}')">
+                <div class="col-md-8">
+                    <div class="event-card row">
+                        <div class="col-md-8">
+                            <h2 style="color: #0d6efd;">{{ event.name }}</h2>
+                            <p class="mb-2"><strong>Date:</strong> {{event.date}}</p>
+                            <p>{{event.description}}</p>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="event-image">{{event.image}}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="popup" id="popup{{ forloop.counter }}">
+                <button class="popup-close" onclick="exitPopup('{{ forloop.counter }}')">X</button>
+                <h2 style="color: #0d6efd;">{{ event.name }}</h2>
+                    <p class="mb-2"><strong>Date:</strong> {{event.date}}</p>
+                    <p>{{event.description}}</p>
+                    <div class="col-md-4">
+                        <div class="event-image">{{event.image}}</div>
+                </div>
+            </div>
+    {% empty %}
+        <p class="text-muted text-center">No sustainable events found. Check back soon!</p>
+    {% endfor %}
 
     <!-- CoreUI JS -->
     <script src="https://cdn.jsdelivr.net/npm/@coreui/coreui@4.6.1/dist/js/coreui.bundle.min.js"></script>
@@ -134,5 +190,4 @@
         });
     </script>
 </body>
-
 {% endblock %}

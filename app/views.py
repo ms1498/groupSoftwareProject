@@ -16,10 +16,12 @@ from .forms import SignInForm, SignUpForm, CreateEventForm
 import os
 
 def index(request: HttpRequest) -> HttpResponse:
-    return render(request, "home.html")
+    events = Event.objects.all()
+    return render(request, "home.html", {"events":events})
 
 def discover(request: HttpRequest) -> HttpResponse:
-    return render(request, "discover.html")
+    events = Event.objects.all()
+    return render(request, "discover.html",{"events":events})
 
 def my_events(request: HttpRequest) -> HttpResponse:
     return render(request, "my_events.html")
