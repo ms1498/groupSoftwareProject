@@ -20,8 +20,39 @@ def index(request: HttpRequest) -> HttpResponse:
     return render(request, "home.html", {"events":events})
 
 def discover(request: HttpRequest) -> HttpResponse:
+    """Filters events based on user input
+
+    @author  Tilly Searle
+    """
+    search_query = request.GET.get('search_query', '')
+    event_date = request.GET.get('event_date', '')
+    category = request.GET.get('category', '')
+    society = request.GET.get('society', '')
+
     events = Event.objects.all()
-    return render(request, "discover.html",{"events":events})
+
+    if search_query:
+        events = events.filter(name__icontains=search_query)
+
+    events = events.filter(approved="1")
+    if category:
+        events = events.filter(category=category)
+
+    if event_date:
+        events = events.filter(date__date=event_date)
+
+    if category:
+        events = events.filter(category=category)
+
+    if society:
+        events = events.filter(organiser__society_name=society)
+
+    return render(request, "discover.html", {"events": events})
+
+def register(request: HttpRequest) -> HttpResponse:
+    """Filters events based on user input"""
+    
+    return render(request, "discover.html", {"events": events})
 
 def my_events(request: HttpRequest) -> HttpResponse:
     return render(request, "my_events.html")
