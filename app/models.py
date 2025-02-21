@@ -32,7 +32,7 @@ class Event(models.Model):
     maximum_attendance = models.IntegerField(null=True)
     approved = models.BooleanField(default=False)
     description = models.CharField(max_length=500, null=True)
-    image = models.ImageField(blank=True)
+    image = models.ImageField(upload_to='event_images/', null=True, blank=True)
 
 class Booking(models.Model):
     student = models.ForeignKey(Student, on_delete=models.CASCADE)

@@ -72,10 +72,9 @@
                 <div class="card shadow-sm">
                     <img src="{{ event.image_url }}" class="card-img-top" alt="{{ event.title }}">
                     <div class="card-body">
-                        <h5 class="card-title">{{ event.title }}</h5>
+                        <h5 class="card-title">{{ event.name }}</h5>
                         <p class="card-text text-muted">{{ event.date }} • {{ event.location }}</p>
                         <span class="badge bg-blue">🌱 {{ event.sustainability_tag }}</span>
-                        <a href="{% url 'event_detail' event.id %}" class="btn btn-success mt-2">View Event</a>
                     </div>
                 </div>
             </div>

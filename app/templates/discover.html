@@ -24,21 +24,21 @@
         }
 
         .event-card {
+            display: flex;
+            align-items: stretch;
+            min-height: 200px;
             border: 2px solid #3c5376;
             border-radius: 10px;
             padding: 20px;
             box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
         }
 
-        .event-image {
-            background-color: #3c5376;
+        .event-card img {
+            width: 100%;
+            height: auto; 
+            max-height: 150px;
+            object-fit: contain;
             border-radius: 10px;
-            height: 150px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            color: #ffffff;
         }
 
         /* Popup Styling */
@@ -140,38 +140,41 @@
             <button type="submit" class="btn searcher">Search</button>
         </div>
     </form>
+    
     <!-- Event Cards -->
-
+    <div class="container py-4" style="align-items: center;">
     {% for event in events %}
-    <div class="container py-4">
-        <div class="row justify-content-center mb-3" onclick="showPopup('{{ forloop.counter }}')">
-            <div class="col-md-8">
-                <div class="event-card row">
+        <div class="row d-flex mb-3 justify-content-center col-md-8" onclick="showPopup('{{ forloop.counter }}')"  style="align-items: center;">
+                <div class="event-card">
                     <div class="col-md-8">
                         <h2 style="color: #0d6efd;">{{ event.name }}</h2>
                         <p class="mb-2"><strong>Date:</strong> {{event.date}}</p>
+                        <p class="mb-2"><strong>Society:</strong> {{event.organiser.society_name}}</p>
                         <p>{{event.description}}</p>
                     </div>
                     <div class="col-md-4">
-                        <div class="event-image">{{event.image}}</div>
+                        <img src="{{ event.image.url }}" alt="Event Image" class="img-fluid" onerror="this.src='/static/default-event.jpg';">
                     </div>
+
                 </div>
-            </div>
         </div>
         
         <!-- Popup -->
         <div class="popup-container" id="popup{{ forloop.counter }}">
             <div class="popup">
                 <button class="popup-close" onclick="exitPopup('{{ forloop.counter }}')">X</button>
-                <h2 class="popup-title">{{ event.name }}</h2>
+                <h2 class="popup-title" style="color: #0d6efd;">{{ event.name }}</h2>
                 <p class="popup-date"><strong>Date:</strong> {{ event.date }}</p>
+                <p class="popup-date"><strong>Society:</strong> {{ event.organiser.society_name}}</p>
                 <p class="popup-description">{{ event.description }}</p>
                 <div class="popup-image">
-                    <img src="{{ event.image }}" alt="Event Image">
+                    <img src="{{ event.image.url }}" alt="Event Image" class="img-fluid" style="height: 50%;" onerror="this.src='/static/default-event.jpg';">
                 </div>
-                <button class="btn register-btn" onclick="">Register here</button>
+                <form id="registerForm{{ forloop.counter }}" method="POST" action="{% url 'register_event' event.id %}">
+                    {% csrf_token %}
+                    <button type="submit" class="btn register-btn">Register Here</button>
+                </form>
             </div>
-            {% endfor %}
         </div>
         {% empty %}
             <p class="text-muted text-center">No sustainable events found. Check back soon!</p>
