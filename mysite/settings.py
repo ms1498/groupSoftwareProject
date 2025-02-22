@@ -30,7 +30,6 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
-    "app.apps.UWeaveConfig",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
