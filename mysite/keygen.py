@@ -1,6 +1,6 @@
 import random
 
-def generate_random_key(length:int) -> str:
+def generate_random_key(length:int=7) -> str:
     """Generates an alphanumeric key of the specified length randomly.
     @param: length - the length of the key.
     @returns: the key (str).
