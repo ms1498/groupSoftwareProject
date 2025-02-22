@@ -23,19 +23,29 @@
             background-color: #0056b3;
         }
 
+        /* Event Card Styling */
+        .event-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
         .event-card {
             display: flex;
-            align-items: stretch;
+            align-items: center;
+            justify-content: center;
+            width: 60%;
             min-height: 200px;
             border: 2px solid #3c5376;
             border-radius: 10px;
             padding: 20px;
             box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
         }
 
         .event-card img {
             width: 100%;
-            height: auto; 
+            height: auto;
             max-height: 150px;
             object-fit: contain;
             border-radius: 10px;
@@ -142,21 +152,18 @@
     </form>
     
     <!-- Event Cards -->
-    <div class="container py-4" style="align-items: center;">
+    <div class="event-container">
     {% for event in events %}
-        <div class="row d-flex mb-3 justify-content-center col-md-8" onclick="showPopup('{{ forloop.counter }}')"  style="align-items: center;">
-                <div class="event-card">
-                    <div class="col-md-8">
-                        <h2 style="color: #0d6efd;">{{ event.name }}</h2>
-                        <p class="mb-2"><strong>Date:</strong> {{event.date}}</p>
-                        <p class="mb-2"><strong>Society:</strong> {{event.organiser.society_name}}</p>
-                        <p>{{event.description}}</p>
-                    </div>
-                    <div class="col-md-4">
-                        <img src="{{ event.image.url }}" alt="Event Image" class="img-fluid" onerror="this.src='/static/default-event.jpg';">
-                    </div>
-
-                </div>
+        <div class="event-card" onclick="showPopup('{{ forloop.counter }}')">
+            <div class="col-md-8">
+                <h2 style="color: #0d6efd;">{{ event.name }}</h2>
+                <p class="mb-2"><strong>Date:</strong> {{ event.date }}</p>
+                <p class="mb-2"><strong>Society:</strong> {{ event.organiser.society_name }}</p>
+                <p>{{ event.description }}</p>
+            </div>
+            <div class="col-md-4">
+                <img src="{{ event.image.url }}" alt="Event Image" class="img-fluid" onerror="this.src='/static/default-event.jpg';">
+            </div>
         </div>
         
         <!-- Popup -->
@@ -165,7 +172,7 @@
                 <button class="popup-close" onclick="exitPopup('{{ forloop.counter }}')">X</button>
                 <h2 class="popup-title" style="color: #0d6efd;">{{ event.name }}</h2>
                 <p class="popup-date"><strong>Date:</strong> {{ event.date }}</p>
-                <p class="popup-date"><strong>Society:</strong> {{ event.organiser.society_name}}</p>
+                <p class="popup-date"><strong>Society:</strong> {{ event.organiser.society_name }}</p>
                 <p class="popup-description">{{ event.description }}</p>
                 <div class="popup-image">
                     <img src="{{ event.image.url }}" alt="Event Image" class="img-fluid" style="height: 50%;" onerror="this.src='/static/default-event.jpg';">
@@ -176,10 +183,9 @@
                 </form>
             </div>
         </div>
-        {% empty %}
-            <p class="text-muted text-center">No sustainable events found. Check back soon!</p>
-        {% endfor %}
+    {% empty %}
+        <p class="text-muted text-center">No sustainable events found. Check back soon!</p>
+    {% endfor %}
     </div>
 </body>
-
 {% endblock %}

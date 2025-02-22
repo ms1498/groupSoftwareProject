@@ -26,14 +26,12 @@ def discover(request: HttpRequest) -> HttpResponse:
 
     @author  Tilly Searle
     """
-    '''search_query = request.GET.get('search_query', '')
+    search_query = request.GET.get('search_query', '')
     event_date = request.GET.get('event_date', '')
     category = request.GET.get('category', '')
-    society = request.GET.get('society', '')'''
+    society = request.GET.get('society', '')
 
     events = Event.objects.all()
-    event = events.object.first()
-    print(event.image.url)
 
     if search_query:
         events = events.filter(name__icontains=search_query)
