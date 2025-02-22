@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from mysite.keygen import generate_random_key
 
 class Student(models.Model):
     user = models.OneToOneField(User)
@@ -29,8 +30,8 @@ class Location(models.Model):
     address = models.CharField(max_length=255)
 
 class Event(models.Model):
-    startKey = models.CharField(max_length=7)
-    endKey = models.CharField(max_length=7, null=True)
+    startKey = models.CharField(max_length=7, default=generate_random_key(7))
+    endKey = models.CharField(max_length=7, null=True, default=generate_random_key(7))
     eventType = models.CharField(max_length=50)
     organiser = models.ForeignKey(SocietyRepresentative, on_delete=models.CASCADE)
     eventDate = models.DateField()
