@@ -30,17 +30,19 @@ class Location(models.Model):
     address = models.CharField(max_length=255)
 
 class Event(models.Model):
-    startKey = models.CharField(max_length=7, default=generate_random_key(7))
-    endKey = models.CharField(max_length=7, null=True, default=generate_random_key(7))
-    eventType = models.CharField(max_length=50)
+    start_key = models.CharField(max_length=7, default=generate_random_key(7))
+    end_key = models.CharField(max_length=7, null=True, default=generate_random_key(7))
+    event_type = models.CharField(max_length=50)
     organiser = models.ForeignKey(SocietyRepresentative, on_delete=models.CASCADE)
-    eventDate = models.DateField()
-    eventTime = models.TimeField()
-    eventLocation = models.ForeignKey(Location, on_delete=models.CASCADE)
-    expectedAttendance = models.IntegerField(null=True)
-    actualAttendance = models.IntegerField(null=True)
-    maximumAttendance = models.IntegerField(null=True)
+    event_date = models.DateField()
+    event_time = models.TimeField()
+    event_location = models.ForeignKey(Location, on_delete=models.CASCADE)
+    expected_attendance = models.IntegerField(null=True)
+    actual_attendance = models.IntegerField(null=True)
+    maximum_attendance = models.IntegerField(null=True)
     approved = models.BooleanField(default=False)
+    description = models.CharField(max_length=500, null=True)
+    image = models.ImageField(blank=True)
 
 class Booking(models.Model):
     student = models.ForeignKey(Student, on_delete=models.CASCADE)
