@@ -3,7 +3,7 @@ from django.contrib.auth.models import User
 from mysite.keygen import generate_random_key
 
 class Student(models.Model):
-    user = models.OneToOneField(User)
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
     points = models.IntegerField()
     class Meta:
         permissions = [("sign_up", "Can sign up for events")]
@@ -16,7 +16,7 @@ class SocietyRepresentative(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     society_name = models.CharField(max_length=50)
     class Meta:
-        permissions = [("create_events","Can create events")
+        permissions = [("create_events","Can create events"),
                       ("generate_qr", "Can generate QR codes for events they are running")]
 
 class Moderator(models.Model):
