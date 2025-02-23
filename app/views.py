@@ -68,6 +68,7 @@ def register_event(request, event_id):
 
     return render(request, "discover.html", {"events": events})  
 
+@login_required
 def approval_page(request: HttpRequest) -> HttpResponse:
     """Shows a list of unnapproved events
 
@@ -77,8 +78,9 @@ def approval_page(request: HttpRequest) -> HttpResponse:
     events = Event.objects.all()
     events = events.filter(approved="0")
 
-    return render(request, "approval_page.html", {"events": events})
+    return render(request, "approval.html", {"events": events})
 
+@login_required
 def approve_event(request, event_id):
     """Allows a moderator to approve an event.
 
@@ -91,7 +93,7 @@ def approve_event(request, event_id):
     event.save() 
     events = Event.objects.filter(approved="0")
 
-    return render(request, "approval_page.html", {"events": events})
+    return render(request, "approval.html", {"events": events})
 
 def my_events(request: HttpRequest) -> HttpResponse:
     return render(request, "my_events.html")

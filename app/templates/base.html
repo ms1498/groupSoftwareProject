@@ -33,7 +33,7 @@
                     </li>
                     {% if user.is_authenticated and perms.app.approve_events %}
                         <li>
-                            <a href="{% url 'approval_page' %}" class="nav-link text-white">
+                            <a href="{% url 'approval' %}" class="nav-link text-white">
                                 <h3 class="bi d-block mx-auto mb-2">Approve event</h3>
                             </a>
                         </li>
