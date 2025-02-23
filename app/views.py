@@ -1,28 +1,77 @@
 import os
 #django imports
 from pathlib import Path
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import Group
 from django.core import serializers
 from django.http import HttpResponse, HttpRequest
+from django.contrib.auth.decorators import login_required
 # model imports
-from app.models import Event
+from app.models import Event, Booking, Student
 # backend imports
-from .forms import SignInForm, SignUpForm
+from .forms import SignInForm, SignUpForm, BookingForm
 from mysite.qrgen import get_qrcode_from_response
 from .forms import SignInForm, SignUpForm, CreateEventForm
 
 import os
 
 def index(request: HttpRequest) -> HttpResponse:
-    return render(request, "home.html")
+    events = Event.objects.all()
+    return render(request, "home.html", {"events":events})
+
 
 def discover(request: HttpRequest) -> HttpResponse:
-    return render(request, "discover.html")
+    """Filters events based on user input
+
+    @author  Tilly Searle
+    """
+    search_query = request.GET.get("search_query", "")
+    event_date = request.GET.get("event_date", "")
+    category = request.GET.get("category", "")
+    society = request.GET.get("society", "")
+
+    events = Event.objects.all()
+
+    if search_query:
+        events = events.filter(name__icontains=search_query)
+
+    events = events.filter(approved="1")
+    if category:
+        events = events.filter(category=category)
+
+    if event_date:
+        events = events.filter(date__date=event_date)
+
+    if category:
+        events = events.filter(category=category)
+
+    if society:
+        events = events.filter(organiser__society_name=society)
+
+    return render(request, "discover.html", {"events": events})
+
+
+@login_required
+def register_event(request, event_id):
+    """ Adds events to the booking table for the logged-in student.
+
+    @author Tilly Searle
+    """
+    # Get the event
+    event = get_object_or_404(Event, id=event_id)
+    student = get_object_or_404(Student, user=request.user)
+    Booking.objects.create(student=student, event=event)
+
+    events = Event.objects.all()
+    events = events.filter(approved="1")
+
+    return render(request, "discover.html", {"events": events})  
+
 
 def my_events(request: HttpRequest) -> HttpResponse:
     return render(request, "my_events.html")
+
 
 def organise(request: HttpRequest) -> HttpResponse:
     """Take data from the event creation form, and uses it to create and save an event.

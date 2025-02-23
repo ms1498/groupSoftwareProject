@@ -12,14 +12,19 @@
         <div class="d-flex justify-content-center gap-3 mt-3">
             <button class="btn btn-outline-primary">🤝 End Poverty</button>
             <button class="btn btn-outline-primary">♻️ Responsible Consumption</button>
+            <button class="btn btn-outline-primary">📚 Quality Education</button>
             <button class="btn btn-outline-primary">🚺 Gender Equality</button>
             <button class="btn btn-outline-primary">🚰 Clean Water and Sanitation</button>
             <button class="btn btn-outline-primary">🔋 Clean Energy</button>
+            <button class="btn btn-outline-primary">🤝 End Poverty</button>
             <button class="btn btn-outline-primary">💪 Good Health</button>
+            <button class="btn btn-outline-primary">🌍 Low Carbon</button>
+            <button class="btn btn-outline-primary">📈 Economic Growth</button>
+            <button class="btn btn-outline-primary">⚕️ Good Health</button>
         </div>
     </div>
     
-        <div class="mt-4 text-center">
+        <div class="mt-4">
             {% if user.is_authenticated and user.groups.all.0.name == "moderator"%}
                 <h3 class="mb-3">Hello, {{ user.username }}! Ready to organize an event?</h3>
                 <a href="{% url 'organise' %}" class="btn btn-success btn-lg">
@@ -27,7 +32,7 @@
                 </a>
     
             {%elif user.is_authenticated %}
-            <h3 class="mb-3 text-center">Hello, {{ user.username }}! Ready to book an event?</h3>
+            <h3 class="mb-3">Hello, {{ user.username }}! Ready to book an event?</h3>
                 <div class="d-flex justify-content-center gap-3">
                     <a href="{% url 'discover' %}" class="btn btn-primary btn-lg">
                         <i class="bi bi-search"></i> Discover Events
@@ -59,7 +64,7 @@
 
     <!-- Featured Sustainable Events -->
     <div class="mt-5">
-        <h2 class="fw-bold text-primary text-center">♻️ Sustainable Event Highlights</h2>
+        <h2 class="fw-bold text-primary">♻️ Sustainable Event Highlights</h2>
         
         <div class="row">
             {% for event in events %}
@@ -67,15 +72,14 @@
                 <div class="card shadow-sm">
                     <img src="{{ event.image_url }}" class="card-img-top" alt="{{ event.title }}">
                     <div class="card-body">
-                        <h5 class="card-title">{{ event.title }}</h5>
+                        <h5 class="card-title">{{ event.name }}</h5>
                         <p class="card-text text-muted">{{ event.date }} • {{ event.location }}</p>
                         <span class="badge bg-blue">🌱 {{ event.sustainability_tag }}</span>
-                        <a href="{% url 'event_detail' event.id %}" class="btn btn-success mt-2">View Event</a>
                     </div>
                 </div>
             </div>
             {% empty %}
-            <p class="text-muted text-center">No sustainable events found. Check back soon!</p>
+            <p class="text-muted">No sustainable events found. Check back soon!</p>
             {% endfor %}
         </div>
     </div>
