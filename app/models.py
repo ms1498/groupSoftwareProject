@@ -30,8 +30,8 @@ class Location(models.Model):
     address = models.CharField(max_length=255)
 
 class Event(models.Model):
-    start_key = models.CharField(max_length=7, default=generate_random_key(7))
-    end_key = models.CharField(max_length=7, null=True, default=generate_random_key(7))
+    start_key = models.CharField(max_length=7, default=generate_random_key)
+    end_key = models.CharField(max_length=7, null=True, default=generate_random_key)
     category = models.CharField(max_length=50)
     organiser = models.ForeignKey(SocietyRepresentative, on_delete=models.CASCADE, null=True)
     date = models.DateTimeField()
