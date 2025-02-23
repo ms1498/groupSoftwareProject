@@ -79,7 +79,7 @@ def organise(request: HttpRequest) -> HttpResponse:
     @author    Tricia Sibley
     """
     if request.method == "POST":
-        form = CreateEventForm(request.POST)
+        form = CreateEventForm(request.POST, request.FILES)
         if form.is_valid():
             form.save()
         else:
