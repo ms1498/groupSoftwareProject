@@ -2,7 +2,7 @@
 from django.core import serializers
 from django.http import HttpResponse, HttpRequest
 # model imports
-from app.models import Event, Moderator
+from app.models import Event
 # backend imports
 from mysite.qrgen import get_qrcode_from_response
 
