@@ -46,5 +46,4 @@ class BookingForm(forms.ModelForm):
         model = Booking
         fields = ['event']  # Only need to choose the event
 
-    # Optionally, you can customize this field, e.g., a select list
     event = forms.ModelChoiceField(queryset=Event.objects.all(), required=True)

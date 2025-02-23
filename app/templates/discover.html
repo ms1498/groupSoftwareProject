@@ -1,4 +1,8 @@
 <head>
+    <!-- Shows a list of events a student can book
+
+    @author Tilly Searle
+    -->
     <style>
         /* Navbar Styling */
         .navbar-custom {
@@ -32,23 +36,49 @@
 
         .event-card {
             display: flex;
+            flex-wrap: wrap;
             align-items: center;
             justify-content: center;
-            width: 60%;
+            width: 80%;
+            max-width: 600px;
             min-height: 200px;
             border: 2px solid #3c5376;
             border-radius: 10px;
             padding: 20px;
             box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
             margin-bottom: 20px;
+            background-color: white;
         }
 
+        .event-card .col-md-8, .event-card .col-md-4 {
+            flex: 1;
+            text-align: center;
+        }
+
+        /* Event Image */
         .event-card img {
             width: 100%;
             height: auto;
             max-height: 150px;
             object-fit: contain;
             border-radius: 10px;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .event-card {
+                flex-direction: column;
+                width: 90%;
+            }
+
+            .event-card .col-md-8, .event-card .col-md-4 {
+                width: 100%;
+                text-align: center;
+            }
+
+            .event-card img {
+                max-height: 200px;
+            }
         }
 
         /* Popup Styling */
@@ -155,14 +185,18 @@
     <div class="event-container">
     {% for event in events %}
         <div class="event-card" onclick="showPopup('{{ forloop.counter }}')">
-            <div class="col-md-8">
+            <div class="col-md-8" style="width: 50%;">
                 <h2 style="color: #0d6efd;">{{ event.name }}</h2>
                 <p class="mb-2"><strong>Date:</strong> {{ event.date }}</p>
                 <p class="mb-2"><strong>Society:</strong> {{ event.organiser.society_name }}</p>
                 <p>{{ event.description }}</p>
             </div>
             <div class="col-md-4">
-                <img src="{{ event.image.url }}" alt="Event Image" class="img-fluid" onerror="this.src='/static/default-event.jpg';">
+                {% if event.image %}
+                    <img src="{{ event.image.url }}" alt="Event Image" class="img-fluid" onerror="this.src='/static/default-event.jpg';">
+                {% else %}
+                    <img src="/static/default-event.jpg" alt="Default Event Image" class="img-fluid">
+                {% endif %}
             </div>
         </div>
         
@@ -177,10 +211,14 @@
                 <div class="popup-image">
                     <img src="{{ event.image.url }}" alt="Event Image" class="img-fluid" style="height: 50%;" onerror="this.src='/static/default-event.jpg';">
                 </div>
-                <form id="registerForm{{ forloop.counter }}" method="POST" action="{% url 'register_event' event.id %}">
-                    {% csrf_token %}
-                    <button type="submit" class="btn register-btn">Register Here</button>
-                </form>
+                {%if perms.app.sign_up%}
+                    <form id="registerForm{{ forloop.counter }}" method="POST" action="{% url 'register_event' event.id %}">
+                        {% csrf_token %}
+                        <button type="submit" class="btn register-btn">Register Here</button>
+                    </form>
+                {%else%}
+                    <p class="text-muted text-center">Sign in to register!</p>
+                {%endif%}
             </div>
         </div>
     {% empty %}
