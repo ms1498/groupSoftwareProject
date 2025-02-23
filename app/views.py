@@ -68,6 +68,30 @@ def register_event(request, event_id):
 
     return render(request, "discover.html", {"events": events})  
 
+def approval_page(request: HttpRequest) -> HttpResponse:
+    """Shows a list of unnapproved events
+
+    @author  Tilly Searle
+    """
+
+    events = Event.objects.all()
+    events = events.filter(approved="0")
+
+    return render(request, "approval_page.html", {"events": events})
+
+def approve_event(request, event_id):
+    """Allows a moderator to approve an event.
+
+    @author Tilly Searle
+    """
+    # Get the event
+    event = get_object_or_404(Event, id=event_id)
+
+    event.approved = "1"
+    event.save() 
+    events = Event.objects.filter(approved="0")
+
+    return render(request, "approval_page.html", {"events": events})
 
 def my_events(request: HttpRequest) -> HttpResponse:
     return render(request, "my_events.html")
