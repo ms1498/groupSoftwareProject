@@ -44,6 +44,6 @@ class CreateEventForm(forms.ModelForm):
 class BookingForm(forms.ModelForm):
     class Meta:
         model = Booking
-        fields = ['event']  # Only need to choose the event
+        fields = ("event")  # Only need to choose the event
 
     event = forms.ModelChoiceField(queryset=Event.objects.all(), required=True)
