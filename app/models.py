@@ -11,6 +11,9 @@ class Student(models.Model):
 class Developer(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     is_superuser = True
+    class Meta:
+        permissions = [("create_events","Can create events"),
+                      ("generate_qr", "Can generate QR codes for events they are running")]
 
 class SocietyRepresentative(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
