@@ -12,7 +12,11 @@
             <h4 class="text-center">Manage Events</h4>
             <hr>
             <!-- Event buttons will be dynamically added here -->
-            <div id="textfile-buttons"></div>
+            <div id="textfile-buttons">
+                {% for event in events %}
+                    <h4 class="text-center">{{ event.name }}</h4>
+                {% endfor %}
+            </div>
         </div>
         </div>
 
@@ -20,7 +24,7 @@
         <!-- Event Cards -->
         <div class="event-container">
             {% for event in events %}
-                <div class="event-card" onclick="showPopup('{{ forloop.counter }}')">
+                <div class="event-card">
                     <div class="col-md-8" style="width: 50%;">
                         <h2 style="color: #0d6efd;">{{ event.name }}</h2>
                         <p class="mb-2"><strong>Date:</strong> {{ event.date }}</p>
@@ -35,22 +39,8 @@
                         {% endif %}
                     </div>
                 </div>
-                
-                <!-- Popup -->
-                <div class="popup-container" id="popup{{ forloop.counter }}">
-                    <div class="popup">
-                        <button class="popup-close" onclick="exitPopup('{{ forloop.counter }}')">X</button>
-                        <h2 class="popup-title" style="color: #0d6efd;">{{ event.name }}</h2>
-                        <p class="popup-date"><strong>Date:</strong> {{ event.date }}</p>
-                        <p class="popup-date"><strong>Society:</strong> {{ event.organiser.society_name }}</p>
-                        <p class="popup-description">{{ event.description }}</p>
-                        <div class="popup-image">
-                            <img src="{{ event.image.url }}" alt="Event Image" class="img-fluid" style="height: 50%;" onerror="this.src='/static/default-event.jpg';">
-                        </div>
-                    </div>
-                </div>
             {% empty %}
-                <p class="text-muted text-center">No sustainable events found. Check back soon!</p>
+                <p class="text-muted text-center">You are not registered for any sustainable events.</p>
             {% endfor %}
             </div>
         
