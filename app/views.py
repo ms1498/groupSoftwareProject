@@ -158,8 +158,7 @@ def sign_up(request: HttpRequest) -> HttpResponse:
         form = SignUpForm(request.POST)
         if form.is_valid():
             user = form.save()
-            group = Group.objects.get(name="student")
-            user.groups.add(group)
+            Student.objects.create(user=user, points=0)
             login(request, user)
             return redirect("home")
     else:
