@@ -8,16 +8,16 @@
     
         <!-- Left Sidebar -->
         <div class="col-md-3">
-        <div class="card p-3">
-            <h4 class="text-center">Manage Events</h4>
-            <hr>
-            <!-- Event buttons will be dynamically added here -->
-            <div id="textfile-buttons">
-                {% for booking in bookings %}
-                    <h4 class="text-center">{{ booking.event.name }}</h4>
-                {% endfor %}
+            <div class="card p-3">
+                <h4 class="text-center">Manage Events</h4>
+                <hr>
+                <!-- Event buttons will be dynamically added here -->
+                <div id="textfile-buttons">
+                    {% for booking in bookings %}
+                        <h4 class="text-center">{{ booking.event.name }}</h4>
+                    {% endfor %}
+                </div>
             </div>
-        </div>
         </div>
 
 
@@ -33,17 +33,20 @@
                     </div>
                     <div class="col-md-4">
                         {% if booking.event.image %}
-                            <img src="{{ event.image.url }}" alt="Event Image" class="img-fluid" onerror="this.src='/static/default-event.jpg';">
+                            <img src="{{ booking.event.image.url }}" alt="Event Image" class="img-fluid" onerror="this.src='/static/default-event.jpg';">
                         {% else %}
                             <img src="/static/default-event.jpg" alt="Default Event Image" class="img-fluid">
                         {% endif %}
                     </div>
                 </div>
             {% empty %}
+            {% if user.is_authenticated %}
                 <p class="text-muted text-center">You are not registered for any sustainable events.</p>
+            {% else %}
+                <p class="text-muted text-center">Sign in to see the events you have registered for.</p>
+            {% endif %}
             {% endfor %}
-            </div>
-        
         </div>
     </div>
+</div>
 {% endblock %}
