@@ -9,8 +9,9 @@ from django.contrib.auth.views import PasswordResetView, PasswordResetDoneView, 
 from django.core import serializers
 from django.http import HttpResponse, HttpRequest
 from django.contrib.auth.decorators import login_required, permission_required
+from django.utils import timezone
 # model imports
-from app.models import Event, Booking, Student
+from app.models import Event, Booking, Student, SocietyRepresentative
 # backend imports
 from .forms import SignInForm, SignUpForm, BookingForm
 from mysite.qrgen import get_qrcode_from_response
@@ -33,42 +34,45 @@ def discover(request: HttpRequest) -> HttpResponse:
     category = request.GET.get("category", "")
     society = request.GET.get("society", "")
 
+    society_rep = SocietyRepresentative.objects.all()
     events = Event.objects.all()
+    events = events.filter(approved="1",  date__date__gte=timezone.now().date())
 
     if search_query:
         events = events.filter(name__icontains=search_query)
 
-    events = events.filter(approved="1")
     if category:
         events = events.filter(category=category)
 
     if event_date:
         events = events.filter(date__date=event_date)
 
-    if category:
-        events = events.filter(category=category)
-
     if society:
-        events = events.filter(organiser__society_name=society)
+        society_obj = society_rep.filter(society_name=society).first()
+        events = events.filter(organiser=society_obj)
 
-    return render(request, "discover.html", {"events": events})
+    booked_events = set()
+    if request.user.is_authenticated:
+        student = get_object_or_404(Student, user=request.user)
+        booked_events = set(Booking.objects.filter(student=student).values_list('event_id', flat=True))
 
+    return render(request, "discover.html", {"events": events, "booked_events":booked_events, "societys":society_rep})  
 
 @login_required
 def register_event(request, event_id):
-    """ Adds events to the booking table for the logged-in student.
+    """ Adds events to the booking table for the logged-in student only if not already booked.
 
     @author Tilly Searle
     """
-    # Get the event
+    # Get the event and student
     event = get_object_or_404(Event, id=event_id)
     student = get_object_or_404(Student, user=request.user)
-    Booking.objects.create(student=student, event=event)
 
-    events = Event.objects.all()
-    events = events.filter(approved="1")
+    # Check if the booking already exists
+    if not Booking.objects.filter(student=student, event=event).exists():
+        Booking.objects.create(student=student, event=event)
 
-    return render(request, "discover.html", {"events": events})  
+    return redirect('discover')
 
 @login_required
 @permission_required("perms.app.approve_events", raise_exception=True)
@@ -158,8 +162,7 @@ def sign_up(request: HttpRequest) -> HttpResponse:
         form = SignUpForm(request.POST)
         if form.is_valid():
             user = form.save()
-            group = Group.objects.get(name="student")
-            user.groups.add(group)
+            Student.objects.create(user=user, points=0)
             login(request, user)
             return redirect("home")
     else:
