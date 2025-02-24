@@ -1,12 +1,9 @@
-import os
 #django imports
-from pathlib import Path
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.forms import PasswordResetForm
 from django.contrib.auth.models import Group
 from django.contrib.auth.views import PasswordResetView, PasswordResetDoneView, PasswordResetConfirmView, PasswordResetCompleteView
-from django.core import serializers
 from django.http import HttpResponse, HttpRequest
 from django.contrib.auth.decorators import login_required, permission_required
 from django.utils import timezone
@@ -17,12 +14,9 @@ from .forms import SignInForm, SignUpForm, BookingForm
 from mysite.qrgen import get_qrcode_from_response
 from .forms import SignInForm, SignUpForm, CreateEventForm
 
-import os
-
 def index(request: HttpRequest) -> HttpResponse:
     events = Event.objects.all()
     return render(request, "home.html", {"events":events})
-
 
 def discover(request: HttpRequest) -> HttpResponse:
     """Filters events based on user input
@@ -106,7 +100,6 @@ def approve_event(request, event_id):
 def my_events(request: HttpRequest) -> HttpResponse:
     return render(request, "my_events.html")
 
-
 def organise(request: HttpRequest) -> HttpResponse:
     """Take data from the event creation form, and uses it to create and save an event.
 
@@ -122,7 +115,7 @@ def organise(request: HttpRequest) -> HttpResponse:
         form = CreateEventForm()
     return render(request, "organise.html")
 
-# Authentication section
+#region Authentication
 def sign_in(request: HttpRequest) -> HttpResponse:
     """Takes the username and password and validates whether it matches a user in the system, if so it logs them in.
     @param     user's request
@@ -205,4 +198,9 @@ def password_reset_confirm(request: HttpRequest, uidb64: str, token: str) -> Htt
     return PasswordResetConfirmView.as_view(template_name='password_reset_confirm.html')(request, uidb64=uidb64, token=token)
 
 def password_reset_complete(request: HttpRequest) -> HttpResponse:
+    """Takes the necessary url made by token and base64 to create a password reset link form..
+    @return    the page that shows the user that the reset was successful.
+    @author    Maisie Marks
+    """
     return render(request, 'password_reset_complete.html')
+#endregion

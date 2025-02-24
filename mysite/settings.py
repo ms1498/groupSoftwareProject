@@ -123,6 +123,7 @@ STATIC_URL = "static/"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
+# credentials for the email we will use to contact users
 email_creds = "email_creds.txt"
 def get_email_creds():
     try:
