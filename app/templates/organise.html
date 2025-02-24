@@ -13,7 +13,19 @@
         <button class="btn btn-primary w-100 my-2">➕ Add New Event</button>
         <hr>
         <!-- Event buttons will be dynamically added here -->
-        <div id="textfile-buttons"></div>
+        <div id="textfile-buttons">
+          {% for event in events %}
+          <div class="col mb-4">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                  <h5 class="card-title">{{ event.name }}</h5>
+                  <p class="card-text text-muted">{{ event.date }} • {{ event.location }}</p>
+                  <p class="card-text text-primary">🌱 {{ event.category }}</p>
+                </div>
+              </div>
+            </div>
+          {%endfor%}
+        </div>
       </div>
     </div>
 

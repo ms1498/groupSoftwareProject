@@ -108,15 +108,18 @@ def organise(request: HttpRequest) -> HttpResponse:
 
     @author    Tricia Sibley
     """
+    events = Event.objects.all()
+    events = events.filter(organiser__user = request.user)
+
     if request.method == "POST":
         form = CreateEventForm(request.POST, request.FILES)
         if form.is_valid():
             form.save()
         else:
-            return render(request, "organise.html", {"form": form, "errors": form.errors})
+            return render(request, "organise.html", {"form": form, "errors": form.errors, "events": events})
     else:
         form = CreateEventForm()
-    return render(request, "organise.html")
+    return render(request, "organise.html", {"events": events})
 
 # Authentication section
 def sign_in(request: HttpRequest) -> HttpResponse:
