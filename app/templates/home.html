@@ -76,12 +76,12 @@
                     <div class="card-body">
                         <h5 class="card-title">{{ event.name }}</h5>
                         <p class="card-text text-muted">{{ event.date }} • {{ event.location }}</p>
-                        <span class="badge bg-blue">🌱 {{ event.sustainability_tag }}</span>
+                        <p class="card-text text-primary">🌱 {{ event.category }}</p>
                     </div>
                 </div>
             </div>
             {% empty %}
-            <p class="text-muted">No sustainable events found. Check back soon!</p>
+                <p class="text-muted">No sustainable events found. Check back soon!</p>
             {% endfor %}
         </div>
     </div>
