@@ -14,7 +14,7 @@
             <!-- Event buttons will be dynamically added here -->
             <div id="textfile-buttons">
                 {% for booking in bookings %}
-                    <h4 class="text-center">{{ event.name }}</h4>
+                    <h4 class="text-center">{{ booking.event.name }}</h4>
                 {% endfor %}
             </div>
         </div>
@@ -26,13 +26,13 @@
             {% for booking in bookings %}
                 <div class="event-card">
                     <div class="col-md-8" style="width: 50%;">
-                        <h2 style="color: #0d6efd;">{{ event.name }}</h2>
-                        <p class="mb-2"><strong>Date:</strong> {{ event.date }}</p>
-                        <p class="mb-2"><strong>Society:</strong> {{ event.organiser.society_name }}</p>
-                        <p>{{ event.description }}</p>
+                        <h2 style="color: #0d6efd;">{{ booking.event.name }}</h2>
+                        <p class="mb-2"><strong>Date:</strong> {{ booking.event.date }}</p>
+                        <p class="mb-2"><strong>Society:</strong> {{ booking.event.organiser.society_name }}</p>
+                        <p>{{ booking.event.description }}</p>
                     </div>
                     <div class="col-md-4">
-                        {% if event.image %}
+                        {% if booking.event.image %}
                             <img src="{{ event.image.url }}" alt="Event Image" class="img-fluid" onerror="this.src='/static/default-event.jpg';">
                         {% else %}
                             <img src="/static/default-event.jpg" alt="Default Event Image" class="img-fluid">
