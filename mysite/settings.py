@@ -122,3 +122,24 @@ STATIC_URL = "static/"
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+email_creds = "email_creds.txt"
+def get_email_creds():
+    try:
+        with open(email_creds, "r") as file:
+            lines = file.readlines()
+            username = lines[0].strip()
+            password = lines[1].strip()
+            return username, password
+    except Exception as e:
+        print(e)
+        return None, None
+username, password = get_email_creds()
+#EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'     <- for deployment
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend' # <- for testing (prints to console)
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = username
+EMAIL_HOST_PASSWORD = password
+DEFAULT_FROM_EMAIL = "Uweave <"+str(username)+">"
