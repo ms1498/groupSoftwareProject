@@ -1,3 +1,4 @@
+from .models import Event, Booking
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from django import forms
@@ -29,3 +30,19 @@ class SignUpForm(UserCreationForm):
     class Meta(UserCreationForm.Meta):
         model = User
         fields = ("username", "email", "password1", "password2")
+
+class CreateEventForm(forms.ModelForm):
+    """Form for creating events.
+
+    @author            Tricia Sibley
+    """
+
+    class Meta:
+        model = Event
+        fields = ("name", "date", "category", "description", "image")
+
+class BookingForm(forms.ModelForm):
+    event = forms.ModelChoiceField(queryset=Event.objects.all(), required=True)
+    class Meta:
+        model = Booking
+        fields = ("event",)  # Only need to choose the event

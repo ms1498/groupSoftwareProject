@@ -2,17 +2,89 @@
 
 {% block content %}
 
-    {% if user.is_authenticated %}
-        <p>Currently logged in as: {{ user.username }} :3!</p>
-        <p>Yay, you're logged in :></p>
-    {% else %}
-        <p>You're not logged in >:C</p>
-    {% endif %}
+<div class="container mt-5">
+    <!-- Hero Section -->
+    <div class="text-center">
+        <h1 class="fw-bold text-primary display-4">Discover & Book Sustainable Events</h1>
+        <p class="lead text-muted">Find exciting campus events while supporting our Carbon Zero 2030 goal! 🌍</p>
 
-    {% if user.is_authenticated and user.groups.all.0.name == "moderator" %}
-        <p>Welcome, Admin! You have access to this secret panel teehee</p>
-    {% else %}
-        <p></p>
-    {% endif %}
+        <!-- Event Categories (Sustainability Focused) -->
+        <div class="d-flex justify-content-center gap-3 mt-3">
+            <button class="btn btn-outline-primary">🤝 End Poverty</button>
+            <button class="btn btn-outline-primary">♻️ Responsible Consumption</button>
+            <button class="btn btn-outline-primary">🚰 Clean Water and Sanitation</button>
+            <button class="btn btn-outline-primary">🤝 End Poverty</button>
+            <button class="btn btn-outline-primary">💪 Good Health</button>
+            <button class="btn btn-outline-primary">🌍 Low Carbon</button>
+            <button class="btn btn-outline-primary">⚕️ Good Health</button>
+        </div>
+    </div>
+    
+        <div class="mt-4 text-center">
+            {%if user.is_authenticated and perms.app.approve_event%}
+            <h3 class="mb-3">Hello, {{ user.username }}! Ready to approve events?</h3>
+            <a href="{% url 'organise' %}" class="btn btn-primary btn-lg">
+                <i class="bi bi-calendar-plus"></i> Approve Events
+            </a>
+
+            {%elif user.is_authenticated and perms.app.create_events%}
+                <h3 class="mb-3">Hello, {{ user.username }}! Ready to organize an event?</h3>
+                <a href="{% url 'organise' %}" class="btn btn-primary btn-lg">
+                    <i class="bi bi-calendar-plus"></i> Create an Event
+                </a>
+    
+            {%elif user.is_authenticated %}
+            <h3 class="mb-3">Hello, {{ user.username }}! Ready to book an event?</h3>
+                <div class="d-flex justify-content-center gap-3">
+                    <a href="{% url 'discover' %}" class="btn btn-primary btn-lg">
+                        <i class="bi bi-search"></i> Discover Events
+                    </a>
+                </div>
+    
+            {% else %}
+                <h3 class="mb-3">Join us today and start exploring exciting events!</h3>
+                <div class="d-flex justify-content-center gap-3">
+                    <a href="{% url 'discover' %}" class="btn btn-primary btn-lg">
+                        <i class="bi bi-search"></i> Discover Events
+                    </a>
+                    <a href="{% url 'sign-in' %}" class="btn btn-outline-dark btn-lg">
+                        <i class="bi bi-box-arrow-in-right"></i> Sign In
+                    </a>
+                    <a href="{% url 'sign-up' %}" class="btn btn-dark btn-lg">
+                        <i class="bi bi-person-plus"></i> Sign Up
+                    </a>
+                </div>
+            {% endif %}
+        </div>
+    
+        {% if user.is_authenticated and user.groups.all.0.name == "moderator" %}
+            <div class="mt-5 p-3 border border-danger rounded bg-light">
+                <h4 class="text-danger">🔒 Admin Access</h4>
+                <p class="text-muted">Welcome, Admin! You have access to special moderation tools.</p>
+            </div>
+        {% endif %}
+
+    <!-- Featured Sustainable Events -->
+    <div class="mt-5">
+        <h2 class="fw-bold text-primary">♻️ Sustainable Event Highlights</h2>
+        
+        <div class="row">
+            {% for event in events %}
+            <div class="col-md-4 mb-4">
+                <div class="card shadow-sm">
+                    <img src="{{ event.image_url }}" class="card-img-top" alt="{{ event.title }}">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ event.name }}</h5>
+                        <p class="card-text text-muted">{{ event.date }} • {{ event.location }}</p>
+                        <p class="card-text text-primary">🌱 {{ event.category }}</p>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+                <p class="text-muted">No sustainable events found. Check back soon!</p>
+            {% endfor %}
+        </div>
+    </div>
+</div>
 
 {% endblock %}

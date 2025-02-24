@@ -1,31 +1,91 @@
+import os
+#django imports
 from pathlib import Path
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import Group
+from django.core import serializers
 from django.http import HttpResponse, HttpRequest
+from django.contrib.auth.decorators import login_required
+# model imports
+from app.models import Event, Booking, Student
+# backend imports
+from .forms import SignInForm, SignUpForm, BookingForm
 from mysite.qrgen import get_qrcode_from_response
-from .forms import SignInForm, SignUpForm
+from .forms import SignInForm, SignUpForm, CreateEventForm
 
-
-def serve_events_txt(_request: HttpRequest) -> HttpResponse:
-    file_path = Path.parent("templates/events.txt")
-    try:
-        with file_path.open("r") as file:
-            content = file.read()
-        return HttpResponse(content, content_type="text/plain")
-    except FileNotFoundError:
-        return HttpResponse("File not found", status=404)
+import os
 
 def index(request: HttpRequest) -> HttpResponse:
-    return render(request, "home.html")
+    events = Event.objects.all()
+    return render(request, "home.html", {"events":events})
+
 
 def discover(request: HttpRequest) -> HttpResponse:
-    return render(request, "discover.html")
+    """Filters events based on user input
+
+    @author  Tilly Searle
+    """
+    search_query = request.GET.get("search_query", "")
+    event_date = request.GET.get("event_date", "")
+    category = request.GET.get("category", "")
+    society = request.GET.get("society", "")
+
+    events = Event.objects.all()
+
+    if search_query:
+        events = events.filter(name__icontains=search_query)
+
+    events = events.filter(approved="1")
+    if category:
+        events = events.filter(category=category)
+
+    if event_date:
+        events = events.filter(date__date=event_date)
+
+    if category:
+        events = events.filter(category=category)
+
+    if society:
+        events = events.filter(organiser__society_name=society)
+
+    return render(request, "discover.html", {"events": events})
+
+
+@login_required
+def register_event(request, event_id):
+    """ Adds events to the booking table for the logged-in student.
+
+    @author Tilly Searle
+    """
+    # Get the event
+    event = get_object_or_404(Event, id=event_id)
+    student = get_object_or_404(Student, user=request.user)
+    Booking.objects.create(student=student, event=event)
+
+    events = Event.objects.all()
+    events = events.filter(approved="1")
+
+    return render(request, "discover.html", {"events": events})  
+
 
 def my_events(request: HttpRequest) -> HttpResponse:
     return render(request, "my_events.html")
 
+
 def organise(request: HttpRequest) -> HttpResponse:
+    """Take data from the event creation form, and uses it to create and save an event.
+
+    @author    Tricia Sibley
+    """
+    if request.method == "POST":
+        form = CreateEventForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+        else:
+            return render(request, "organise.html", {"form": form, "errors": form.errors})
+    else:
+        form = CreateEventForm()
     return render(request, "organise.html")
 
 # Authentication section
@@ -58,7 +118,7 @@ def sign_out(request: HttpRequest) -> HttpResponse:
     @author    Maisie Marks
     """
     logout(request)
-    return redirect("/app")
+    return redirect("home")
 
 def sign_up(request: HttpRequest) -> HttpResponse:
     """Allows the user to sign-up and make an account on the webpage.
@@ -79,13 +139,3 @@ def sign_up(request: HttpRequest) -> HttpResponse:
         form = SignUpForm()
     return render(request, "sign_up.html", {"form": form})
 
-def qrgen(request: HttpRequest) -> HttpResponse:
-    """Accepts a GET request with a 'url' argument, that argument will be processed into a QR code and a jpeg image returned to the frontend.
-
-    @param: request - HttpRequest
-    @author: Seth Mallinson
-    """
-    code_image = get_qrcode_from_response(request)
-    if code_image is None:
-        return HttpResponse("Invalid request. The qrgen expects a GET request with a 'url' parameter.")
-    return HttpResponse(code_image, content_type="image/jpeg")
