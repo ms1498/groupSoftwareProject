@@ -37,7 +37,6 @@ def discover(request: HttpRequest) -> HttpResponse:
     society_rep = SocietyRepresentative.objects.all()
     events = Event.objects.all()
     events = events.filter(approved="1",  date__date__gte=timezone.now().date())
-    student = get_object_or_404(Student, user=request.user)
 
     if search_query:
         events = events.filter(name__icontains=search_query)
@@ -50,11 +49,11 @@ def discover(request: HttpRequest) -> HttpResponse:
 
     if society:
         society_obj = society_rep.filter(society_name=society).first()
-        print(society_obj)
         events = events.filter(organiser=society_obj)
 
     booked_events = set()
     if request.user.is_authenticated:
+        student = get_object_or_404(Student, user=request.user)
         booked_events = set(Booking.objects.filter(student=student).values_list('event_id', flat=True))
 
     return render(request, "discover.html", {"events": events, "booked_events":booked_events, "societys":society_rep})  
