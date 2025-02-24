@@ -203,3 +203,19 @@ def password_reset_confirm(request: HttpRequest, uidb64: str, token: str) -> Htt
 
 def password_reset_complete(request: HttpRequest) -> HttpResponse:
     return render(request, 'password_reset_complete.html')
+
+def my_events(request: HttpRequest) -> HttpResponse:
+    """Shows the user's list of booked events
+
+    @author  Ruaidhrigh Plummer
+    """
+    if request.user.is_authenticated:
+        try:
+            student = Student.objects.get(user=request.user)
+            bookings = Booking.objects.filter(student=student)
+        except Student.DoesNotExist:
+            bookings = Booking.objects.none()
+    else:
+        bookings = Booking.objects.none()
+
+    return render(request, "my_events.html", {"bookings": bookings})
