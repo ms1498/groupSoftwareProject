@@ -12,22 +12,24 @@
         <div class="d-flex justify-content-center gap-3 mt-3">
             <button class="btn btn-outline-primary">🤝 End Poverty</button>
             <button class="btn btn-outline-primary">♻️ Responsible Consumption</button>
-            <button class="btn btn-outline-primary">📚 Quality Education</button>
-            <button class="btn btn-outline-primary">🚺 Gender Equality</button>
             <button class="btn btn-outline-primary">🚰 Clean Water and Sanitation</button>
-            <button class="btn btn-outline-primary">🔋 Clean Energy</button>
             <button class="btn btn-outline-primary">🤝 End Poverty</button>
             <button class="btn btn-outline-primary">💪 Good Health</button>
             <button class="btn btn-outline-primary">🌍 Low Carbon</button>
-            <button class="btn btn-outline-primary">📈 Economic Growth</button>
             <button class="btn btn-outline-primary">⚕️ Good Health</button>
         </div>
     </div>
     
-        <div class="mt-4">
-            {% if user.is_authenticated and user.groups.all.0.name == "moderator"%}
+        <div class="mt-4 text-center">
+            {%if user.is_authenticated and perms.app.approve_event%}
+            <h3 class="mb-3">Hello, {{ user.username }}! Ready to approve events?</h3>
+            <a href="{% url 'organise' %}" class="btn btn-primary btn-lg">
+                <i class="bi bi-calendar-plus"></i> Approve Events
+            </a>
+
+            {%elif user.is_authenticated and perms.app.create_events%}
                 <h3 class="mb-3">Hello, {{ user.username }}! Ready to organize an event?</h3>
-                <a href="{% url 'organise' %}" class="btn btn-success btn-lg">
+                <a href="{% url 'organise' %}" class="btn btn-primary btn-lg">
                     <i class="bi bi-calendar-plus"></i> Create an Event
                 </a>
     
@@ -74,12 +76,12 @@
                     <div class="card-body">
                         <h5 class="card-title">{{ event.name }}</h5>
                         <p class="card-text text-muted">{{ event.date }} • {{ event.location }}</p>
-                        <span class="badge bg-blue">🌱 {{ event.sustainability_tag }}</span>
+                        <p class="card-text text-primary">🌱 {{ event.category }}</p>
                     </div>
                 </div>
             </div>
             {% empty %}
-            <p class="text-muted">No sustainable events found. Check back soon!</p>
+                <p class="text-muted">No sustainable events found. Check back soon!</p>
             {% endfor %}
         </div>
     </div>
