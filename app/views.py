@@ -53,13 +53,16 @@ def discover(request: HttpRequest) -> HttpResponse:
     return render(request, "discover.html", {"events": events, "booked_events":booked_events, "societys":society_rep})  
 
 @login_required
-def register_event(request, event_id):
+def register_event(request: HttpRequest, event_id) -> HttpResponse:
     """ Adds events to the booking table for the logged-in student only if not already booked.
 
     @author Tilly Searle
     """
-    # Get the event and student
+    # Get the event - if it is not approved, do not allow the booking to take place
     event = get_object_or_404(Event, id=event_id)
+    if not event.approved:
+        return HttpResponse(status=403)
+    # Get the student
     student = get_object_or_404(Student, user=request.user)
 
     # Check if the booking already exists
@@ -83,7 +86,7 @@ def approval_page(request: HttpRequest) -> HttpResponse:
 
 @login_required
 @permission_required("perms.app.approve_events", raise_exception=True)
-def approve_event(request, event_id):
+def approve_event(request: HttpRequest, event_id) -> HttpResponse:
     """Allows a moderator to approve an event.
 
     @author Tilly Searle
