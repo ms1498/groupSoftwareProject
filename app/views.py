@@ -8,7 +8,7 @@ from django.contrib.auth.models import Group
 from django.contrib.auth.views import PasswordResetView, PasswordResetDoneView, PasswordResetConfirmView, PasswordResetCompleteView
 from django.core import serializers
 from django.http import HttpResponse, HttpRequest
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, permission_required
 # model imports
 from app.models import Event, Booking, Student
 # backend imports
@@ -70,6 +70,34 @@ def register_event(request, event_id):
 
     return render(request, "discover.html", {"events": events})  
 
+@login_required
+@permission_required("perms.app.approve_events", raise_exception=True)
+def approval_page(request: HttpRequest) -> HttpResponse:
+    """Shows a list of unnapproved events
+
+    @author  Tilly Searle
+    """
+
+    events = Event.objects.all()
+    events = events.filter(approved="0")
+
+    return render(request, "approval.html", {"events": events})
+
+@login_required
+@permission_required("perms.app.approve_events", raise_exception=True)
+def approve_event(request, event_id):
+    """Allows a moderator to approve an event.
+
+    @author Tilly Searle
+    """
+    # Get the event
+    event = get_object_or_404(Event, id=event_id)
+
+    event.approved = "1"
+    event.save() 
+    events = Event.objects.filter(approved="0")
+
+    return render(request, "approval.html", {"events": events})
 
 def my_events(request: HttpRequest) -> HttpResponse:
     return render(request, "my_events.html")
