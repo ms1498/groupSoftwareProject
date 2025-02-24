@@ -6,7 +6,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import Group
 from django.core import serializers
 from django.http import HttpResponse, HttpRequest
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, permission_required
 # model imports
 from app.models import Event, Booking, Student
 # backend imports
@@ -69,6 +69,7 @@ def register_event(request, event_id):
     return render(request, "discover.html", {"events": events})  
 
 @login_required
+@permission_required("perms.app.approve_events", raise_exception=True)
 def approval_page(request: HttpRequest) -> HttpResponse:
     """Shows a list of unnapproved events
 
@@ -81,6 +82,7 @@ def approval_page(request: HttpRequest) -> HttpResponse:
     return render(request, "approval.html", {"events": events})
 
 @login_required
+@permission_required("perms.app.approve_events", raise_exception=True)
 def approve_event(request, event_id):
     """Allows a moderator to approve an event.
 
