@@ -132,6 +132,17 @@
         .register-btn:hover {
             background-color: #0056b3 !important;
         }
+
+        .booked-label {
+            position: flex;
+            transform: rotate(-90deg) translateY(-50%);
+            color: #000;
+            padding: 5px 1px;
+            font-weight: bold;
+            border-radius: 5px;
+            white-space: nowrap;
+        }
+
     </style>
 </head>
 
@@ -173,8 +184,8 @@
             </select>
             <select class="form-select searcher mx-2" name="society">
                 <option value="">All Societies</option>
-                {% for society in societies %}
-                    <option value="{{ society }}">{{ society }}</option>
+                {% for society in societys %}
+                    <option value="{{ society.society_name }}">{{ society.society_name}}</option>
                 {% endfor %}
             </select>
             <button type="submit" class="btn searcher">Search</button>
@@ -185,18 +196,18 @@
     <div class="event-container">
     {% for event in events %}
         <div class="event-card" onclick="showPopup('{{ forloop.counter }}')">
-            <div class="col-md-8" style="width: 50%;">
+            {% if user.is_authenticated and event.id in booked_events %}
+                <p class="booked-label text-muted text-center"><strong>Booked</strong></p>
+            {%endif%}
+            <div class="col-md-8 text-left" style="width: 50%;">
                 <h2 style="color: #0d6efd;">{{ event.name }}</h2>
                 <p class="mb-2"><strong>Date:</strong> {{ event.date }}</p>
                 <p class="mb-2"><strong>Society:</strong> {{ event.organiser.society_name }}</p>
                 <p>{{ event.description }}</p>
             </div>
-            <div class="col-md-4">
-                {% if event.image %}
-                    <img src="{{ event.image.url }}" alt="Event Image" class="img-fluid" onerror="this.src='/static/default-event.jpg';">
-                {% else %}
-                    <img src="/static/default-event.jpg" alt="Default Event Image" class="img-fluid">
-                {% endif %}
+            <div class="col-md-3">
+                <img src="{{ event.image.url }}" alt="Event Image" class="img-fluid" onerror="this.src='/static/default-event.jpg';">
+
             </div>
         </div>
         
@@ -211,12 +222,14 @@
                 <div class="popup-image">
                     <img src="{{ event.image.url }}" alt="Event Image" class="img-fluid" style="height: 50%;" onerror="this.src='/static/default-event.jpg';">
                 </div>
-                {%if perms.app.sign_up%}
-                    <form id="registerForm{{ forloop.counter }}" method="POST" action="{% url 'register_event' event.id %}">
-                        {% csrf_token %}
-                        <button type="submit" class="btn register-btn">Register Here</button>
-                    </form>
+                {% if user.is_authenticated and event.id in booked_events %}
+                    <p class="text-muted text-center"><strong>Event Booked</strong></p>
+                {%elif user.is_authenticated %}
+                <form id="registerForm{{ forloop.counter }}" method="POST" action="{% url 'register_event' event.id %}">
+                    {% csrf_token %}
+                    <button type="submit" class="btn register-btn">Register Here</button>
                 {%else%}
+                </form>
                     <p class="text-muted text-center">Sign in to register!</p>
                 {%endif%}
             </div>
