@@ -105,7 +105,6 @@ def my_events(request: HttpRequest) -> HttpResponse:
 def organise(request):
     locations = Location.objects.all()  # Fetch locations for dropdown
     location = request.GET.get("location", "")
-    print(location)
     if request.method == "POST":
         form = CreateEventForm(request.POST, request.FILES)
         if form.is_valid():
@@ -121,6 +120,32 @@ def organise(request):
     form = CreateEventForm()
     events = Event.objects.all()  # Fetch all events
     return render(request, "organise.html", {"events": events, "locations": locations})
+
+def edit_event(request, event_id):
+    # Fetch the event object using the event_id or return a 404 error if it doesn't exist
+    event = get_object_or_404(Event, id=event_id)
+    
+    # Fetch all locations for the dropdown
+    locations = Location.objects.all()
+    events = Event.objects.all()
+    # If the request method is POST, process the form data
+    if request.method == "POST":
+        form = CreateEventForm(request.POST, request.FILES, instance=event)
+        if form.is_valid():
+            location = Location.objects.get(name=request.POST["location"])
+            event.location = location
+            event.approved = False
+            event.save()
+            
+            return redirect("home")
+        else:
+            print("Form errors:", form.errors)
+            return render(request, "edit_event.html", {"form": form, "errors": form.errors, "locations": locations, "event": event, "events": events})
+
+    else:
+        form = CreateEventForm(instance=event)
+        return render(request, "edit_event.html", {"form": form, "locations": locations, "event": event, "events": events})
+
 
 #region Authentication
 def sign_in(request: HttpRequest) -> HttpResponse:

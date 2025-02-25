@@ -13,19 +13,16 @@
         <button class="btn btn-primary w-100 my-2">➕ Add New Event</button>
         <hr>
         {%for event in events%}
-          <button class="btn btn-primary w-100 my-2">{{event.name}}</button>
+          <a class="btn btn-primary w-100 my-2" href ="{% url 'edit_event' event.id %}">{{event.name}}</a>
         {%endfor%}
       </div>
     </div>
 
     <!-- Right Content: Event Form -->
-    <div class="col-md-9">
+    <div class="col-md-9 pb-3">
       <div class="card p-4">
         <h2 class="text-center mb-4">Create Event</h2>
 
-        {% if errors %}
-          {{ errors }}
-        {% endif %}
         <form method="POST" enctype="multipart/form-data" action="{% url 'organise' %}">
 	  {% csrf_token %}
           <!-- Event Name -->

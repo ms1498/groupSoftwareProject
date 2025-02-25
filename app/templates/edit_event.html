@@ -1,0 +1,116 @@
+{% extends "base.html" %}
+
+{% block title %}Home{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+  <div class="row">
+    
+    <!-- Left Sidebar -->
+    <div class="col-md-3">
+      <div class="card p-3">
+        <h4 class="text-center">Manage Events</h4>
+        <a class="btn btn-primary w-100 my-2" href="{% url 'organise' %}">➕ Add New Event</a>
+        <hr>
+        {%for event in events%}
+          <a class="btn btn-primary w-100 my-2" href ="{% url 'edit_event' event.id %}">{{event.name}}</a>
+        {%endfor%}
+      </div>
+    </div>
+
+    <!-- Right Content: Event Form -->
+    <div class="col-md-9 pb-3">
+      <div class="card p-4" id="event-form-container">
+        <h2 class="text-center mb-4">Edit Event: <strong class="text-primary">{{ event.name }}</strong></h2>
+
+        <form method="POST" enctype="multipart/form-data" action="{% url 'edit_event' event.id %}">
+          {% csrf_token %}
+          
+          <!-- Event Name -->
+          <div class="mb-3">
+            <label for="event-name" class="form-label"><strong>Event Name:</strong></label>
+            <div class="editable-text" id="event-name" onclick="editField('event-name')">{{ event.name }}</div>
+            <input type="text" class="form-control" id="event-name-input" name="name" value="{{ event.name }}" style="display:none;">
+          </div>
+
+          <!-- Event Date -->
+          <div class="mb-3">
+            <label for="event-date" class="form-label"><strong>Event Date:</strong></label>
+            <div class="editable-text" id="event-date" onclick="editField('event-date')">{{ event.date }}</div>
+            <input type="datetime-local" class="form-control" id="event-date-input" name="date" value="{{ event.date|date:'Y-m-d\TH:i' }}" style="display:none;">
+          </div>
+
+          <!-- Event Category -->
+          <div class="mb-3">
+            <label for="category" class="form-label"><strong>Select Category:</strong></label>
+            <div class="editable-text" id="event-category" onclick="editField('event-category')">{{ event.category }}</div>
+            <select class="form-select" id="event-category-input" name="category" style="display:none;">
+              <option value="poverty" {% if event.category == 'poverty' %}selected{% endif %}>End Poverty</option>
+              <option value="hunger" {% if event.category == 'hunger' %}selected{% endif %}>End Hunger</option>
+              <option value="health" {% if event.category == 'health' %}selected{% endif %}>Good Health</option>
+              <option value="education" {% if event.category == 'education' %}selected{% endif %}>Quality Education</option>
+              <option value="equality" {% if event.category == 'equality' %}selected{% endif %}>Gender Equality</option>
+              <option value="water" {% if event.category == 'water' %}selected{% endif %}>Clean Water and Sanitation</option>
+              <option value="energy" {% if event.category == 'energy' %}selected{% endif %}>Clean Energy</option>
+              <option value="growth" {% if event.category == 'growth' %}selected{% endif %}>Economic Growth</option>
+              <option value="inequality" {% if event.category == 'inequality' %}selected{% endif %}>Reducing Inequalities</option>
+              <option value="cities" {% if event.category == 'cities' %}selected{% endif %}>Sustainable Cities and Communities</option>
+              <option value="consumption" {% if event.category == 'consumption' %}selected{% endif %}>Responsible Consumption</option>
+              <option value="planet" {% if event.category == 'planet' %}selected{% endif %}>Protect the Planet</option>
+              <option value="peace" {% if event.category == 'peace' %}selected{% endif %}>Peace and Justice</option>
+              <option value="other" {% if event.category == 'other' %}selected{% endif %}>Other</option>
+            </select>
+          </div>
+
+          <!-- Event Description -->
+          <div class="mb-3">
+            <label for="event-description" class="form-label"><strong>Event Description:</strong></label>
+            <div class="editable-text" id="event-description" onclick="editField('event-description')">{{ event.description }}</div>
+            <textarea class="form-control" id="event-description-input" name="description" rows="3" style="display:none;">{{ event.description }}</textarea>
+          </div>
+
+          <!-- Event Location -->
+          <div class="mb-3">
+            <label for="location" class="form-label"><strong>Select Location:</strong></label>
+            <div class="editable-text" id="event-location" onclick="editField('event-location')">{{ event.location.name }}</div>
+            <select class="form-select" name="location" style="display:none;">
+              <option selected disabled>Choose a location</option>
+              {% for location in locations %}
+                <option value="{{ location.name }}" {% if event.location.name == location.name %}selected{% endif %}>
+                  {{ location.name }}
+                </option>
+              {% endfor %}
+            </select>
+          </div>
+
+          <!-- Image Upload (Optional) -->
+          <div class="mb-3">
+            <label for="event-image" class="form-label"><strong>Upload Event Image:</strong></label>
+            <input class="form-control" type="file" id="event-image" name="image" accept="image/*">
+            <small class="text-muted">Accepted formats: JPG, PNG, GIF</small>
+          </div>
+
+          <!-- Submit Button -->
+          <div class="text-center">
+            <button type="submit" class="btn btn-primary px-4">Save Changes</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- JavaScript to Toggle Editable Fields -->
+<script>
+  function editField(fieldId) {
+    // Hide the current text and show the corresponding input field
+    var textField = document.getElementById(fieldId);
+    var inputField = document.getElementById(fieldId + '-input');
+    
+    textField.style.display = 'none';
+    inputField.style.display = 'block';
+  }
+</script>
+
+{% endblock %}
