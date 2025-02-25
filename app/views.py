@@ -215,7 +215,7 @@ def my_events(request: HttpRequest) -> HttpResponse:
     if request.user.is_authenticated:
         try:
             student = Student.objects.get(user=request.user)
-            bookings = Booking.objects.filter(student=student)
+            bookings = Booking.objects.filter(student=student).order_by("event__date")
         except Student.DoesNotExist:
             bookings = Booking.objects.none()
     else:
