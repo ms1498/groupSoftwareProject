@@ -1,4 +1,4 @@
-from .models import Event, Booking
+from .models import Event, Booking, Location
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from django import forms
@@ -39,12 +39,16 @@ class CreateEventForm(forms.ModelForm):
     @param category:    The category of the event
     @param description: A description of the event
     @param image:       An image to display representing the event
+    @param location:    The location of the event
     @author             Tricia Sibley
     """
 
     class Meta:
         model = Event
-        fields = ("name", "date", "category", "description", "image")
+        fields = ("name", "date", "category", "description", "location", "image")
+    
+    # Ensure location field uses a ModelChoiceField
+    location = forms.ModelChoiceField(queryset= Location.objects.all(), empty_label="Choose a location")
 
 class BookingForm(forms.ModelForm):
     """Form for booking a place at an event.

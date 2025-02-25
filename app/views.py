@@ -8,11 +8,10 @@ from django.http import HttpResponse, HttpRequest
 from django.contrib.auth.decorators import login_required, permission_required
 from django.utils import timezone
 # model imports
-from app.models import Event, Booking, Student, SocietyRepresentative
+from app.models import Event, Booking, Student, SocietyRepresentative, Location
 # backend imports
-from .forms import SignInForm, SignUpForm, BookingForm
 from mysite.qrgen import get_qrcode_from_response
-from .forms import SignInForm, SignUpForm, CreateEventForm
+from .forms import SignInForm, SignUpForm, CreateEventForm, BookingForm
 
 def index(request: HttpRequest) -> HttpResponse:
     events = Event.objects.all()
@@ -103,20 +102,25 @@ def approve_event(request: HttpRequest, event_id) -> HttpResponse:
 def my_events(request: HttpRequest) -> HttpResponse:
     return render(request, "my_events.html")
 
-def organise(request: HttpRequest) -> HttpResponse:
-    """Take data from the event creation form, and uses it to create and save an event.
-
-    @author    Tricia Sibley
-    """
+def organise(request):
+    locations = Location.objects.all()  # Fetch locations for dropdown
+    location = request.GET.get("location", "")
+    print(location)
     if request.method == "POST":
         form = CreateEventForm(request.POST, request.FILES)
         if form.is_valid():
-            form.save()
+            event = form.save(commit=False)  # Prevent immediate saving
+            event.location = Location.objects.get(name=request.POST["location"])
+            event.approved = False  # Auto-approve event
+            event.save()  # Save to database
+            return redirect("home")  # Redirect to home page
         else:
+            print("Form errors:", form.errors)
             return render(request, "organise.html", {"form": form, "errors": form.errors})
-    else:
-        form = CreateEventForm()
-    return render(request, "organise.html")
+    
+    form = CreateEventForm()
+    events = Event.objects.all()  # Fetch all events
+    return render(request, "organise.html", {"events": events, "locations": locations})
 
 #region Authentication
 def sign_in(request: HttpRequest) -> HttpResponse:

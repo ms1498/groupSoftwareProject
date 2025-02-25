@@ -12,8 +12,9 @@
         <h4 class="text-center">Manage Events</h4>
         <button class="btn btn-primary w-100 my-2">➕ Add New Event</button>
         <hr>
-        <!-- Event buttons will be dynamically added here -->
-        <div id="textfile-buttons"></div>
+        {%for event in events%}
+          <button class="btn btn-primary w-100 my-2">{{event.name}}</button>
+        {%endfor%}
       </div>
     </div>
 
@@ -22,12 +23,10 @@
       <div class="card p-4">
         <h2 class="text-center mb-4">Create Event</h2>
 
-        <h2 class="text-center mb-4">New Event</h2>
-
         {% if errors %}
           {{ errors }}
         {% endif %}
-        <form method="POST" enctype="multipart/form-data">
+        <form method="POST" enctype="multipart/form-data" action="{% url 'organise' %}">
 	  {% csrf_token %}
           <!-- Event Name -->
           <div class="mb-3">
@@ -69,6 +68,17 @@
             <textarea class="form-control" id="event-description" placeholder="Enter event details" name="description" rows="3"></textarea>
           </div>
 
+          <!-- Event location -->
+          <div class="mb-3">
+            <label for="location" class="form-label">Select location:</label>
+            <select class="form-select" name="location">
+              <option selected disabled>Choose a location</option>
+              {% for location in locations %}
+                <option value="{{ location.name }}">{{ location.name}}</option>
+              {% endfor %}
+            </select>
+          </div>
+
           <!-- Image Upload -->
           <div class="mb-3">
             <label for="event-image" class="form-label">Upload Event Image:</label>
@@ -87,28 +97,4 @@
   </div>
 </div>
 
-<!-- Ensure jQuery is loaded -->
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-<script>
-  $(document).ready(function() {
-        $.ajax({
-            url: '/events-data/',  // Django route
-            dataType: "text",
-            success: function(filecontent) {
-                console.log("File loaded successfully:", filecontent);
-                var lines = filecontent.split('\n');
-                $.each(lines, function(index, eventName) {
-                    eventName = eventName.trim();
-                    if (eventName !== '') {
-                        var button = '<button class="btn btn-primary w-100 my-1">' + eventName + '</button>';
-                        $("#textfile-buttons").append(button);
-                    }
-                });
-            },
-            error: function(xhr, status, error) {
-                console.error("Error loading file:", status, error);
-            }
-        });
-    });
-</script>
 {% endblock %}
