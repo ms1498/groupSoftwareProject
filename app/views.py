@@ -1,12 +1,9 @@
-import os
 #django imports
-from pathlib import Path
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.forms import PasswordResetForm
 from django.contrib.auth.models import Group
 from django.contrib.auth.views import PasswordResetView, PasswordResetDoneView, PasswordResetConfirmView, PasswordResetCompleteView
-from django.core import serializers
 from django.http import HttpResponse, HttpRequest
 from django.contrib.auth.decorators import login_required, permission_required
 from django.utils import timezone
@@ -17,12 +14,9 @@ from .forms import SignInForm, SignUpForm, BookingForm
 from mysite.qrgen import get_qrcode_from_response
 from .forms import SignInForm, SignUpForm, CreateEventForm
 
-import os
-
 def index(request: HttpRequest) -> HttpResponse:
     events = Event.objects.all()
     return render(request, "home.html", {"events":events})
-
 
 def discover(request: HttpRequest) -> HttpResponse:
     """Filters events based on user input
@@ -59,13 +53,16 @@ def discover(request: HttpRequest) -> HttpResponse:
     return render(request, "discover.html", {"events": events, "booked_events":booked_events, "societys":society_rep})  
 
 @login_required
-def register_event(request, event_id):
+def register_event(request: HttpRequest, event_id) -> HttpResponse:
     """ Adds events to the booking table for the logged-in student only if not already booked.
 
     @author Tilly Searle
     """
-    # Get the event and student
+    # Get the event - if it is not approved, do not allow the booking to take place
     event = get_object_or_404(Event, id=event_id)
+    if not event.approved:
+        return HttpResponse(status=403)
+    # Get the student
     student = get_object_or_404(Student, user=request.user)
 
     # Check if the booking already exists
@@ -89,7 +86,7 @@ def approval_page(request: HttpRequest) -> HttpResponse:
 
 @login_required
 @permission_required("perms.app.approve_events", raise_exception=True)
-def approve_event(request, event_id):
+def approve_event(request: HttpRequest, event_id) -> HttpResponse:
     """Allows a moderator to approve an event.
 
     @author Tilly Searle
@@ -106,7 +103,6 @@ def approve_event(request, event_id):
 def my_events(request: HttpRequest) -> HttpResponse:
     return render(request, "my_events.html")
 
-
 def organise(request: HttpRequest) -> HttpResponse:
     """Take data from the event creation form, and uses it to create and save an event.
 
@@ -122,7 +118,7 @@ def organise(request: HttpRequest) -> HttpResponse:
         form = CreateEventForm()
     return render(request, "organise.html")
 
-# Authentication section
+#region Authentication
 def sign_in(request: HttpRequest) -> HttpResponse:
     """Takes the username and password and validates whether it matches a user in the system, if so it logs them in.
     @param     user's request
@@ -205,6 +201,10 @@ def password_reset_confirm(request: HttpRequest, uidb64: str, token: str) -> Htt
     return PasswordResetConfirmView.as_view(template_name='password_reset_confirm.html')(request, uidb64=uidb64, token=token)
 
 def password_reset_complete(request: HttpRequest) -> HttpResponse:
+    """Takes the necessary url made by token and base64 to create a password reset link form..
+    @return    the page that shows the user that the reset was successful.
+    @author    Maisie Marks
+    """
     return render(request, 'password_reset_complete.html')
 
 def my_events(request: HttpRequest) -> HttpResponse:
@@ -222,3 +222,5 @@ def my_events(request: HttpRequest) -> HttpResponse:
         bookings = Booking.objects.none()
 
     return render(request, "my_events.html", {"bookings": bookings})
+
+#endregion
