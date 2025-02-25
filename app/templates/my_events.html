@@ -5,23 +5,9 @@
 {% block content %}
 <div class="container mt-5">
     <div class="row">
-    
-        <!-- Left Sidebar -->
-        <div class="col-md-3">
-            <div class="card p-3">
-                <h4 class="text-center">Manage Events</h4>
-                <hr>
-                <!-- Event buttons -->
-                <div id="textfile-buttons">
-                    {% for booking in bookings %}
-                        <h4 class="text-center">{{ booking.event.name }}</h4>
-                    {% endfor %}
-                </div>
-            </div>
-        </div>
-
+        
         <!-- Event Cards -->
-        <div class="col-md-9">
+        <div class="col-md-10">
             <div class="row">
                 {% for booking in bookings %}
                     <div class="col-md-6 mb-4">
