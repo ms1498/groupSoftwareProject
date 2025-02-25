@@ -29,7 +29,7 @@ def get_qrcode_from_response(request: HttpRequest) -> bytes | None:
     except:
         return None
 
-    # this image should be in a jpeg format that can just be sent to the server and embedded, I think...
+    # this image should be in a jpeg format that can just be sent to the server and embedded.
     img = qr.make_image(fill_color="black", back_color="white", format="jpeg")
 
     # save the image, but to memory rather than an actual file location.

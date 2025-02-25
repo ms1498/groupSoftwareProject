@@ -6,7 +6,6 @@ from . import queries
 
 urlpatterns = [
     path("", views.index, name="home"),
-    path("events-data", queries.serve_events, name="serve-events"),
     path("register_event/<int:event_id>/", views.register_event, name="register_event"),
     path("qrgen", queries.qrgen, name="QR code"),
     path("discover", views.discover, name="discover"),
