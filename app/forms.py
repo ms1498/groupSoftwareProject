@@ -1,4 +1,4 @@
-from .models import Event, Booking
+from .models import Event, Booking, SocietyRepresentative
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from django import forms
@@ -39,7 +39,9 @@ class CreateEventForm(forms.ModelForm):
 
     class Meta:
         model = Event
-        fields = ("name", "date", "category", "description", "image")
+        fields = ("name", "date", "category", "description", "image", "organiser")
+    organiser = forms.ModelChoiceField(queryset = SocietyRepresentative.objects.all())
+    
 
 class BookingForm(forms.ModelForm):
     event = forms.ModelChoiceField(queryset=Event.objects.all(), required=True)

@@ -19,7 +19,7 @@
             <div class="card shadow-sm">
                 <div class="card-body">
                   <h5 class="card-title">{{ event.name }}</h5>
-                  <p class="card-text text-muted">{{ event.date }} • {{ event.location }}</p>
+                  <p class="card-text text-muted">{{ event.date }} • {{ event.location.name }}</p>
                   <p class="card-text text-primary">🌱 {{ event.category }}</p>
                 </div>
               </div>
@@ -87,6 +87,9 @@
             <input class="form-control" type="file" id="event-image" name="image" accept="image/*">
             <small class="text-muted">Accepted formats: JPG, PNG, GIF</small>
           </div>
+
+          <!-- User Data -->
+          <input class="form-control" type="hidden" id = "event-organiser" name="organiser" value="{{ user.username }}">
 
           <!-- Submit Button -->
           <div class="text-center">

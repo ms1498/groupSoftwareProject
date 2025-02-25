@@ -10,7 +10,7 @@ from django.core import serializers
 from django.http import HttpResponse, HttpRequest
 from django.contrib.auth.decorators import login_required, permission_required
 # model imports
-from app.models import Event, Booking, Student
+from app.models import Event, Booking, Student, Location, SocietyRepresentative
 # backend imports
 from .forms import SignInForm, SignUpForm, BookingForm
 from mysite.qrgen import get_qrcode_from_response
@@ -108,18 +108,20 @@ def organise(request: HttpRequest) -> HttpResponse:
 
     @author    Tricia Sibley
     """
-    events = Event.objects.all()
-    events = events.filter(organiser__user = request.user)
-
+    locations = Location.objects.all()
     if request.method == "POST":
         form = CreateEventForm(request.POST, request.FILES)
         if form.is_valid():
             form.save()
         else:
-            return render(request, "organise.html", {"form": form, "errors": form.errors, "events": events})
+            events = Event.objects.all()
+            events = events.filter(organiser__user = request.user)
+            return render(request, "organise.html", {"form": form, "errors": form.errors, "events": events, "locations": locations})
     else:
         form = CreateEventForm()
-    return render(request, "organise.html", {"events": events})
+    events = Event.objects.all()
+    events = events.filter(organiser__user = request.user)
+    return render(request, "organise.html", {"events": events, "locations": locations})
 
 # Authentication section
 def sign_in(request: HttpRequest) -> HttpResponse:
