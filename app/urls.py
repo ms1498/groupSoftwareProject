@@ -14,6 +14,7 @@ urlpatterns = [
     path("my-events", views.my_events, name="my-events"),
     path("organise", views.organise, name="organise"),
     path("edit_event/<int:event_id>/", views.edit_event, name="edit_event"),
+    path('qrgen/', views.generate_qr, name='generate_qr'),
     path("sign-in", views.sign_in, name="sign-in"),
     path("sign-up", views.sign_up, name="sign-up"),
     path("sign-out", views.sign_out, name="sign-out"),

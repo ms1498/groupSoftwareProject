@@ -4,37 +4,63 @@
 
 {% block content %}
 <div class="container mt-5">
+    <style>
+        /* Position the QR code in the top right of the form */
+        .qr-code-container {
+        position: absolute;
+        top: 50px; /* Adjust this to control vertical spacing */
+        right: 20px; /* Adjust this to control horizontal spacing */
+        z-index: 10; /* Ensure it is on top of other elements */
+        }
+
+        .qr-code {
+        max-width: 200px; /* Adjust size of the QR code */
+        height: auto;
+        }
+
+        /* Ensure event form container has sufficient space */
+        .event-form-container {
+            position: relative; /* Allow QR code to float */
+            padding-right: 220px; /* Provide space for the QR code */
+        }
+
+    </style>
+
   <div class="row">
-    
     <!-- Left Sidebar -->
     <div class="col-md-3">
       <div class="card p-3">
         <h4 class="text-center">Manage Events</h4>
         <a class="btn btn-primary w-100 my-2" href="{% url 'organise' %}">➕ Add New Event</a>
         <hr>
-        {%for event in events%}
-          <a class="btn btn-primary w-100 my-2" href ="{% url 'edit_event' event.id %}">{{event.name}}</a>
-        {%endfor%}
+        {% for event in events %}
+          <a class="btn btn-primary w-100 my-2" href="{% url 'edit_event' event.id %}">{{ event.name }}</a>
+        {% endfor %}
       </div>
     </div>
 
     <!-- Right Content: Event Form -->
     <div class="col-md-9 pb-3">
-      <div class="card p-4" id="event-form-container">
+      <div class="card p-4 event-form-container" id="event-form-container">
         <h2 class="text-center mb-4">Edit Event: <strong class="text-primary">{{ event.name }}</strong></h2>
+        
+        <!-- QR Code: Positioned in the top-right corner -->
+        <div class="qr-code-container">
+          <img src="{% url 'generate_qr' %}?url={{ event.get_absolute_url }}" alt="QR Code" class="qr-code" />
+        </div>
 
         <form method="POST" enctype="multipart/form-data" action="{% url 'edit_event' event.id %}">
           {% csrf_token %}
           
           <!-- Event Name -->
-          <div class="mb-3">
+          <div class="mb-3" style="max-width: 60%;">
             <label for="event-name" class="form-label"><strong>Event Name:</strong></label>
             <div class="editable-text" id="event-name" onclick="editField('event-name')">{{ event.name }}</div>
             <input type="text" class="form-control" id="event-name-input" name="name" value="{{ event.name }}" style="display:none;">
           </div>
 
           <!-- Event Date -->
-          <div class="mb-3">
+          <div class="mb-3" style="max-width: 60%;">
             <label for="event-date" class="form-label"><strong>Event Date:</strong></label>
             <div class="editable-text" id="event-date" onclick="editField('event-date')">{{ event.date }}</div>
             <input type="datetime-local" class="form-control" id="event-date-input" name="date" value="{{ event.date|date:'Y-m-d\TH:i' }}" style="display:none;">
@@ -42,7 +68,7 @@
 
           <!-- Event Category -->
           <div class="mb-3">
-            <label for="category" class="form-label"><strong>Select Category:</strong></label>
+            <label for="category" class="form-label"><strong>Category:</strong></label>
             <div class="editable-text" id="event-category" onclick="editField('event-category')">{{ event.category }}</div>
             <select class="form-select" id="event-category-input" name="category" style="display:none;">
               <option value="poverty" {% if event.category == 'poverty' %}selected{% endif %}>End Poverty</option>
@@ -71,7 +97,7 @@
 
           <!-- Event Location -->
           <div class="mb-3">
-            <label for="location" class="form-label"><strong>Select Location:</strong></label>
+            <label for="location" class="form-label"><strong>Location:</strong></label>
             <div class="editable-text" id="event-location" onclick="editField('event-location')">{{ event.location.name }}</div>
             <select class="form-select" name="location" style="display:none;">
               <option selected disabled>Choose a location</option>
@@ -95,22 +121,20 @@
             <button type="submit" class="btn btn-primary px-4">Save Changes</button>
           </div>
         </form>
+
       </div>
     </div>
-
   </div>
 </div>
 
 <!-- JavaScript to Toggle Editable Fields -->
 <script>
-  function editField(fieldId) {
-    // Hide the current text and show the corresponding input field
-    var textField = document.getElementById(fieldId);
-    var inputField = document.getElementById(fieldId + '-input');
-    
-    textField.style.display = 'none';
-    inputField.style.display = 'block';
-  }
+    function editField(fieldId) {
+      var textField = document.getElementById(fieldId);
+      var inputField = document.getElementById(fieldId + '-input');
+      textField.style.display = 'none';
+      inputField.style.display = 'block';
+    }
 </script>
 
 {% endblock %}

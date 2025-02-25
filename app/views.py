@@ -12,6 +12,8 @@ from app.models import Event, Booking, Student, SocietyRepresentative, Location
 # backend imports
 from mysite.qrgen import get_qrcode_from_response
 from .forms import SignInForm, SignUpForm, CreateEventForm, BookingForm
+from django.http import HttpResponse
+from mysite.qrgen import get_qrcode_from_response  # Assuming get_qrcode_from_response is in qrcode_utils.py
 
 def index(request: HttpRequest) -> HttpResponse:
     events = Event.objects.all()
@@ -235,4 +237,14 @@ def password_reset_complete(request: HttpRequest) -> HttpResponse:
     @author    Maisie Marks
     """
     return render(request, 'password_reset_complete.html')
+
+def generate_qr(request):
+    # Get the QR code image data from the request
+    qr_code_data = get_qrcode_from_response(request)
+    
+    if qr_code_data is None:
+        return HttpResponse("Invalid request", status=400)
+    
+    # Return the QR code as an image in the HTTP response
+    return HttpResponse(qr_code_data, content_type="image/jpeg")
 #endregion
