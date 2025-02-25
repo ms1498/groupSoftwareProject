@@ -46,7 +46,7 @@
         
         <!-- QR Code: Positioned in the top-right corner -->
         <div class="qr-code-container">
-            <img src="{% url 'generate_qr' %}?url=http://127.0.0.1:8000/home?popup=thank-you" alt="QR Code" class="qr-code" />
+            <img src="{% url 'generate_qr' %}?url=http://127.0.0.1:8000/?popup=thank-you" alt="QR Code" class="qr-code" />
         </div>
 
         <form method="POST" enctype="multipart/form-data" action="{% url 'edit_event' event.id %}">
