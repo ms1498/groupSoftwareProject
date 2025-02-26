@@ -1,14 +1,15 @@
 #django imports
+from django.forms import DateTimeField
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.forms import PasswordResetForm
-from django.contrib.auth.models import Group
+from django.contrib.auth.models import Group, User
 from django.contrib.auth.views import PasswordResetView, PasswordResetDoneView, PasswordResetConfirmView, PasswordResetCompleteView
 from django.http import HttpResponse, HttpRequest
 from django.contrib.auth.decorators import login_required, permission_required
 from django.utils import timezone
 # model imports
-from app.models import Event, Booking, Student, SocietyRepresentative
+from app.models import Event, Booking, Student, SocietyRepresentative, Moderator, Developer, Location
 # backend imports
 from .forms import SignInForm, SignUpForm, BookingForm
 from mysite.qrgen import get_qrcode_from_response
