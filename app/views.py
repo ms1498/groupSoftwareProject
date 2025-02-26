@@ -47,7 +47,7 @@ def discover(request: HttpRequest) -> HttpResponse:
         events = events.filter(organiser=society_obj)
 
     booked_events = set()
-    if request.user.is_authenticated:
+    if request.user.is_authenticated and Student.objects.filter(user=request.user).exists():
         student = get_object_or_404(Student, user=request.user)
         booked_events = set(Booking.objects.filter(student=student).values_list('event_id', flat=True))
 
