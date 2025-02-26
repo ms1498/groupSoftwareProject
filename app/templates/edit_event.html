@@ -71,20 +71,20 @@
             <label for="category" class="form-label"><strong>Category:</strong></label>
             <div class="editable-text" id="event-category" onclick="editField('event-category')">{{ event.category }}</div>
             <select class="form-select" id="event-category-input" name="category" style="display:none;">
-              <option value="poverty" {% if event.category == 'poverty' %}selected{% endif %}>End Poverty</option>
-              <option value="hunger" {% if event.category == 'hunger' %}selected{% endif %}>End Hunger</option>
-              <option value="health" {% if event.category == 'health' %}selected{% endif %}>Good Health</option>
-              <option value="education" {% if event.category == 'education' %}selected{% endif %}>Quality Education</option>
-              <option value="equality" {% if event.category == 'equality' %}selected{% endif %}>Gender Equality</option>
-              <option value="water" {% if event.category == 'water' %}selected{% endif %}>Clean Water and Sanitation</option>
-              <option value="energy" {% if event.category == 'energy' %}selected{% endif %}>Clean Energy</option>
-              <option value="growth" {% if event.category == 'growth' %}selected{% endif %}>Economic Growth</option>
-              <option value="inequality" {% if event.category == 'inequality' %}selected{% endif %}>Reducing Inequalities</option>
-              <option value="cities" {% if event.category == 'cities' %}selected{% endif %}>Sustainable Cities and Communities</option>
-              <option value="consumption" {% if event.category == 'consumption' %}selected{% endif %}>Responsible Consumption</option>
-              <option value="planet" {% if event.category == 'planet' %}selected{% endif %}>Protect the Planet</option>
-              <option value="peace" {% if event.category == 'peace' %}selected{% endif %}>Peace and Justice</option>
-              <option value="other" {% if event.category == 'other' %}selected{% endif %}>Other</option>
+              <option value="poverty" {% if event.category == "poverty" %}selected{% endif %}>End Poverty</option>
+              <option value="hunger" {% if event.category == "hunger" %}selected{% endif %}>End Hunger</option>
+              <option value="health" {% if event.category == "health" %}selected{% endif %}>Good Health</option>
+              <option value="education" {% if event.category == "education" %}selected{% endif %}>Quality Education</option>
+              <option value="equality" {% if event.category == "equality" %}selected{% endif %}>Gender Equality</option>
+              <option value="water" {% if event.category == "water" %}selected{% endif %}>Clean Water and Sanitation</option>
+              <option value="energy" {% if event.category == "energy" %}selected{% endif %}>Clean Energy</option>
+              <option value="growth" {% if event.category == "growth" %}selected{% endif %}>Economic Growth</option>
+              <option value="inequality" {% if event.category == "inequality" %}selected{% endif %}>Reducing Inequalities</option>
+              <option value="cities" {% if event.category == "cities" %}selected{% endif %}>Sustainable Cities and Communities</option>
+              <option value="consumption" {% if event.category == "consumption" %}selected{% endif %}>Responsible Consumption</option>
+              <option value="planet" {% if event.category == "planet" %}selected{% endif %}>Protect the Planet</option>
+              <option value="peace" {% if event.category == "peace" %}selected{% endif %}>Peace and Justice</option>
+              <option value="other" {% if event.category == "other" %}selected{% endif %}>Other</option>
             </select>
           </div>
 
@@ -131,9 +131,9 @@
 <script>
     function editField(fieldId) {
       var textField = document.getElementById(fieldId);
-      var inputField = document.getElementById(fieldId + '-input');
-      textField.style.display = 'none';
-      inputField.style.display = 'block';
+      var inputField = document.getElementById(fieldId + "-input");
+      textField.style.display = "none";
+      inputField.style.display = "block";
     }
 </script>
 

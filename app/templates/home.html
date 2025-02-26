@@ -99,7 +99,7 @@
 <script>
     document.addEventListener("DOMContentLoaded", function() {
         const urlParams = new URLSearchParams(window.location.search);
-        if (urlParams.has('popup') && urlParams.get('popup') === 'thank-you') {
+        if (urlParams.has("popup") && urlParams.get("popup") === "thank-you") {
             document.getElementById("thank-you-popup").style.display = "flex";
             startConfetti();
         }

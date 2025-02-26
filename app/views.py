@@ -105,6 +105,10 @@ def my_events(request: HttpRequest) -> HttpResponse:
     return render(request, "my_events.html")
 
 def organise(request):
+    """Allows you to add an event to the events table
+    
+    @author    Tricia Sibley
+    """
     locations = Location.objects.all()  # Fetch locations for dropdown
     location = request.GET.get("location", "")
     if request.method == "POST":
@@ -124,6 +128,10 @@ def organise(request):
     return render(request, "organise.html", {"events": events, "locations": locations})
 
 def edit_event(request, event_id):
+    """Allows you to change booking
+    
+    @author    Tilly Searle
+    """
     # Fetch the event object using the event_id or return a 404 error if it doesn't exist
     event = get_object_or_404(Event, id=event_id)
     
@@ -236,9 +244,14 @@ def password_reset_complete(request: HttpRequest) -> HttpResponse:
     @return    the page that shows the user that the reset was successful.
     @author    Maisie Marks
     """
-    return render(request, 'password_reset_complete.html')
+    return render(request, "password_reset_complete.html")
 
 def generate_qr(request):
+    """Generates a QR code from a given request.
+    
+    @return    An HTTP response containing the QR code.
+    @author    Tilly Searle
+    """
     # Get the QR code image data from the request
     qr_code_data = get_qrcode_from_response(request)
     
