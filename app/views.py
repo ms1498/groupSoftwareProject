@@ -105,7 +105,7 @@ def approve_event(request: HttpRequest, event_id) -> HttpResponse:
 def my_events(request: HttpRequest) -> HttpResponse:
     return render(request, "my_events.html")
 
-def organise(request):
+def organise(request: HttpRequest) -> HttpResponse:
     """Allows you to add an event to the events table
     
     @author    Tricia Sibley
