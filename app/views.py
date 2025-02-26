@@ -104,6 +104,8 @@ def approve_event(request: HttpRequest, event_id) -> HttpResponse:
 def my_events(request: HttpRequest) -> HttpResponse:
     return render(request, "my_events.html")
 
+@login_required
+@permission_required("perms.app.create_events", raise_exception=True)
 def organise(request: HttpRequest) -> HttpResponse:
     """Take data from the event creation form, and uses it to create and save an event.
 
