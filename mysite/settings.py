@@ -26,7 +26,11 @@ SECRET_KEY = "django-insecure-=93#$x%uequk$0%nkv+=(t)%a#=_nz@elg7q(op1d^4#7jx6!d
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["uweave.online", "127.0.0.1"]
+
+CSRF_TRUSTED_ORIGINS = [
+    "https://uweave.online",
+]
 
 # Application definition
 
