@@ -1,2 +1,2 @@
-# groupSoftwareProject
-There is an example database in resources/, further info in that directory.
+# UWeave
+The `resources/` directory contains an example database, along with further information.
