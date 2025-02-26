@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
-from mysite.keygen import generate_random_key
+from mysite.qrgen import generate_random_key
 
 class Student(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
