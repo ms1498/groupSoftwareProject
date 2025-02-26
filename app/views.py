@@ -207,4 +207,21 @@ def password_reset_complete(request: HttpRequest) -> HttpResponse:
     @author    Maisie Marks
     """
     return render(request, 'password_reset_complete.html')
+
+def my_events(request: HttpRequest) -> HttpResponse:
+    """Shows the user's list of booked events
+
+    @author  Ruaidhrigh Plummer
+    """
+    if request.user.is_authenticated:
+        try:
+            student = Student.objects.get(user=request.user)
+            bookings = Booking.objects.filter(student=student).order_by("event__date")
+        except Student.DoesNotExist:
+            bookings = Booking.objects.none()
+    else:
+        bookings = Booking.objects.none()
+
+    return render(request, "my_events.html", {"bookings": bookings})
+
 #endregion
