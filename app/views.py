@@ -49,10 +49,10 @@ def discover(request: HttpRequest) -> HttpResponse:
     booked_events = set()
     if request.user.is_authenticated and Student.objects.filter(user=request.user).exists():
         student = get_object_or_404(Student, user=request.user)
-        booked_events = set(Booking.objects.filter(student=student).values_list('event_id', flat=True))
+        booked_events = set(Booking.objects.filter(student=student).values_list("event_id", flat=True))
     elif Developer.objects.filter(user=request.user).exists():
         student = get_object_or_404(Developer, user=request.user)
-        booked_events = set(Booking.objects.filter(student=student).values_list('event_id', flat=True))
+        booked_events = set(Booking.objects.filter(student=student).values_list('event_id", flat=True))
 
     return render(request, "discover.html", {"events": events, "booked_events":booked_events, "societys":society_rep})  
 
