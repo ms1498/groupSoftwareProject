@@ -54,7 +54,7 @@ def discover(request: HttpRequest) -> HttpResponse:
     return render(request, "discover.html", {
         "events": events,
         "booked_events": booked_events,
-        "societys": society_rep,
+        "societies": society_rep,
     })
 
 @login_required
