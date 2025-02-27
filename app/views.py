@@ -17,7 +17,7 @@ from django.http import HttpResponse
 from mysite.qrgen import get_qrcode_from_response  # Assuming get_qrcode_from_response is in qrcode_utils.py
 
 def index(request: HttpRequest) -> HttpResponse:
-    events = Event.objects.all().order_by('date').filter(approved="1",  date__date__gte=timezone.now().date())[:3]
+    events = Event.objects.all().order_by("date").filter(approved="1",  date__date__gte=timezone.now().date())[:3]
     return render(request, "home.html", {"events":events})
 
 def discover(request: HttpRequest) -> HttpResponse:
