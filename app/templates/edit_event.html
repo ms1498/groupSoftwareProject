@@ -36,6 +36,7 @@
             display: none; /* Initially hidden */
             z-index: 1000;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            border: solid black;
             padding: 20px;
             border-radius: 10px;
         }
@@ -48,20 +49,13 @@
             height: auto;
             margin: auto;
             border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-        }
-
-        /* Popup hover effect */
-        .popup img:hover {
-            transform: scale(1.1);
-            transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
-            border: 2px solid black;
         }
 
         /* Image hover effects */
-        img:hover{
+        .qr-normal:hover{
             transition: border 0.3s ease, box-shadow 0.3s ease;
             border: solid black;
+            border-radius: 8px;
         }
 
     </style>
@@ -100,7 +94,7 @@
         <div class="qr-code-container">
             <img src="{% url 'generate_qr' %}?url=http://127.0.0.1:8000/?popup=thank-you"
                 alt="QR Code"
-                class="qr-code"
+                class="qr-code qr-normal"
                 onclick="showPopup()" />
         </div>
 
