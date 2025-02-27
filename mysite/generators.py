@@ -1,5 +1,6 @@
-"""Handle the generation of QR codes from URLs."""
+"""Handle the generation of event QR codes."""
 from __future__ import annotations
+import secrets
 from typing import TYPE_CHECKING
 from io import BytesIO
 import qrcode
@@ -7,6 +8,18 @@ import qrcode
 if TYPE_CHECKING:
     from django.http import HttpRequest
 
+def generate_random_key(length: int = 7) -> str:
+    """Generate an alphanumeric key of the specified length randomly.
+
+    @param: length - the length of the key.
+    @returns: the key (str).
+    @author: Seth Mallinson
+    """
+    characters: str = "abcdefghijklmnopqrstuvwxyz0123456789"
+    key: str = ""
+    for _ in range(length):
+        key += secrets.choice(characters)
+    return key
 
 def get_qrcode_from_response(request: HttpRequest) -> bytes | None:
     """Validate then encapsulate the request's GET parameter in a QR code.
