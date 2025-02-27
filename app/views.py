@@ -111,15 +111,15 @@ def organise(request: HttpRequest) -> HttpResponse:
     @author    Tricia Sibley
     """
     locations = Location.objects.all()  # Fetch locations for dropdown
-    location = request.GET.get("location", "")
     if request.method == "POST":
         form = CreateEventForm(request.POST, request.FILES)
         if form.is_valid():
             event = form.save(commit=False)  # Prevent immediate saving
+            event.organiser = SocietyRepresentative.objects.get(user=request.user)
             event.location = Location.objects.get(name=request.POST["location"])
             event.approved = False  # Auto-approve event
             event.save()  # Save to database
-            return redirect("home")  # Redirect to home page
+            return redirect("organise")  # Redirect to home page
         else:
             print("Form errors:", form.errors)
             return render(request, "organise.html", {"form": form, "errors": form.errors})

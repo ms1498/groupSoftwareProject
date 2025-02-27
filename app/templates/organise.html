@@ -40,8 +40,8 @@
           <!-- Event Category -->
           <div class="mb-3">
             <label for="category" class="form-label">Select Category:</label>
-            <select class="form-select" id="category" name="category">
-              <option selected disabled>Choose a category</option>
+            <select class="form-select" id="category" name="category" required>
+              <option selected disabled value="">Choose a category</option>
               <option value="poverty">End Poverty</option>
               <option value="hunger">End Hunger</option>
               <option value="health">Good Health</option>
@@ -62,14 +62,14 @@
           <!-- Event Description -->
           <div class="mb-3">
             <label for="event-description" class="form-label">Event Description:</label>
-            <textarea class="form-control" id="event-description" placeholder="Enter event details" name="description" rows="3"></textarea>
+            <textarea class="form-control" id="event-description" placeholder="Enter event details" name="description" rows="3" required></textarea>
           </div>
 
           <!-- Event location -->
           <div class="mb-3">
             <label for="location" class="form-label">Select location:</label>
-            <select class="form-select" name="location">
-              <option selected disabled>Choose a location</option>
+            <select class="form-select" name="location" required>
+              <option selected disabled value="">Choose a location</option>
               {% for location in locations %}
                 <option value="{{ location.name }}">{{ location.name}}</option>
               {% endfor %}
@@ -79,7 +79,7 @@
           <!-- Image Upload -->
           <div class="mb-3">
             <label for="event-image" class="form-label">Upload Event Image:</label>
-            <input class="form-control" type="file" id="event-image" name="image" accept="image/*">
+            <input class="form-control" type="file" id="event-image" name="image" accept="image/*" required>
             <small class="text-muted">Accepted formats: JPG, PNG, GIF</small>
           </div>
 
