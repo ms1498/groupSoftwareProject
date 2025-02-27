@@ -12,7 +12,6 @@ from django.utils import timezone
 from app.models import Event, Booking, Student, SocietyRepresentative, Moderator, Developer, Location
 # backend imports
 from .forms import SignInForm, SignUpForm, BookingForm
-from mysite.qrgen import get_qrcode_from_response
 from .forms import SignInForm, SignUpForm, CreateEventForm
 
 def index(request: HttpRequest) -> HttpResponse:
