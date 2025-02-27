@@ -99,12 +99,10 @@
           <div class="mb-3">
             <label for="location" class="form-label"><strong>Location:</strong></label>
             <div class="editable-text" id="event-location" onclick="editField('event-location')">{{ event.location.name }}</div>
-            <select class="form-select" name="location" style="display:none;">
+            <select class="form-select" id="event-location-input" name="location" style="display:none;">
               <option selected disabled>Choose a location</option>
               {% for location in locations %}
-                <option value="{{ location.name }}" {% if event.location.name == location.name %}selected{% endif %}>
-                  {{ location.name }}
-                </option>
+                <option value="{{ location.name }}" {% if event.location.name == location.name %}selected{% endif %}>{{ location.name }}</option>
               {% endfor %}
             </select>
           </div>
