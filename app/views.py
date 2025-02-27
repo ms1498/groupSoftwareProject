@@ -53,7 +53,7 @@ def discover(request: HttpRequest) -> HttpResponse:
     return render(request, "discover.html", {"events": events, "booked_events":booked_events, "societys":society_rep})  
 
 def discover_shortcut(request: HttpRequest, event_id) -> HttpResponse:
-    """Takes the user straight to discover page with the chosen event open
+    """Take the user straight to discover page with the chosen event open.
 
     @author  Maisie Marks
     """
@@ -82,7 +82,7 @@ def discover_shortcut(request: HttpRequest, event_id) -> HttpResponse:
     booked_events = set()
     if request.user.is_authenticated:
         student = get_object_or_404(Student, user=request.user)
-        booked_events = set(Booking.objects.filter(student=student).values_list('event_id', flat=True))
+        booked_events = set(Booking.objects.filter(student=student).values_list("event_id", flat=True))
     return render(request, "discover.html", {"events": events, "booked_events":booked_events, "societys":society_rep}) 
 
 @login_required
