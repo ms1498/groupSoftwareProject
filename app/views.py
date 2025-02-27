@@ -12,7 +12,6 @@ from django.utils import timezone
 from app.models import Event, Booking, Student, SocietyRepresentative, Moderator, Developer, Location
 # backend imports
 from .forms import SignInForm, SignUpForm, CreateEventForm, BookingForm
-from django.http import HttpResponse
 from mysite.generators import get_qrcode_from_response
 
 def index(request: HttpRequest) -> HttpResponse:
@@ -121,9 +120,8 @@ def organise(request: HttpRequest) -> HttpResponse:
             event.approved = False  # Auto-approve event
             event.save()  # Save to database
             return redirect("organise")  # Redirect to home page
-        else:
-            print("Form errors:", form.errors)
-            return render(request, "organise.html", {"form": form, "errors": form.errors})
+        print("Form errors:", form.errors)
+        return render(request, "organise.html", {"form": form, "errors": form.errors})
     
     form = CreateEventForm()
     events = Event.objects.all()  # Fetch all events
@@ -150,13 +148,10 @@ def edit_event(request, event_id):
             event.save()
             
             return redirect("home")
-        else:
-            print("Form errors:", form.errors)
-            return render(request, "edit_event.html", {"form": form, "errors": form.errors, "locations": locations, "event": event, "events": events})
-
-    else:
-        form = CreateEventForm(instance=event)
-        return render(request, "edit_event.html", {"form": form, "locations": locations, "event": event, "events": events})
+        print("Form errors:", form.errors)
+        return render(request, "edit_event.html", {"form": form, "errors": form.errors, "locations": locations, "event": event, "events": events})
+    form = CreateEventForm(instance=event)
+    return render(request, "edit_event.html", {"form": form, "locations": locations, "event": event, "events": events})
 
 
 #region Authentication
