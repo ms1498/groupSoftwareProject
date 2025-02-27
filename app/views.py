@@ -16,7 +16,7 @@ from django.http import HttpResponse
 from mysite.generators import get_qrcode_from_response
 
 def index(request: HttpRequest) -> HttpResponse:
-    events = Event.objects.all()
+    events = Event.objects.all().order_by("date").filter(approved="1",  date__date__gte=timezone.now().date())[:3]
     return render(request, "home.html", {"events":events})
 
 def discover(request: HttpRequest) -> HttpResponse:
@@ -100,9 +100,6 @@ def approve_event(request: HttpRequest, event_id) -> HttpResponse:
     events = Event.objects.filter(approved="0")
 
     return render(request, "approval.html", {"events": events})
-
-def my_events(request: HttpRequest) -> HttpResponse:
-    return render(request, "my_events.html")
 
 @login_required
 @permission_required("app.create_events", raise_exception=True)
