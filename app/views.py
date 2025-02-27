@@ -15,7 +15,9 @@ from .forms import SignInForm, SignUpForm, CreateEventForm
 
 def index(request: HttpRequest) -> HttpResponse:
     """Display the home page."""
-    events = Event.objects.all().order_by("date").filter(approved="1",  date__date__gte=timezone.now().date())[:3]
+    ordered_events = Event.objects.all().order_by("date")
+    date_now = timezone.now().date()
+    events = ordered_events.filter(approved="1",  date__date__gte=date_now)[:3]
     return render(request, "home.html", {"events":events})
 
 def discover(request: HttpRequest) -> HttpResponse:
