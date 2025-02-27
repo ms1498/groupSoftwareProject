@@ -1,9 +1,12 @@
 """Provide models to use for the database."""
 from django.db import models
+# pylint: disable=imported-auth-user
 from django.contrib.auth.models import User, Permission
 from mysite.generators import generate_random_key
 
 class Student(models.Model):
+    """Model for a Student user, who can sign up to events."""
+
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     points = models.IntegerField()
     class Meta:
@@ -14,10 +17,14 @@ class Student(models.Model):
         self.user.user_permissions.add(signup_perm)
 
 class Developer(models.Model):
+    """Model for a Developer user, who can make system changes."""
+
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     is_superuser = True
 
 class SocietyRepresentative(models.Model):
+    """Model for a Society Representative user, who can create events."""
+
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     society_name = models.CharField(max_length=50)
     class Meta:
@@ -32,6 +39,8 @@ class SocietyRepresentative(models.Model):
         self.user.user_permissions.add(create_perm, qr_perm)
 
 class Moderator(models.Model):
+    """Model for a Moderator user, who can approve events."""
+
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     class Meta:
         permissions = (
@@ -45,10 +54,14 @@ class Moderator(models.Model):
         self.user.user_permissions.add(view_perm, approve_perm)
 
 class Location(models.Model):
+    """Model for a Location, which is a real-world site at which events can take place."""
+
     name = models.CharField(max_length=50, primary_key=True)
     address = models.CharField(max_length=255)
 
 class Event(models.Model):
+    """Model for an Event, which students can register for and attend."""
+
     start_key = models.CharField(max_length=7, default=generate_random_key)
     end_key = models.CharField(max_length=7, blank=True, default=generate_random_key)
     category = models.CharField(max_length=50)
@@ -64,5 +77,7 @@ class Event(models.Model):
     image = models.ImageField(upload_to="event_images/", null=True, blank=True)
 
 class Booking(models.Model):
+    """Model for a Booking, which stores that a student has booked to attend an event."""
+
     student = models.ForeignKey(Student, on_delete=models.CASCADE)
     event = models.ForeignKey(Event, on_delete=models.CASCADE)
