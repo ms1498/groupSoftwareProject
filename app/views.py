@@ -73,7 +73,7 @@ def register_event(request: HttpRequest, event_id) -> HttpResponse:
     return redirect('discover')
 
 @login_required
-@permission_required("perms.app.approve_events", raise_exception=True)
+@permission_required("app.approve_events", raise_exception=True)
 def approval_page(request: HttpRequest) -> HttpResponse:
     """Shows a list of unnapproved events
 
@@ -86,7 +86,7 @@ def approval_page(request: HttpRequest) -> HttpResponse:
     return render(request, "approval.html", {"events": events})
 
 @login_required
-@permission_required("perms.app.approve_events", raise_exception=True)
+@permission_required("app.approve_events", raise_exception=True)
 def approve_event(request: HttpRequest, event_id) -> HttpResponse:
     """Allows a moderator to approve an event.
 
@@ -105,7 +105,7 @@ def my_events(request: HttpRequest) -> HttpResponse:
     return render(request, "my_events.html")
 
 @login_required
-@permission_required("perms.app.create_events", raise_exception=True)
+@permission_required("app.create_events", raise_exception=True)
 def organise(request: HttpRequest) -> HttpResponse:
     """Take data from the event creation form, and uses it to create and save an event.
 
