@@ -17,6 +17,7 @@ from .forms import SignInForm, SignUpForm, CreateEventForm
 
 def index(request: HttpRequest) -> HttpResponse:
     events = Event.objects.all()
+    events = events.filter(approved="1",  date__date__gte=timezone.now().date())
     return render(request, "home.html", {"events":events})
 
 def discover(request: HttpRequest) -> HttpResponse:
