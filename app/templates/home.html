@@ -73,11 +73,13 @@
             <div class="col-md-4 mb-4">
                 <div class="card shadow-sm">
                     <img src="{{ event.image_url }}" class="card-img-top" alt="{{ event.title }}">
-                    <div class="card-body">
-                        <h5 class="card-title">{{ event.name }}</h5>
-                        <p class="card-text text-muted">{{ event.date }} • {{ event.location }}</p>
-                        <p class="card-text text-primary">🌱 {{ event.category }}</p>
-                    </div>
+                        <div class="card-body">
+                            <a href="{% url "discover_shortcut" event.id %}" style=text-decoration:none;>
+                            <h5 class="card-title">{{ event.name }}</h5>
+                            <p class="card-text text-muted">{{ event.date }} • {{ event.location }}</p>
+                            <p class="card-text text-primary">🌱 {{ event.category }}</p>
+                            </a>
+                        </div>
                 </div>
             </div>
             {% empty %}

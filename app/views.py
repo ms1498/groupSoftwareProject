@@ -50,8 +50,40 @@ def discover(request: HttpRequest) -> HttpResponse:
     if request.user.is_authenticated:
         student = get_object_or_404(Student, user=request.user)
         booked_events = set(Booking.objects.filter(student=student).values_list('event_id', flat=True))
-
     return render(request, "discover.html", {"events": events, "booked_events":booked_events, "societys":society_rep})  
+
+def discover_shortcut(request: HttpRequest, event_id) -> HttpResponse:
+    """Takes the user straight to discover page with the chosen event open
+
+    @author  Maisie Marks
+    """
+    events = Event.objects.all()
+    event = get_object_or_404(Event, id=event_id)
+    society_rep = SocietyRepresentative.objects.all()
+
+    search_query = event.name
+    event_date = event.date
+    category = event.category
+    society = event.organiser.society_name
+
+    if search_query:
+        events = events.filter(name__icontains=search_query)
+
+    if category:
+        events = events.filter(category=category)
+
+    if event_date:
+        events = events.filter(date__date=event_date)
+
+    if society:
+        society_obj = society_rep.filter(society_name=society).first()
+        events = events.filter(organiser=society_obj)
+
+    booked_events = set()
+    if request.user.is_authenticated:
+        student = get_object_or_404(Student, user=request.user)
+        booked_events = set(Booking.objects.filter(student=student).values_list('event_id', flat=True))
+    return render(request, "discover.html", {"events": events, "booked_events":booked_events, "societys":society_rep}) 
 
 @login_required
 def register_event(request: HttpRequest, event_id) -> HttpResponse:
