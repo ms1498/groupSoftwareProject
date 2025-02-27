@@ -1,7 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User, Permission
 from django.contrib.contenttypes.models import ContentType
-from mysite.keygen import generate_random_key
+from mysite.generators import generate_random_key
 
 class Student(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)

@@ -11,10 +11,9 @@ from django.utils import timezone
 # model imports
 from app.models import Event, Booking, Student, SocietyRepresentative, Moderator, Developer, Location
 # backend imports
-from mysite.qrgen import get_qrcode_from_response
 from .forms import SignInForm, SignUpForm, CreateEventForm, BookingForm
 from django.http import HttpResponse
-from mysite.qrgen import get_qrcode_from_response  # Assuming get_qrcode_from_response is in qrcode_utils.py
+from mysite.generators import get_qrcode_from_response
 
 def index(request: HttpRequest) -> HttpResponse:
     events = Event.objects.all()
