@@ -9,6 +9,7 @@ urlpatterns = [
     path("?popup=thank-you", views.index, name = "home"),
     path("register_event/<int:event_id>/", views.register_event, name="register_event"),
     path("discover", views.discover, name="discover"),
+    path("discover/<int:event_id>/", views.discover_shortcut, name="discover_shortcut"),
     path("approval", views.approval_page, name="approval"),
     path("approve_event/<int:event_id>/", views.approve_event, name="approve_event"),
     path("my-events", views.my_events, name="my-events"),
