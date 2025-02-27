@@ -48,12 +48,17 @@ def discover(request: HttpRequest) -> HttpResponse:
     booked_events = set()
     if request.user.is_authenticated:
         student = get_object_or_404(Student, user=request.user)
-        booked_events = set(Booking.objects.filter(student=student).values_list('event_id', flat=True))
+        filtered_bookings = Booking.objects.filter(student=student)
+        booked_events = set(filtered_bookings.values_list("event_id", flat=True))
 
-    return render(request, "discover.html", {"events": events, "booked_events":booked_events, "societys":society_rep})  
+    return render(request, "discover.html", {
+        "events": events,
+        "booked_events": booked_events,
+        "societys": society_rep,
+    })
 
 @login_required
-def register_event(request: HttpRequest, event_id) -> HttpResponse:
+def register_event(request: HttpRequest, event_id: int) -> HttpResponse:
     """Add an event to the booking table for the logged-in student.
 
     Only perform the booking if the event is not already booked.
@@ -71,7 +76,7 @@ def register_event(request: HttpRequest, event_id) -> HttpResponse:
     if not Booking.objects.filter(student=student, event=event).exists():
         Booking.objects.create(student=student, event=event)
 
-    return redirect('discover')
+    return redirect("discover")
 
 @login_required
 @permission_required("app.approve_events", raise_exception=True)
@@ -87,7 +92,7 @@ def approval_page(request: HttpRequest) -> HttpResponse:
 
 @login_required
 @permission_required("app.approve_events", raise_exception=True)
-def approve_event(request: HttpRequest, event_id) -> HttpResponse:
+def approve_event(request: HttpRequest, event_id: int) -> HttpResponse:
     """Approve an event.
 
     Only moderators may approve events.
@@ -98,7 +103,7 @@ def approve_event(request: HttpRequest, event_id) -> HttpResponse:
     event = get_object_or_404(Event, id=event_id)
 
     event.approved = "1"
-    event.save() 
+    event.save()
     events = Event.objects.filter(approved="0")
 
     return render(request, "approval.html", {"events": events})
@@ -122,19 +127,19 @@ def organise(request: HttpRequest) -> HttpResponse:
             return redirect("organise")  # Redirect to home page
         print("Form errors:", form.errors)
         return render(request, "organise.html", {"form": form, "errors": form.errors})
-    
+
     form = CreateEventForm()
     events = Event.objects.all()  # Fetch all events
     return render(request, "organise.html", {"events": events, "locations": locations})
 
-def edit_event(request, event_id):
+def edit_event(request: HttpRequest, event_id: int) -> HttpResponse:
     """Display a page for editing events.
 
     @author    Tilly Searle
     """
     # Fetch the event object using the event_id or return a 404 error if it doesn't exist
     event = get_object_or_404(Event, id=event_id)
-    
+
     # Fetch all locations for the dropdown
     locations = Location.objects.all()
     events = Event.objects.all()
@@ -146,12 +151,23 @@ def edit_event(request, event_id):
             event.location = location
             event.approved = False
             event.save()
-            
+
             return redirect("home")
         print("Form errors:", form.errors)
-        return render(request, "edit_event.html", {"form": form, "errors": form.errors, "locations": locations, "event": event, "events": events})
+        return render(request, "edit_event.html", {
+            "form": form,
+            "errors": form.errors,
+            "locations": locations,
+            "event": event,
+            "events": events,
+        })
     form = CreateEventForm(instance=event)
-    return render(request, "edit_event.html", {"form": form, "locations": locations, "event": event, "events": events})
+    return render(request, "edit_event.html", {
+        "form": form,
+        "locations": locations,
+        "event": event,
+        "events": events,
+    })
 
 
 #region Authentication
@@ -170,7 +186,10 @@ def sign_in(request: HttpRequest) -> HttpResponse:
             password = form.cleaned_data["password"]
             user = authenticate(request, username=username, password=password)
             if user is None:
-                return render(request, "sign_in.html", {"form": form, "error": "Invalid username or password"})
+                return render(request, "sign_in.html", {
+                    "form": form,
+                    "error": "Invalid username or password",
+                })
             login(request, user)
             return redirect("home")
     else:
@@ -212,27 +231,27 @@ def password_reset(request: HttpRequest) -> HttpResponse:
     @return    email sent to the user if the email is found within the system.
     @author    Maisie Marks
     """
-    if request.method == 'POST':
+    if request.method == "POST":
         form = PasswordResetForm(request.POST)
         if form.is_valid():
             form.save(
                 request=request,
                 use_https=request.is_secure(),
                 from_email=None,
-                email_template_name='password_reset_email.html',
-                subject_template_name='password_reset_subject.txt',
+                email_template_name="password_reset_email.html",
+                subject_template_name="password_reset_subject.txt",
             )
-            return redirect('password_reset_done')
+            return redirect("password_reset_done")
     else:
         form = PasswordResetForm()
-    return render(request, 'password_reset_form.html', {'form': form})
+    return render(request, "password_reset_form.html", {"form": form})
 
 def password_reset_done(request: HttpRequest) -> HttpResponse:
     """Display a page to show that an email request has been sent.
 
     @author    Maisie Marks
     """
-    return render(request, 'password_reset_done.html')
+    return render(request, "password_reset_done.html")
 
 def password_reset_confirm(request: HttpRequest, uidb64: str, token: str) -> HttpResponse:
     """Take the url made by token and base64 to create a password reset link form.
@@ -241,7 +260,8 @@ def password_reset_confirm(request: HttpRequest, uidb64: str, token: str) -> Htt
     @return    password successfully reset if new password meets requirements.
     @author    Maisie Marks
     """
-    return PasswordResetConfirmView.as_view(template_name='password_reset_confirm.html')(request, uidb64=uidb64, token=token)
+    view = PasswordResetConfirmView.as_view(template_name="password_reset_confirm.html")
+    return view(request, uidb64=uidb64, token=token)
 
 def password_reset_complete(request: HttpRequest) -> HttpResponse:
     """Take the url made by token and base64 to create a password reset link form.
@@ -251,7 +271,7 @@ def password_reset_complete(request: HttpRequest) -> HttpResponse:
     """
     return render(request, "password_reset_complete.html")
 
-def generate_qr(request):
+def generate_qr(request: HttpRequest) -> HttpResponse:
     """Generate a QR code from a given request.
 
     @return    An HTTP response containing the QR code.
@@ -259,10 +279,10 @@ def generate_qr(request):
     """
     # Get the QR code image data from the request
     qr_code_data = get_qrcode_from_response(request)
-    
+
     if qr_code_data is None:
         return HttpResponse("Invalid request", status=400)
-    
+
     # Return the QR code as an image in the HTTP response
     return HttpResponse(qr_code_data, content_type="image/jpeg")
 
