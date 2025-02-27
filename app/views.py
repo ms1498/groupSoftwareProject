@@ -14,11 +14,12 @@ from .forms import SignInForm, SignUpForm, CreateEventForm
 from mysite.generators import get_qrcode_from_response
 
 def index(request: HttpRequest) -> HttpResponse:
+    """Display the home page."""
     events = Event.objects.all()
     return render(request, "home.html", {"events":events})
 
 def discover(request: HttpRequest) -> HttpResponse:
-    """Filters events based on user input
+    """Filter events based on user input.
 
     @author  Tilly Searle
     """
@@ -53,7 +54,9 @@ def discover(request: HttpRequest) -> HttpResponse:
 
 @login_required
 def register_event(request: HttpRequest, event_id) -> HttpResponse:
-    """ Adds events to the booking table for the logged-in student only if not already booked.
+    """Add an event to the booking table for the logged-in student.
+
+    Only perform the booking if the event is not already booked.
 
     @author Tilly Searle
     """
@@ -73,11 +76,10 @@ def register_event(request: HttpRequest, event_id) -> HttpResponse:
 @login_required
 @permission_required("app.approve_events", raise_exception=True)
 def approval_page(request: HttpRequest) -> HttpResponse:
-    """Shows a list of unnapproved events
+    """Show a list of unnapproved events.
 
     @author  Tilly Searle
     """
-
     events = Event.objects.all()
     events = events.filter(approved="0")
 
@@ -86,7 +88,9 @@ def approval_page(request: HttpRequest) -> HttpResponse:
 @login_required
 @permission_required("app.approve_events", raise_exception=True)
 def approve_event(request: HttpRequest, event_id) -> HttpResponse:
-    """Allows a moderator to approve an event.
+    """Approve an event.
+
+    Only moderators may approve events.
 
     @author Tilly Searle
     """
@@ -99,14 +103,11 @@ def approve_event(request: HttpRequest, event_id) -> HttpResponse:
 
     return render(request, "approval.html", {"events": events})
 
-def my_events(request: HttpRequest) -> HttpResponse:
-    return render(request, "my_events.html")
-
 @login_required
 @permission_required("app.create_events", raise_exception=True)
 def organise(request: HttpRequest) -> HttpResponse:
-    """Allows you to add an event to the events table
-    
+    """Display a page for creating events.
+
     @author    Tricia Sibley
     """
     locations = Location.objects.all()  # Fetch locations for dropdown
@@ -127,8 +128,8 @@ def organise(request: HttpRequest) -> HttpResponse:
     return render(request, "organise.html", {"events": events, "locations": locations})
 
 def edit_event(request, event_id):
-    """Allows you to change booking
-    
+    """Display a page for editing events.
+
     @author    Tilly Searle
     """
     # Fetch the event object using the event_id or return a 404 error if it doesn't exist
@@ -155,9 +156,11 @@ def edit_event(request, event_id):
 
 #region Authentication
 def sign_in(request: HttpRequest) -> HttpResponse:
-    """Takes the username and password and validates whether it matches a user in the system, if so it logs them in.
+    """Take the username and password and check whether it matches a user in the system.
+
+    If the match is successful, log in the user specified by the username.
     @param     user's request
-    @return    renders home + session logged in if successful, keeps rendering sign-in page if unsuccessful
+    @return    renders home if successful, keeps rendering sign-in page if unsuccessful
     @author    Maisie Marks
     """
     if request.method == "POST":
@@ -175,7 +178,8 @@ def sign_in(request: HttpRequest) -> HttpResponse:
     return render(request, "sign_in.html", {"form": form})
 
 def sign_out(request: HttpRequest) -> HttpResponse:
-    """Logs the user out of the current session and redirects them to the homepage.
+    """Log the user out of the current session and redirect them to the homepage.
+
     @param     user's request
     @return    renders homepage
     @author    Maisie Marks
@@ -184,9 +188,10 @@ def sign_out(request: HttpRequest) -> HttpResponse:
     return redirect("home")
 
 def sign_up(request: HttpRequest) -> HttpResponse:
-    """Allows the user to sign-up and make an account on the webpage.
+    """Allow the user to sign-up and make an account on the webpage.
+
     @param     user's request
-    @return    renders the sign-up page (showing currently logged in user), adding an account to the system.
+    @return    render the sign-up page (showing current user), create an account.
     @author    Maisie Marks
     """
     if request.method == "POST":
@@ -201,7 +206,8 @@ def sign_up(request: HttpRequest) -> HttpResponse:
     return render(request, "sign_up.html", {"form": form})
 
 def password_reset(request: HttpRequest) -> HttpResponse:
-    """Takes the user's email, sending them a link to a reset password form webpage.
+    """Take the user's email and send them a link to a reset password form webpage.
+
     @param     user's email
     @return    email sent to the user if the email is found within the system.
     @author    Maisie Marks
@@ -222,13 +228,15 @@ def password_reset(request: HttpRequest) -> HttpResponse:
     return render(request, 'password_reset_form.html', {'form': form})
 
 def password_reset_done(request: HttpRequest) -> HttpResponse:
-    """Page to show that an email request has been sent
+    """Display a page to show that an email request has been sent.
+
     @author    Maisie Marks
     """
     return render(request, 'password_reset_done.html')
 
 def password_reset_confirm(request: HttpRequest, uidb64: str, token: str) -> HttpResponse:
-    """Takes the necessary url made by token and base64 to create a password reset link form.
+    """Take the url made by token and base64 to create a password reset link form.
+
     @param     new password inputs to confirm password reset.
     @return    password successfully reset if new password meets requirements.
     @author    Maisie Marks
@@ -236,15 +244,16 @@ def password_reset_confirm(request: HttpRequest, uidb64: str, token: str) -> Htt
     return PasswordResetConfirmView.as_view(template_name='password_reset_confirm.html')(request, uidb64=uidb64, token=token)
 
 def password_reset_complete(request: HttpRequest) -> HttpResponse:
-    """Takes the necessary url made by token and base64 to create a password reset link form..
+    """Take the url made by token and base64 to create a password reset link form.
+
     @return    the page that shows the user that the reset was successful.
     @author    Maisie Marks
     """
     return render(request, "password_reset_complete.html")
 
 def generate_qr(request):
-    """Generates a QR code from a given request.
-    
+    """Generate a QR code from a given request.
+
     @return    An HTTP response containing the QR code.
     @author    Tilly Searle
     """
@@ -258,7 +267,7 @@ def generate_qr(request):
     return HttpResponse(qr_code_data, content_type="image/jpeg")
 
 def my_events(request: HttpRequest) -> HttpResponse:
-    """Shows the user's list of booked events
+    """Show the user's list of booked events.
 
     @author  Ruaidhrigh Plummer
     """
