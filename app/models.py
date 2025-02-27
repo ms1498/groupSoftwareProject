@@ -1,6 +1,5 @@
 from django.db import models
 from django.contrib.auth.models import User, Permission
-from django.contrib.contenttypes.models import ContentType
 from mysite.generators import generate_random_key
 
 class Student(models.Model):
@@ -46,7 +45,7 @@ class Location(models.Model):
 
 class Event(models.Model):
     start_key = models.CharField(max_length=7, default=generate_random_key)
-    end_key = models.CharField(max_length=7, null=True, default=generate_random_key)
+    end_key = models.CharField(max_length=7, blank=True, default=generate_random_key)
     category = models.CharField(max_length=50)
     organiser = models.ForeignKey(SocietyRepresentative, on_delete=models.CASCADE, null=True)
     date = models.DateTimeField()
@@ -56,7 +55,7 @@ class Event(models.Model):
     actual_attendance = models.IntegerField(null=True)
     maximum_attendance = models.IntegerField(null=True)
     approved = models.BooleanField(default=False)
-    description = models.CharField(max_length=500, null=True)
+    description = models.CharField(max_length=500, blank=True)
     image = models.ImageField(upload_to="event_images/", null=True, blank=True)
 
 class Booking(models.Model):
