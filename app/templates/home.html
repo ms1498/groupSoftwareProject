@@ -19,72 +19,150 @@
             <button class="btn btn-outline-primary">⚕️ Good Health</button>
         </div>
     </div>
-    
-        <div class="mt-4 text-center">
-            {%if user.is_authenticated and perms.app.approve_event%}
+
+    <div class="mt-4 text-center">
+        {% if user.is_authenticated and perms.app.approve_event %}
             <h3 class="mb-3">Hello, {{ user.username }}! Ready to approve events?</h3>
             <a href="{% url 'organise' %}" class="btn btn-primary btn-lg">
                 <i class="bi bi-calendar-plus"></i> Approve Events
             </a>
-
-            {%elif user.is_authenticated and perms.app.create_events%}
-                <h3 class="mb-3">Hello, {{ user.username }}! Ready to organize an event?</h3>
-                <a href="{% url 'organise' %}" class="btn btn-primary btn-lg">
-                    <i class="bi bi-calendar-plus"></i> Create an Event
-                </a>
-    
-            {%elif user.is_authenticated %}
+        {% elif user.is_authenticated and perms.app.create_events %}
+            <h3 class="mb-3">Hello, {{ user.username }}! Ready to organize an event?</h3>
+            <a href="{% url 'organise' %}" class="btn btn-primary btn-lg">
+                <i class="bi bi-calendar-plus"></i> Create an Event
+            </a>
+        {% elif user.is_authenticated %}
             <h3 class="mb-3">Hello, {{ user.username }}! Ready to book an event?</h3>
-                <div class="d-flex justify-content-center gap-3">
-                    <a href="{% url 'discover' %}" class="btn btn-primary btn-lg">
-                        <i class="bi bi-search"></i> Discover Events
-                    </a>
-                </div>
-    
-            {% else %}
-                <h3 class="mb-3">Join us today and start exploring exciting events!</h3>
-                <div class="d-flex justify-content-center gap-3">
-                    <a href="{% url 'discover' %}" class="btn btn-primary btn-lg">
-                        <i class="bi bi-search"></i> Discover Events
-                    </a>
-                    <a href="{% url 'sign-in' %}" class="btn btn-outline-dark btn-lg">
-                        <i class="bi bi-box-arrow-in-right"></i> Sign In
-                    </a>
-                    <a href="{% url 'sign-up' %}" class="btn btn-dark btn-lg">
-                        <i class="bi bi-person-plus"></i> Sign Up
-                    </a>
-                </div>
-            {% endif %}
-        </div>
-    
-        {% if user.is_authenticated and user.groups.all.0.name == "moderator" %}
-            <div class="mt-5 p-3 border border-danger rounded bg-light">
-                <h4 class="text-danger">🔒 Admin Access</h4>
-                <p class="text-muted">Welcome, Admin! You have access to special moderation tools.</p>
+            <div class="d-flex justify-content-center gap-3">
+                <a href="{% url 'discover' %}" class="btn btn-primary btn-lg">
+                    <i class="bi bi-search"></i> Discover Events
+                </a>
+            </div>
+        {% else %}
+            <h3 class="mb-3">Join us today and start exploring exciting events!</h3>
+            <div class="d-flex justify-content-center gap-3">
+                <a href="{% url 'discover' %}" class="btn btn-primary btn-lg">
+                    <i class="bi bi-search"></i> Discover Events
+                </a>
+                <a href="{% url 'sign-in' %}" class="btn btn-outline-dark btn-lg">
+                    <i class="bi bi-box-arrow-in-right"></i> Sign In
+                </a>
+                <a href="{% url 'sign-up' %}" class="btn btn-dark btn-lg">
+                    <i class="bi bi-person-plus"></i> Sign Up
+                </a>
             </div>
         {% endif %}
+    </div>
+
+    {% if user.is_authenticated and user.groups.all.0.name == "moderator" %}
+        <div class="mt-5 p-3 border border-danger rounded bg-light">
+            <h4 class="text-danger">🔒 Admin Access</h4>
+            <p class="text-muted">Welcome, Admin! You have access to special moderation tools.</p>
+        </div>
+    {% endif %}
 
     <!-- Featured Sustainable Events -->
     <div class="mt-5">
         <h2 class="fw-bold text-primary">♻️ Sustainable Event Highlights</h2>
-        
+
         <div class="row">
             {% for event in events %}
-            <div class="col-md-4 mb-4">
-                <div class="card shadow-sm">
-                    <img src="{{ event.image_url }}" class="card-img-top" alt="{{ event.title }}">
-                    <div class="card-body">
-                        <h5 class="card-title">{{ event.name }}</h5>
-                        <p class="card-text text-muted">{{ event.date }} • {{ event.location }}</p>
-                        <p class="card-text text-primary">🌱 {{ event.category }}</p>
+                <div class="col-md-4 mb-4">
+                    <div class="card shadow-sm">
+                        <img src="{{ event.image_url }}" class="card-img-top" alt="{{ event.title }}">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ event.name }}</h5>
+                            <p class="card-text text-muted">{{ event.date }} • {{ event.location }}</p>
+                            <p class="card-text text-primary">🌱 {{ event.category }}</p>
+                        </div>
                     </div>
                 </div>
-            </div>
             {% empty %}
                 <p class="text-muted">No sustainable events found. Check back soon!</p>
             {% endfor %}
         </div>
     </div>
 </div>
+
+<!-- Thank You Popup -->
+<div id="thank-you-popup" class="popup">
+    <div class="popup-content">
+        <h2 class="fw-bold text-success">🎉 Thank You for Attending! 🎉</h2>
+        <p>We appreciate your support for sustainable events. See you at the next one!</p>
+        <button class="btn btn-primary" onclick="closePopup()">OK</button>
+    </div>
+</div>
+
+<!-- Confetti Canvas -->
+<canvas id="confetti-canvas"></canvas>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.has("popup") && urlParams.get("popup") === "thank-you") {
+            document.getElementById("thank-you-popup").style.display = "flex";
+            startConfetti();
+        }
+    });
+
+    function closePopup() {
+        document.getElementById("thank-you-popup").style.display = "none";
+        stopConfetti();
+    }
+
+    // Confetti Effect
+    let confetti;
+    function startConfetti() {
+        confetti = new ConfettiGenerator({ target: "confetti-canvas" });
+        confetti.render();
+    }
+
+    function stopConfetti() {
+        confetti.clear();
+    }
+</script>
+
+<style>
+    /* Popup Styling */
+    .popup {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.7);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        z-index: 1000;
+    }
+
+    .popup-content {
+        background: white;
+        padding: 20px;
+        border-radius: 10px;
+        text-align: center;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+        animation: fadeIn 0.5s ease-in-out;
+    }
+
+    #confetti-canvas {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        pointer-events: none;
+        z-index: 999;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; transform: scale(0.9); }
+        to { opacity: 1; transform: scale(1); }
+    }
+</style>
+
+<!-- Confetti Library -->
+<script src="https://cdn.jsdelivr.net/npm/confetti-js"></script>
 
 {% endblock %}

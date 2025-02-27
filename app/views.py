@@ -11,9 +11,10 @@ from django.utils import timezone
 # model imports
 from app.models import Event, Booking, Student, SocietyRepresentative, Moderator, Developer, Location
 # backend imports
-from .forms import SignInForm, SignUpForm, BookingForm
 from mysite.qrgen import get_qrcode_from_response
-from .forms import SignInForm, SignUpForm, CreateEventForm
+from .forms import SignInForm, SignUpForm, CreateEventForm, BookingForm
+from django.http import HttpResponse
+from mysite.qrgen import get_qrcode_from_response  # Assuming get_qrcode_from_response is in qrcode_utils.py
 
 def index(request: HttpRequest) -> HttpResponse:
     events = Event.objects.all()
@@ -105,19 +106,57 @@ def my_events(request: HttpRequest) -> HttpResponse:
     return render(request, "my_events.html")
 
 def organise(request: HttpRequest) -> HttpResponse:
-    """Take data from the event creation form, and uses it to create and save an event.
-
+    """Allows you to add an event to the events table
+    
     @author    Tricia Sibley
     """
+    locations = Location.objects.all()  # Fetch locations for dropdown
     if request.method == "POST":
         form = CreateEventForm(request.POST, request.FILES)
         if form.is_valid():
-            form.save()
+            event = form.save(commit=False)  # Prevent immediate saving
+            event.organiser = SocietyRepresentative.objects.get(user=request.user)
+            event.location = Location.objects.get(name=request.POST["location"])
+            event.approved = False  # Auto-approve event
+            event.save()  # Save to database
+            return redirect("organise")  # Redirect to home page
         else:
+            print("Form errors:", form.errors)
             return render(request, "organise.html", {"form": form, "errors": form.errors})
+    
+    form = CreateEventForm()
+    events = Event.objects.all()  # Fetch all events
+    return render(request, "organise.html", {"events": events, "locations": locations})
+
+def edit_event(request, event_id):
+    """Allows you to change booking
+    
+    @author    Tilly Searle
+    """
+    # Fetch the event object using the event_id or return a 404 error if it doesn't exist
+    event = get_object_or_404(Event, id=event_id)
+    
+    # Fetch all locations for the dropdown
+    locations = Location.objects.all()
+    events = Event.objects.all()
+    # If the request method is POST, process the form data
+    if request.method == "POST":
+        form = CreateEventForm(request.POST, request.FILES, instance=event)
+        if form.is_valid():
+            location = Location.objects.get(name=request.POST["location"])
+            event.location = location
+            event.approved = False
+            event.save()
+            
+            return redirect("home")
+        else:
+            print("Form errors:", form.errors)
+            return render(request, "edit_event.html", {"form": form, "errors": form.errors, "locations": locations, "event": event, "events": events})
+
     else:
-        form = CreateEventForm()
-    return render(request, "organise.html")
+        form = CreateEventForm(instance=event)
+        return render(request, "edit_event.html", {"form": form, "locations": locations, "event": event, "events": events})
+
 
 #region Authentication
 def sign_in(request: HttpRequest) -> HttpResponse:
@@ -206,7 +245,22 @@ def password_reset_complete(request: HttpRequest) -> HttpResponse:
     @return    the page that shows the user that the reset was successful.
     @author    Maisie Marks
     """
-    return render(request, 'password_reset_complete.html')
+    return render(request, "password_reset_complete.html")
+
+def generate_qr(request):
+    """Generates a QR code from a given request.
+    
+    @return    An HTTP response containing the QR code.
+    @author    Tilly Searle
+    """
+    # Get the QR code image data from the request
+    qr_code_data = get_qrcode_from_response(request)
+    
+    if qr_code_data is None:
+        return HttpResponse("Invalid request", status=400)
+    
+    # Return the QR code as an image in the HTTP response
+    return HttpResponse(qr_code_data, content_type="image/jpeg")
 
 def my_events(request: HttpRequest) -> HttpResponse:
     """Shows the user's list of booked events
