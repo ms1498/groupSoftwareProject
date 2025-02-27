@@ -3,15 +3,15 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.forms import PasswordResetForm
-from django.contrib.auth.views import PasswordResetView, PasswordResetDoneView, PasswordResetConfirmView
+from django.contrib.auth.views import PasswordResetConfirmView
 from django.http import HttpResponse, HttpRequest
 from django.contrib.auth.decorators import login_required, permission_required
 from django.utils import timezone
 # model imports
-from app.models import Event, Booking, Student, SocietyRepresentative, Moderator, Developer, Location
+from app.models import Event, Booking, Student, SocietyRepresentative, Location
 # backend imports
-from .forms import SignInForm, SignUpForm, CreateEventForm
 from mysite.generators import get_qrcode_from_response
+from .forms import SignInForm, SignUpForm, CreateEventForm
 
 def index(request: HttpRequest) -> HttpResponse:
     """Display the home page."""
