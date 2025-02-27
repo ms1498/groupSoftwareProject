@@ -6,10 +6,10 @@ class Student(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     points = models.IntegerField()
     class Meta:
-        permissions = [("sign_up", "Can sign up for events")]
+        permissions = (("sign_up", "Can sign up for events"),)
     def save(self, *args, **kwargs):
         super(Student, self).save(*args, **kwargs)
-        signup_perm = Permission.objects.get(codename='sign_up')
+        signup_perm = Permission.objects.get(codename="sign_up")
         self.user.user_permissions.add(signup_perm)
 
 class Developer(models.Model):
@@ -20,23 +20,27 @@ class SocietyRepresentative(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     society_name = models.CharField(max_length=50)
     class Meta:
-        permissions = [("create_events","Can create events"),
-                      ("generate_qr", "Can generate QR codes for events they are running")]
+        permissions = (
+            ("create_events","Can create events"),
+            ("generate_qr", "Can generate QR codes for events they are running"),
+        )
     def save(self, *args, **kwargs):
         super(SocietyRepresentative, self).save(*args, **kwargs)
-        create_perm = Permission.objects.get(codename='create_events')
-        qr_perm = Permission.objects.get(codename='generate_qr')
+        create_perm = Permission.objects.get(codename="create_events")
+        qr_perm = Permission.objects.get(codename="generate_qr")
         self.user.user_permissions.add(create_perm, qr_perm)
 
 class Moderator(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     class Meta:
-        permissions = [("view_unapproved_events", "Can view currently unapproved events"),
-                       ("approve_events", "Can approve currently unapproved events")]
+        permissions = (
+            ("view_unapproved_events", "Can view currently unapproved events"),
+            ("approve_events", "Can approve currently unapproved events"),
+        )
     def save(self, *args, **kwargs):
         super(Moderator, self).save(*args, **kwargs)
-        view_perm = Permission.objects.get(codename='view_unapproved_events')
-        approve_perm = Permission.objects.get(codename='approve_events')
+        view_perm = Permission.objects.get(codename="view_unapproved_events")
+        approve_perm = Permission.objects.get(codename="approve_events")
         self.user.user_permissions.add(view_perm, approve_perm)
 
 class Location(models.Model):
