@@ -1,3 +1,4 @@
+"""Provide models to use for the database."""
 from django.db import models
 from django.contrib.auth.models import User, Permission
 from mysite.generators import generate_random_key
@@ -8,7 +9,7 @@ class Student(models.Model):
     class Meta:
         permissions = (("sign_up", "Can sign up for events"),)
     def save(self, *args, **kwargs):
-        super(Student, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
         signup_perm = Permission.objects.get(codename="sign_up")
         self.user.user_permissions.add(signup_perm)
 
@@ -25,7 +26,7 @@ class SocietyRepresentative(models.Model):
             ("generate_qr", "Can generate QR codes for events they are running"),
         )
     def save(self, *args, **kwargs):
-        super(SocietyRepresentative, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
         create_perm = Permission.objects.get(codename="create_events")
         qr_perm = Permission.objects.get(codename="generate_qr")
         self.user.user_permissions.add(create_perm, qr_perm)
@@ -38,7 +39,7 @@ class Moderator(models.Model):
             ("approve_events", "Can approve currently unapproved events"),
         )
     def save(self, *args, **kwargs):
-        super(Moderator, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
         view_perm = Permission.objects.get(codename="view_unapproved_events")
         approve_perm = Permission.objects.get(codename="approve_events")
         self.user.user_permissions.add(view_perm, approve_perm)
