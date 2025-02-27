@@ -23,8 +23,60 @@
             position: relative; /* Allow QR code to float */
             padding-right: 220px; /* Provide space for the QR code */
         }
+        
+        /* Popup modal */
+        .popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: auto;
+            max-width: 90%;
+            background: white;
+            display: none; /* Initially hidden */
+            z-index: 1000;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            padding: 20px;
+            border-radius: 10px;
+        }
+
+        /* Center QR code in popup */
+        .popup img {
+            display: block;
+            max-width: 400px;
+            width: auto;
+            height: auto;
+            margin: auto;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Popup hover effect */
+        .popup img:hover {
+            transform: scale(1.1);
+            transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+            border: 2px solid black;
+        }
+
+        /* Image hover effects */
+        img:hover{
+            transition: border 0.3s ease, box-shadow 0.3s ease;
+            border: solid black;
+        }
 
     </style>
+
+    <script>
+        function showPopup() {
+            console.log("Popup opened!");
+            document.getElementById('qr_code').style.display = 'block';
+        }
+
+        function exitPopup() {
+            console.log("Popup closed!");
+            document.getElementById('qr_code').style.display = 'none';
+        }
+    </script>
 
   <div class="row">
     <!-- Left Sidebar -->
@@ -46,7 +98,16 @@
         
         <!-- QR Code: Positioned in the top-right corner -->
         <div class="qr-code-container">
-            <img src="{% url 'generate_qr' %}?url=http://127.0.0.1:8000/?popup=thank-you" alt="QR Code" class="qr-code" />
+            <img src="{% url 'generate_qr' %}?url=http://127.0.0.1:8000/?popup=thank-you"
+                alt="QR Code"
+                class="qr-code"
+                onclick="showPopup()" />
+        </div>
+
+        <!-- Popup for the image -->
+        <div class="popup" id="qr_code">
+            <button class="popup-close" onclick="exitPopup('qr_code')">X</button>
+            <img src="{% url 'generate_qr' %}?url=http://127.0.0.1:8000/?popup=thank-you" alt="Full Size Image">
         </div>
 
         <form method="POST" enctype="multipart/form-data" action="{% url 'edit_event' event.id %}">
