@@ -49,12 +49,16 @@ def discover(request: HttpRequest) -> HttpResponse:
     booked_events = set()
     if request.user.is_authenticated and Student.objects.filter(user=request.user).exists():
         student = get_object_or_404(Student, user=request.user)
-        booked_events = set(Booking.objects.filter(student=student).values_list("event_id", flat=True))
-    elif Developer.objects.filter(user=request.user).exists():
-        student = get_object_or_404(Developer, user=request.user)
-        booked_events = set(Booking.objects.filter(student=student).values_list("event_id", flat=True))
+        filtered_bookings = Booking.objects.filter(student=student)
+        booked_events = set(filtered_bookings.values_list("event_id", flat=True))
+    
 
-    return render(request, "discover.html", {"events": events, "booked_events":booked_events, "societys":society_rep})  
+   return render(request, "discover.html", {
+        "events": events,
+        "booked_events": booked_events,
+        "societies": society_rep,
+    })
+
 
 def discover_shortcut(request: HttpRequest, event_id) -> HttpResponse:
     """Take the user straight to discover page with the chosen event open.
