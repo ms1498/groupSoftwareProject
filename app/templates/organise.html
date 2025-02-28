@@ -12,22 +12,18 @@
         <h4 class="text-center">Manage Events</h4>
         <button class="btn btn-primary w-100 my-2">➕ Add New Event</button>
         <hr>
-        <!-- Event buttons will be dynamically added here -->
-        <div id="textfile-buttons"></div>
+        {%for event in events%}
+          <a class="btn btn-primary w-100 my-2" href ="{% url 'edit_event' event.id %}">{{event.name}}</a>
+        {%endfor%}
       </div>
     </div>
 
     <!-- Right Content: Event Form -->
-    <div class="col-md-9">
+    <div class="col-md-9 pb-3">
       <div class="card p-4">
         <h2 class="text-center mb-4">Create Event</h2>
 
-        <h2 class="text-center mb-4">New Event</h2>
-
-        {% if errors %}
-          {{ errors }}
-        {% endif %}
-        <form method="POST" enctype="multipart/form-data">
+        <form method="POST" enctype="multipart/form-data" action="{% url 'organise' %}">
 	  {% csrf_token %}
           <!-- Event Name -->
           <div class="mb-3">
@@ -44,35 +40,47 @@
           <!-- Event Category -->
           <div class="mb-3">
             <label for="category" class="form-label">Select Category:</label>
-            <select class="form-select" id="category" name="category">
-              <option selected disabled>Choose a category</option>
-              <option value="poverty">End Poverty</option>
-              <option value="hunger">End Hunger</option>
-              <option value="health">Good Health</option>
-              <option value="education">Quality Education</option>
-              <option value="equality">Gender Equality</option>
-              <option value="water">Clean Water and Sanitation</option>
-              <option value="energy">Clean Energy</option>
-              <option value="growth">Economic Growth</option>
-              <option value="inequality">Reducing Inequalities</option>
-              <option value="cities">Sustainable Cities and Communities</option>
-              <option value="consumption">Responsible Consumption</option>
-              <option value="planet">Protect the Planet</option>
-              <option value="peace">Peace and Justice</option>
-              <option value="other">Other</option>
+            <select class="form-select" id="category" name="category" required>
+              <option selected disabled value="">Choose a category</option>
+              <option value="">All Categories</option>
+              <option value="End Poverty">End Poverty</option>
+              <option value="End Hunger">End Hunger</option>
+              <option value="Good Health">Good Health</option>
+              <option value="Quality Education">Quality Education</option>
+              <option value="Gender Equality">Gender Equality</option>
+              <option value="Clean Water and Sanitation">Clean Water and Sanitation</option>
+              <option value="Clean Energy">Clean Energy</option>
+              <option value="Economic Growth">Economic Growth</option>
+              <option value="Reducing Inequalities">Reducing Inequalities</option>
+              <option value="Sustainable Cities and Communities">Sustainable Cities and Communities</option>
+              <option value="Responsible Consumption">Responsible Consumption</option>
+              <option value="Protect the Planet">Protect the Planet</option>
+              <option value="Peace and Justice">Peace and Justice</option>
+              <option value="Other">Other</option>
             </select>
           </div>
 
           <!-- Event Description -->
           <div class="mb-3">
             <label for="event-description" class="form-label">Event Description:</label>
-            <textarea class="form-control" id="event-description" placeholder="Enter event details" name="description" rows="3"></textarea>
+            <textarea class="form-control" id="event-description" placeholder="Enter event details" name="description" rows="3" required></textarea>
+          </div>
+
+          <!-- Event location -->
+          <div class="mb-3">
+            <label for="location" class="form-label">Select location:</label>
+            <select class="form-select" name="location" required>
+              <option selected disabled value="">Choose a location</option>
+              {% for location in locations %}
+                <option value="{{ location.name }}">{{ location.name}}</option>
+              {% endfor %}
+            </select>
           </div>
 
           <!-- Image Upload -->
           <div class="mb-3">
             <label for="event-image" class="form-label">Upload Event Image:</label>
-            <input class="form-control" type="file" id="event-image" name="image" accept="image/*">
+            <input class="form-control" type="file" id="event-image" name="image" accept="image/*" required>
             <small class="text-muted">Accepted formats: JPG, PNG, GIF</small>
           </div>
 
@@ -87,28 +95,4 @@
   </div>
 </div>
 
-<!-- Ensure jQuery is loaded -->
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-<script>
-  $(document).ready(function() {
-        $.ajax({
-            url: '/events-data/',  // Django route
-            dataType: "text",
-            success: function(filecontent) {
-                console.log("File loaded successfully:", filecontent);
-                var lines = filecontent.split('\n');
-                $.each(lines, function(index, eventName) {
-                    eventName = eventName.trim();
-                    if (eventName !== '') {
-                        var button = '<button class="btn btn-primary w-100 my-1">' + eventName + '</button>';
-                        $("#textfile-buttons").append(button);
-                    }
-                });
-            },
-            error: function(xhr, status, error) {
-                console.error("Error loading file:", status, error);
-            }
-        });
-    });
-</script>
 {% endblock %}
