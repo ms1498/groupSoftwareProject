@@ -1,7 +1,9 @@
-from .models import Event, Booking, Location
+"""Forms used to take user input."""
 from django.contrib.auth.forms import UserCreationForm
+# pylint: disable=imported-auth-user
 from django.contrib.auth.models import User
 from django import forms
+from .models import Event, Booking, Location
 
 class SignInForm(forms.Form):
     """The template for the sign-in form.
@@ -15,7 +17,7 @@ class SignInForm(forms.Form):
     username = forms.CharField()
     password = forms.CharField(widget=forms.PasswordInput)
 
-class SignUpForm(UserCreationForm):
+class SignUpForm(UserCreationForm): # pylint: disable=too-many-ancestors
     """The template for the sign-up form.
 
     @param username:   The username
@@ -46,15 +48,20 @@ class CreateEventForm(forms.ModelForm):
     class Meta:
         model = Event
         fields = ("name", "date", "category", "description", "location", "image")
-    
+
     # Ensure location field uses a ModelChoiceField
-    location = forms.ModelChoiceField(queryset= Location.objects.all(), empty_label="Choose a location")
+    location = forms.ModelChoiceField(
+        queryset=Location.objects.all(),
+        empty_label="Choose a location",
+    )
 
 class BookingForm(forms.ModelForm):
     """Form for booking a place at an event.
-    
+
     @param event:       An approved event from the database
-    @author             Tilly Searle"""
+    @author             Tilly Searle
+    """
+
     event = forms.ModelChoiceField(queryset=Event.objects.filter(approved=True), required=True)
     class Meta:
         model = Booking
