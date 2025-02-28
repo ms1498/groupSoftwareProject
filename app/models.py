@@ -15,7 +15,11 @@ class Student(models.Model):
 
 class Developer(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    is_superuser = True
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        self.user.is_superuser = True
+        self.user.is_staff = True
+        self.user.save()
 
 class SocietyRepresentative(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
