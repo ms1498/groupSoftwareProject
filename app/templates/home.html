@@ -73,7 +73,7 @@
                     <div class="card-body">
                         <a href="{% url "discover_shortcut" event.id %}" style=text-decoration:none;>
                           <h5 class="card-title">{{ event.name }}</h5>
-                          <p class="card-text text-muted">{{ event.date }} • {{ event.location }}</p>
+                          <p class="card-text text-muted">{{ event.date }} • {{ event.location.name }}</p>
                           <p class="card-text text-primary">🌱 {{ event.category }}</p>
                         </a>
                     </div>
