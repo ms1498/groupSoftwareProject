@@ -82,7 +82,7 @@ DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.sqlite3",
         "NAME": BASE_DIR / "db.sqlite3",
-    }
+    },
 }
 
 
@@ -128,23 +128,28 @@ STATIC_URL = "static/"
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 # credentials for the email we will use to contact users
-email_creds = "email_creds.txt"
-def get_email_creds():
+EMAIL_CREDS = Path("email_creds.txt")
+def get_email_creds() -> (str, str):
+    """Get the credentials required to use email.
+
+    @author Maisie Marks
+    """
     try:
-        with open(email_creds, "r") as file:
+        with EMAIL_CREDS.open("r", encoding="utf-8") as file:
             lines = file.readlines()
             username = lines[0].strip()
             password = lines[1].strip()
             return username, password
-    except Exception as e:
+    except OSError as e:
         print(e)
         return None, None
-username, password = get_email_creds()
-#EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'     <- for deployment
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend' # <- for testing (prints to console)
-EMAIL_HOST = 'smtp.gmail.com'
+
+USERNAME, PASSWORD = get_email_creds()
+#EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"     <- for deployment
+EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend" # <- for testing
+EMAIL_HOST = "smtp.gmail.com"
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = username
-EMAIL_HOST_PASSWORD = password
-DEFAULT_FROM_EMAIL = "Uweave <"+str(username)+">"
+EMAIL_HOST_USER = USERNAME
+EMAIL_HOST_PASSWORD = PASSWORD
+DEFAULT_FROM_EMAIL = "Uweave <"+str(USERNAME)+">"
