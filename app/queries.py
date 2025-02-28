@@ -1,6 +1,6 @@
 from django.http import HttpResponse, HttpRequest
 # backend imports
-from mysite.qrgen import get_qrcode_from_response
+from mysite.generators import get_qrcode_from_response
 
 def qrgen(request: HttpRequest) -> HttpResponse:
     """Accepts a GET request with a 'url' argument, that argument will be processed into a QR code and a jpeg image returned to the frontend.
