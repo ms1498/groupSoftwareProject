@@ -154,7 +154,7 @@ def organise(request: HttpRequest) -> HttpResponse:
     if request.method == "POST":
         form = CreateEventForm(request.POST, request.FILES)
         if form.is_valid():
-            event = form.save(commit=False)  # Prevent immediate saving
+            event:Event = form.save(commit=False)  # Prevent immediate saving
             event.organiser = SocietyRepresentative.objects.get(user=request.user)
             event.location = Location.objects.get(name=request.POST["location"])
             event.approved = False  # Auto-approve event
@@ -164,8 +164,15 @@ def organise(request: HttpRequest) -> HttpResponse:
         return render(request, "organise.html", {"form": form, "errors": form.errors})
 
     form = CreateEventForm()
-    events = Event.objects.all()  # Fetch all events
-    return render(request, "organise.html", {"events": events, "locations": locations})
+    user_society_rep = get_object_or_404(SocietyRepresentative, user=request.user)
+    # Find all the organisers with the same society as the requesting user, and filter the events we display to only include ones submitted by any of them.
+    potential_organisers = list(SocietyRepresentative.objects.filter(society_name=user_society_rep.society_name))
+    events = list(Event.objects.all())
+    valid_events = []
+    for event in events:
+        if event.organiser in potential_organisers:
+            valid_events.append(event)
+    return render(request, "organise.html", {"events": valid_events, "locations": locations})
 
 def edit_event(request: HttpRequest, event_id: int) -> HttpResponse:
     """Display a page for editing events.
