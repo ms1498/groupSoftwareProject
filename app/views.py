@@ -184,7 +184,16 @@ def edit_event(request: HttpRequest, event_id: int) -> HttpResponse:
 
     # Fetch all locations for the dropdown
     locations = Location.objects.all()
-    events = Event.objects.all()
+
+    user_society_rep = get_object_or_404(SocietyRepresentative, user=request.user)
+    # Find all the organisers with the same society as the requesting user, and filter the events we display to only include ones submitted by any of them.
+    potential_organisers = list(SocietyRepresentative.objects.filter(society_name=user_society_rep.society_name))
+    events = list(Event.objects.all())
+    valid_events = []
+    for event in events:
+        if event.organiser in potential_organisers:
+            valid_events.append(event)
+    
     # If the request method is POST, process the form data
     if request.method == "POST":
         form = CreateEventForm(request.POST, request.FILES, instance=event)
@@ -201,14 +210,14 @@ def edit_event(request: HttpRequest, event_id: int) -> HttpResponse:
             "errors": form.errors,
             "locations": locations,
             "event": event,
-            "events": events,
+            "events": valid_events,
         })
     form = CreateEventForm(instance=event)
     return render(request, "edit_event.html", {
         "form": form,
         "locations": locations,
         "event": event,
-        "events": events,
+        "events": valid_events,
     })
 
 
