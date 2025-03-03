@@ -100,6 +100,7 @@
             padding: 30px;
             border-radius: 10px;
             width: 60%;
+            height: 90%;
             max-width: 600px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             text-align: center;
@@ -184,7 +185,7 @@
             </select>
             <select class="form-select searcher mx-2" name="society">
                 <option value="">All Societies</option>
-                {% for society in societys %}
+                {% for society in societies %}
                     <option value="{{ society.society_name }}">{{ society.society_name}}</option>
                 {% endfor %}
             </select>
