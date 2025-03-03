@@ -229,7 +229,6 @@ def edit_event(request: HttpRequest, event_id: int) -> HttpResponse:
         "events": valid_events,
     })
 
-
 #region Authentication
 def sign_in(request: HttpRequest) -> HttpResponse:
     """Take the username and password and check whether it matches a user in the system.
