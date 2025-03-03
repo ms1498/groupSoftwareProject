@@ -206,7 +206,7 @@ def edit_event(request: HttpRequest, event_id: int) -> HttpResponse:
     for event in events:
         if event.organiser in potential_organisers:
             valid_events.append(event)
-    
+
     # If the request method is POST, process the form data
     if request.method == "POST":
         form = CreateEventForm(request.POST, request.FILES, instance=event)
