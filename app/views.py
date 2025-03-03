@@ -172,9 +172,11 @@ def organise(request: HttpRequest) -> HttpResponse:
 
     form = CreateEventForm()
     user_society_rep = get_object_or_404(SocietyRepresentative, user=request.user)
-    # Find all the organisers with the same society as the requesting user, and filter the events we display to
-    # only include ones submitted by any of them.
-    potential_organisers = list(SocietyRepresentative.objects.filter(society_name=user_society_rep.society_name))
+    # Find all the organisers with the same society as the requesting user, and filter the events
+    # we display to only include ones submitted by any of them.
+    potential_organisers = list(
+        SocietyRepresentative.objects.filter(society_name=user_society_rep.society_name)
+    )
     events = list(Event.objects.all())
     valid_events = []
     for event in events:
@@ -194,9 +196,11 @@ def edit_event(request: HttpRequest, event_id: int) -> HttpResponse:
     locations = Location.objects.all()
 
     user_society_rep = get_object_or_404(SocietyRepresentative, user=request.user)
-    # Find all the organisers with the same society as the requesting user, and filter the events we display to
-    # only include ones submitted by any of them.
-    potential_organisers = list(SocietyRepresentative.objects.filter(society_name=user_society_rep.society_name))
+    # Find all the organisers with the same society as the requesting user, and filter the events
+    # we display to only include ones submitted by any of them.
+    potential_organisers = list(
+        SocietyRepresentative.objects.filter(society_name=user_society_rep.society_name)
+    )
     events = list(Event.objects.all())
     valid_events = []
     for event in events:
