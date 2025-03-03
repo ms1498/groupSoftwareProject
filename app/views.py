@@ -90,7 +90,11 @@ def discover_shortcut(request: HttpRequest, event_id) -> HttpResponse:
     if request.user.is_authenticated:
         student = get_object_or_404(Student, user=request.user)
         booked_events = set(Booking.objects.filter(student=student).values_list("event_id", flat=True))
-    return render(request, "discover.html", {"events": events, "booked_events":booked_events, "societys":society_rep}) 
+    return render(request,"discover.html", {
+        "events": events,
+        "booked_events":booked_events,
+        "societys":society_rep
+    }) 
 
 @login_required
 def register_event(request: HttpRequest, event_id: int) -> HttpResponse:
@@ -165,7 +169,8 @@ def organise(request: HttpRequest) -> HttpResponse:
 
     form = CreateEventForm()
     user_society_rep = get_object_or_404(SocietyRepresentative, user=request.user)
-    # Find all the organisers with the same society as the requesting user, and filter the events we display to only include ones submitted by any of them.
+    # Find all the organisers with the same society as the requesting user, and filter the events we display to
+    # only include ones submitted by any of them.
     potential_organisers = list(SocietyRepresentative.objects.filter(society_name=user_society_rep.society_name))
     events = list(Event.objects.all())
     valid_events = []
@@ -186,7 +191,8 @@ def edit_event(request: HttpRequest, event_id: int) -> HttpResponse:
     locations = Location.objects.all()
 
     user_society_rep = get_object_or_404(SocietyRepresentative, user=request.user)
-    # Find all the organisers with the same society as the requesting user, and filter the events we display to only include ones submitted by any of them.
+    # Find all the organisers with the same society as the requesting user, and filter the events we display to
+    # only include ones submitted by any of them.
     potential_organisers = list(SocietyRepresentative.objects.filter(society_name=user_society_rep.society_name))
     events = list(Event.objects.all())
     valid_events = []
