@@ -36,7 +36,7 @@ def discover(request: HttpRequest) -> HttpResponse:
     events = events.filter(approved="1",  date__date__gte=timezone.now().date())
 
     #region Event filtering
-    # filter out events explicitly excluded by the user
+    # Filter out events explicitly excluded by the user
     if category:
         events = events.filter(category=category)
 
@@ -46,28 +46,28 @@ def discover(request: HttpRequest) -> HttpResponse:
     if society:
         society_obj = society_rep.filter(society_name=society).first()
         events = events.filter(organiser=society_obj)
-    # filter by user search query - events will be removed if they have no relation to the search,
+    # Filter by user search query - events will be removed if they have no relation to the search,
     # and remainders will be ordered by priority - a full name match is higher priority than a
     # partial match for example.
     if search_query:
         events_and_priorities: list[tuple[Event, int]] = []
         priority: int = 0
         for event in events:
-            # query in event name
+            # Query in event name
             if search_query.lower() in event.name.lower():
                 priority = 0
-            # query in event description
+            # Query in event description
             elif search_query.lower() in event.description.lower():
                 priority = 1
-            # at least one word from query in event name
+            # At least one word from query in event name
             elif True in [query in event.name.lower() for query in search_query.split(" ")]:
                 priority = 2
-            # query in society name
+            # Query in society name
             else:
                 priority = 4
                 if search_query.lower() in event.organiser.society_name.lower():
                     priority = 3
-            # filter out undesired events
+            # Filter out undesired events
             if priority < 4:
                 events_and_priorities.append((event, priority))
         events: list[Event] = quicksort(events_and_priorities)
@@ -101,7 +101,7 @@ def discover_shortcut(request: HttpRequest, event_id: int) -> HttpResponse:
     society = event.organiser.society_name
 
     #region Event filtering
-    # filter out events explicitly excluded by the user
+    # Filter out events explicitly excluded by the user
     if category:
         events = events.filter(category=category)
 
@@ -110,29 +110,29 @@ def discover_shortcut(request: HttpRequest, event_id: int) -> HttpResponse:
 
     if society:
         events = events.filter(organiser=society_rep.filter(society_name=society).first())
-    # filter by user search query - events will be removed if they have no relation to the search,
+    # Filter by user search query - events will be removed if they have no relation to the search,
     # and remainders will be ordered by priority - a full name match is higher priority than a
     # partial match for example.
     if search_query:
         events_and_priorities: list[tuple[Event, int]] = []
         priority: int = 0
         for event in events:
-            # query in event name
+            # Query in event name
             if search_query.lower() in event.name.lower():
                 priority = 0
-            # query in event description
+            # Query in event description
             elif search_query.lower() in event.description.lower():
                 priority = 1
-            # at least one word from query in event name
+            # At least one word from query in event name
             elif True in [query in event.name.lower() for query in search_query.split(" ")]:
                 priority = 2
-            # query in society name
+            # Query in society name
             else:
                 priority = 4
                 society_name = SocietyRepresentative.objects.get(user=event.organiser).society_name
                 if search_query.lower() in society_name.lower():
                     priority = 3
-            # filter out undesired events
+            # Filter out undesired events
             if priority < 4:
                 events_and_priorities.append((event, priority))
         events: list[Event] = quicksort(events_and_priorities)
