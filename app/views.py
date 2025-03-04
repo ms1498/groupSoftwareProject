@@ -161,7 +161,7 @@ def organise(request: HttpRequest) -> HttpResponse:
     if request.method == "POST":
         form = CreateEventForm(request.POST, request.FILES)
         if form.is_valid():
-            event:Event = form.save(commit=False)  # Prevent immediate saving
+            event: Event = form.save(commit=False)  # Prevent immediate saving
             event.organiser = SocietyRepresentative.objects.get(user=request.user)
             event.location = Location.objects.get(name=request.POST["location"])
             event.approved = False  # Auto-approve event
