@@ -34,7 +34,7 @@ def discover(request: HttpRequest) -> HttpResponse:
     society_rep = SocietyRepresentative.objects.all()
     events = Event.objects.all()
     events = events.filter(approved="1",  date__date__gte=timezone.now().date())
-    
+
     #region Event filtering
     # filter out events explicitly excluded by the user
     if category:
@@ -109,8 +109,7 @@ def discover_shortcut(request: HttpRequest, event_id: int) -> HttpResponse:
         events = events.filter(date__date=event_date)
 
     if society:
-        society_obj = society_rep.filter(society_name=society).first()
-        events = events.filter(organiser=society_obj)
+        events = events.filter(organiser=society_rep.filter(society_name=society).first())
     # filter by user search query - events will be removed if they have no relation to the search,
     # and remainders will be ordered by priority - a full name match is higher priority than a
     # partial match for example.
