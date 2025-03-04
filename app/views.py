@@ -415,5 +415,4 @@ def my_events(request: HttpRequest) -> HttpResponse:
         bookings = Booking.objects.none()
 
     return render(request, "my_events.html", {"bookings": bookings})
-
 #endregion

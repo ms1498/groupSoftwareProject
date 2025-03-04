@@ -8,9 +8,11 @@ def quicksort(input: list[tuple[any, int]]) -> list[any]:
     @returns: a list of sorted items.
     @author: Seth Mallinson
     """
-    if len(input) <= 1:
-        return input
+    if len(input) == 0:
+        return []
+    if len(input) == 1:
+        return [input[0][0]]
     pivot = input[0]
     left = [element for element in input[1:] if element[1] <= pivot[1]]
     right = [element for element in input[1:] if element[1] > pivot[1]]
-    return quicksort(left) + [pivot[1]] + quicksort(right)
+    return quicksort(left) + [pivot[0]] + quicksort(right)
