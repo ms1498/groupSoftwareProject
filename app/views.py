@@ -121,6 +121,26 @@ def register_event(request: HttpRequest, event_id: int) -> HttpResponse:
     return redirect("discover")
 
 @login_required
+def unregister_event(request: HttpRequest, event_id: int) -> HttpResponse:
+    """Remove an event from the booking table for the logged-in student.
+
+    Only perform the booking if the event is already booked.
+
+    @author Maisie Marks
+    """
+    # Get the event
+    event = get_object_or_404(Event, id=event_id)
+    if not event.approved:
+        return HttpResponse(status=403)
+    # Get the student
+    student = get_object_or_404(Student, user=request.user)
+    # Check if the booking exists to be deleted
+    booking = Booking.objects.filter(student=student, event=event)
+    if booking.exists():
+        booking.delete()
+    return redirect("discover")
+
+@login_required
 @permission_required("app.approve_events", raise_exception=True)
 def approval_page(request: HttpRequest) -> HttpResponse:
     """Show a list of unnapproved events.
