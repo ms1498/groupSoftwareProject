@@ -128,14 +128,13 @@ def unregister_event(request: HttpRequest, event_id: int) -> HttpResponse:
 
     @author Maisie Marks
     """
-    # Get the event - if it is not approved, do not allow the booking to take place
+    # Get the event
     event = get_object_or_404(Event, id=event_id)
     if not event.approved:
         return HttpResponse(status=403)
     # Get the student
     student = get_object_or_404(Student, user=request.user)
-
-    # Check if the booking already exists
+    # Check if the booking exists to be deleted
     if Booking.objects.filter(student=student, event=event).exists():
         Booking.objects.filter(student=student, event=event).delete()
     return redirect("discover")
