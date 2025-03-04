@@ -11,6 +11,7 @@ from django.utils import timezone
 from app.models import Event, Booking, Student, SocietyRepresentative, Location
 # backend imports
 from mysite.generators import get_qrcode_from_response
+from mysite.algorithms import quicksort
 from .forms import SignInForm, SignUpForm, CreateEventForm
 
 def index(request: HttpRequest) -> HttpResponse:
@@ -34,9 +35,7 @@ def discover(request: HttpRequest) -> HttpResponse:
     events = Event.objects.all()
     events = events.filter(approved="1",  date__date__gte=timezone.now().date())
 
-    if search_query:
-        events = events.filter(name__icontains=search_query)
-
+    # filter out events explicitly excluded by the user
     if category:
         events = events.filter(category=category)
 
@@ -46,6 +45,28 @@ def discover(request: HttpRequest) -> HttpResponse:
     if society:
         society_obj = society_rep.filter(society_name=society).first()
         events = events.filter(organiser=society_obj)
+    # filter by user search query - events will be removed if they have no relation to the search,
+    # and remainders will be ordered by relevance.
+    events_and_priorities: list[tuple[Event, int]] = []
+    priority: int = 0
+    for event in events:
+        # query in event name
+        if search_query.lower() in event.name.lower():
+            priority = 0
+        # query in event description
+        elif search_query.lower() in event.description.lower():
+            priority = 1
+        # at least one word from query in event name
+        elif True in [query in event.name.lower() for query in search_query.split(" ")]:
+            priority = 2
+        # query in society name
+        elif search_query.lower() in society_obj.society_name:
+            priority = 3
+        else:
+            priority = 4
+        if priority < 4:
+            events_and_priorities.append((event, priority))
+    events = quicksort(events_and_priorities)
 
     booked_events = set()
     if request.user.is_authenticated and Student.objects.filter(user=request.user).exists():
@@ -53,9 +74,7 @@ def discover(request: HttpRequest) -> HttpResponse:
         filtered_bookings = Booking.objects.filter(student=student)
         booked_events = set(filtered_bookings.values_list("event_id", flat=True))
 
-
     return render(request, "discover.html", {
-
         "events": events,
         "booked_events": booked_events,
         "societies": society_rep,
@@ -67,6 +86,7 @@ def discover_shortcut(request: HttpRequest, event_id: int) -> HttpResponse:
     @author  Maisie Marks
     """
     events = Event.objects.all()
+    events = events.filter(approved="1",  date__date__gte=timezone.now().date())
     event = get_object_or_404(Event, id=event_id)
     society_rep = SocietyRepresentative.objects.all()
 
@@ -75,9 +95,7 @@ def discover_shortcut(request: HttpRequest, event_id: int) -> HttpResponse:
     category = event.category
     society = event.organiser.society_name
 
-    if search_query:
-        events = events.filter(name__icontains=search_query)
-
+    # filter out events explicitly excluded by the user
     if category:
         events = events.filter(category=category)
 
@@ -87,6 +105,28 @@ def discover_shortcut(request: HttpRequest, event_id: int) -> HttpResponse:
     if society:
         society_obj = society_rep.filter(society_name=society).first()
         events = events.filter(organiser=society_obj)
+    # filter by user search query - events will be removed if they have no relation to the search,
+    # and remainders will be ordered by relevance.
+    events_and_priorities: list[tuple[Event, int]] = []
+    priority: int = 0
+    for event in events:
+        # query in event name
+        if search_query.lower() in event.name.lower():
+            priority = 0
+        # query in event description
+        elif search_query.lower() in event.description.lower():
+            priority = 1
+        # at least one word from query in event name
+        elif True in [query in event.name.lower() for query in search_query.split(" ")]:
+            priority = 2
+        # query in society name
+        elif search_query.lower() in society_obj.society_name:
+            priority = 3
+        else:
+            priority = 4
+        if priority < 4:
+            events_and_priorities.append((event, priority))
+    events = quicksort(events_and_priorities)
 
     booked_events = set()
     if request.user.is_authenticated:
