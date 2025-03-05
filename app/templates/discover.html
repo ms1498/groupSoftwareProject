@@ -229,11 +229,11 @@
                         {% csrf_token %}
                         <button type="submit" class="btn register-btn">Unregister Here</button>
                     </form>
-                {%elif user.is_authenticated %}
-                <form id="registerForm{{ forloop.counter }}" method="POST" action="{% url 'register_event' event.id %}">
-                    {% csrf_token %}
-                    <button type="submit" class="btn register-btn">Register Here</button>
-                </form>
+                {%elif user.is_authenticated and perms.app.sign_up %}
+                    <form id="registerForm{{ forloop.counter }}" method="POST" action="{% url 'register_event' event.id %}">
+                        {% csrf_token %}
+                        <button type="submit" class="btn register-btn">Register Here</button>
+                    </form>
                 {%else%}
                     <p class="text-muted text-center">Sign in to register!</p>
                 {%endif%}
