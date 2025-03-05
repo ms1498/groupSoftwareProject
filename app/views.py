@@ -91,7 +91,7 @@ def discover_shortcut(request: HttpRequest, event_id: int) -> HttpResponse:
     @author  Maisie Marks
     """
     events = Event.objects.all()
-    events = events.filter(approved="1",  date__date__gte=timezone.now().date())
+    events = events.filter(approved="1", date__date__gte=timezone.now().date())
     event = get_object_or_404(Event, id=event_id)
     society_rep = SocietyRepresentative.objects.all()
 
