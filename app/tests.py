@@ -1,7 +1,3 @@
-from django.test import TestCase
-from django.http import HttpResponse
+"""Test cases for the app."""
 
-
-def index(request):
-    return HttpResponse("Hello, world. You're at the admin index.")
 # Create your tests here.

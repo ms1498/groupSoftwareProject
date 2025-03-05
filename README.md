@@ -19,3 +19,5 @@ To test logging in to the website, click the "Sign In" button in the navbar when
 To test creating an event, log in as a Society Representative (username: artSoc password: pencilsAndPaint), click on either the Organise button in the navbar or the Create an Event button on the home page, then enter the event details and click Submit.
 To test registering for an event, log in as a Student (username: sampleStudent password: studentPassword), click on Discover Events, then click on an existing event, then click Register Here. 
 To test logging in as a moderator, use this login (username: tillysearle password: myPassword123), and you should be able to see the Approve Events button in the middle of the screen.
+# UWeave
+The `resources/` directory contains an example database, along with further information.
