@@ -11,7 +11,7 @@ from django.utils import timezone
 from app.models import Event, Booking, Student, SocietyRepresentative, Location
 # backend imports
 from mysite.generators import get_qrcode_from_response
-from mysite.algorithms import quicksort
+from mysite.algorithms import get_event_search_priority
 from .forms import SignInForm, SignUpForm, CreateEventForm
 
 def index(request: HttpRequest) -> HttpResponse:
@@ -26,7 +26,7 @@ def discover(request: HttpRequest) -> HttpResponse:
 
     @author  Tilly Searle
     """
-    search_query = request.GET.get("search_query", "")
+    search_query = request.GET.get("search_query", "").lower()
     event_date = request.GET.get("event_date", "")
     category = request.GET.get("category", "")
     society = request.GET.get("society", "")
@@ -46,32 +46,14 @@ def discover(request: HttpRequest) -> HttpResponse:
     if society:
         society_obj = society_rep.filter(society_name=society).first()
         events = events.filter(organiser=society_obj)
-    # Filter by user search query - events will be removed if they have no relation to the search,
-    # and remainders will be ordered by priority - a full name match is higher priority than a
-    # partial match for example.
+    
+    # Filter and sort by user search query - events will be removed if they have no relation to
+    # the search, and remainders will be ordered by priority - a full name match is higher priority
+    # than one word of the query matching for example.
     if search_query:
-        events_and_priorities: list[tuple[Event, int]] = []
-        priority: int = 0
-        for event in events:
-            # Query in event name
-            if search_query.lower() in event.name.lower():
-                priority = 0
-            # Query in event description
-            elif search_query.lower() in event.description.lower():
-                priority = 1
-            # At least one word from query in event name
-            elif True in [query in event.name.lower() for query in search_query.split(" ")]:
-                priority = 2
-            # Query in society name
-            else:
-                priority = 4
-                if search_query.lower() in event.organiser.society_name.lower():
-                    priority = 3
-            # Filter out undesired events
-            if priority < 4:
-                events_and_priorities.append((event, priority))
-        events: list[Event] = quicksort(events_and_priorities)
-    #endregion
+        events_for_ordering = [[event, search_query, 0] for event in events]
+        events_for_ordering.sort(key=get_event_search_priority)
+        events = [thing[0] for thing in events_for_ordering if thing[2] < 4]
 
     booked_events = set()
     if request.user.is_authenticated and Student.objects.filter(user=request.user).exists():
@@ -95,7 +77,7 @@ def discover_shortcut(request: HttpRequest, event_id: int) -> HttpResponse:
     event = get_object_or_404(Event, id=event_id)
     society_rep = SocietyRepresentative.objects.all()
 
-    search_query = event.name
+    search_query = event.name.lower()
     event_date = event.date
     category = event.category
     society = event.organiser.society_name
@@ -110,33 +92,14 @@ def discover_shortcut(request: HttpRequest, event_id: int) -> HttpResponse:
 
     if society:
         events = events.filter(organiser=society_rep.filter(society_name=society).first())
-    # Filter by user search query - events will be removed if they have no relation to the search,
-    # and remainders will be ordered by priority - a full name match is higher priority than a
-    # partial match for example.
+    
+    # Filter and sort by user search query - events will be removed if they have no relation to
+    # the search, and remainders will be ordered by priority - a full name match is higher priority
+    # than one word of the query matching for example.
     if search_query:
-        events_and_priorities: list[tuple[Event, int]] = []
-        priority: int = 0
-        for event in events:
-            # Query in event name
-            if search_query.lower() in event.name.lower():
-                priority = 0
-            # Query in event description
-            elif search_query.lower() in event.description.lower():
-                priority = 1
-            # At least one word from query in event name
-            elif True in [query in event.name.lower() for query in search_query.split(" ")]:
-                priority = 2
-            # Query in society name
-            else:
-                priority = 4
-                society_name = SocietyRepresentative.objects.get(user=event.organiser).society_name
-                if search_query.lower() in society_name.lower():
-                    priority = 3
-            # Filter out undesired events
-            if priority < 4:
-                events_and_priorities.append((event, priority))
-        events: list[Event] = quicksort(events_and_priorities)
-    #endregion
+        events_for_ordering = [[event, search_query, 0] for event in events]
+        events_for_ordering.sort(key=get_event_search_priority)
+        events = [thing[0] for thing in events_for_ordering if thing[2] < 4]
 
     booked_events = set()
     if request.user.is_authenticated:

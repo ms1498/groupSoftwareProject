@@ -1,17 +1,37 @@
 """A file to store algorithms with inspecific use cases."""
 
-def quicksort(unsorted_list: list[tuple[any, int]]) -> list[any]:
-    """Sorts a list of items with priorities by priority, and returns a list of just the items.
+from app.models import Event, SocietyRepresentative
+
+def get_event_search_priority(data: list[Event | str | int]) -> int:
+    """Get the priority of an event (paired with a user query) for ordering search results. The priority passed in is modified in-place.
     
-    @param: input - a list of tuples of items and priorities.
-    @returns: a list of sorted items.
+    @param: data - a list containing an event, the user's query (str) and the event's priority (int).
+    @returns: the priority of the event as an integer, from 0-4.
     @author: Seth Mallinson
     """
-    if len(unsorted_list) == 0:
-        return []
-    if len(unsorted_list) == 1:
-        return [unsorted_list[0][0]]
-    pivot = unsorted_list[0]
-    left = [element for element in unsorted_list[1:] if element[1] <= pivot[1]]
-    right = [element for element in unsorted_list[1:] if element[1] > pivot[1]]
-    return quicksort(left) + [pivot[0]] + quicksort(right)
+    event = data[0]
+    search_query = data[1]
+    # if there is no search query, no ordering needs to be applied by us.
+    if not search_query:
+        data[2] = 0
+        return 0
+
+    society_name = event.organiser.society_name
+    # Query is in event name.
+    if search_query in event.name.lower():
+        data[2] = 0
+        return 0
+    # Query is in event description.
+    elif search_query in event.description.lower():
+        data[2] = 1
+        return 1
+    # True if at least one word in the user's query is in the event name.
+    elif any(query in event.name.lower() for query in search_query.split(" ")):
+        data[2] = 2
+        return 2
+    # Query is in society name.
+    elif search_query in society_name.lower():
+        data[2] = 3
+        return 3
+    data[2] = 4
+    return 4
