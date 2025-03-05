@@ -1,4 +1,4 @@
-"""A file to store algorithms with inspecific use cases."""
+"""Algorithms for general use."""
 
 from app.models import Event
 
