@@ -91,9 +91,11 @@ class Booking(models.Model):
         bookings = bookings.filter(event=self.event)
         self.event.expected_attendance = bookings.count()
         self.event.save()
+
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
         self.update_expected_attendance()
+
     def delete(self, *args, **kwargs):
         super().delete(*args, **kwargs)
         self.update_expected_attendance()
