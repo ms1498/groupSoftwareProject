@@ -279,6 +279,9 @@ def sign_in(request: HttpRequest) -> HttpResponse:
         form = SignInForm()
     return render(request, "sign_in.html", {"form": form})
 
+def terms_and_conditions(request: HttpRequest) -> HttpResponse:
+    return render(request, "terms_and_conditions.html")
+
 def sign_out(request: HttpRequest) -> HttpResponse:
     """Log the user out of the current session and redirect them to the homepage.
 
