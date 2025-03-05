@@ -46,7 +46,7 @@ def discover(request: HttpRequest) -> HttpResponse:
     if society:
         society_obj = society_rep.filter(society_name=society).first()
         events = events.filter(organiser=society_obj)
-    
+
     # Filter and sort by user search query - events will be removed if they have no relation to
     # the search, and remainders will be ordered by priority - a full name match is higher priority
     # than one word of the query matching for example.
@@ -92,7 +92,7 @@ def discover_shortcut(request: HttpRequest, event_id: int) -> HttpResponse:
 
     if society:
         events = events.filter(organiser=society_rep.filter(society_name=society).first())
-    
+
     # Filter and sort by user search query - events will be removed if they have no relation to
     # the search, and remainders will be ordered by priority - a full name match is higher priority
     # than one word of the query matching for example.
