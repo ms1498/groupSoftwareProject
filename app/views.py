@@ -280,6 +280,12 @@ def sign_in(request: HttpRequest) -> HttpResponse:
     return render(request, "sign_in.html", {"form": form})
 
 def terms_and_conditions(request: HttpRequest) -> HttpResponse:
+    """Allows users to look at the terms and conditions.
+
+    @param     user's request
+    @return    renders homepage
+    @author    Tilly Searle
+    """
     return render(request, "terms_and_conditions.html")
 
 def sign_out(request: HttpRequest) -> HttpResponse:
