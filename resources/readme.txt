@@ -7,7 +7,7 @@ Marrow_Soc		marrow.representative@uweave.online placeholderpassword
 Star_Soc		star.representative@uweave.online   placeholderpassword
 Safe_Soc		safe.representative@uweave.online   placeholderpassword
 Moderator 		moderator@uweave.online             placeholderpassword
-Developer       developer@uweave.online             placeholderpassword
+Developer       	developer@uweave.online             placeholderpassword
 Superuser               -	                        placeholderpassword
 
 Before running the webserver:
