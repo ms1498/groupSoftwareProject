@@ -94,5 +94,4 @@ class Booking(models.Model):
         max_length=2,
         choices=AttendanceStatus,
         default=AttendanceStatus.ABSENT
-    )
-    
+    )    
