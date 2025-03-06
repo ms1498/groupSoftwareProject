@@ -83,5 +83,12 @@ class Event(models.Model):
 class Booking(models.Model):
     """Model for a Booking, which stores that a student has booked to attend an event."""
 
+    class AttendanceStatus(models.TextChoices):
+        """Enum which stores the possible attendance states of a booking."""
+        ABSENT = "AB"
+        START = "ST"
+        END = "EN"
     student = models.ForeignKey(Student, on_delete=models.CASCADE)
     event = models.ForeignKey(Event, on_delete=models.CASCADE)
+    attended = models.CharField(max_length=2, choices=AttendanceStatus, default=AttendanceStatus.ABSENT)
+    
