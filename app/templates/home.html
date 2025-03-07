@@ -9,34 +9,14 @@
         <p class="lead text-muted">Find exciting campus events while supporting our Carbon Zero 2030 goal! 🌍</p>
 
         <!-- Event Categories (Sustainability Focused) -->
-        <div class="d-flex justify-content-center gap-3 mt-3" >
-            <a href="{% url "category_shortcut" category='End Poverty' %}" style=text-decoration:none;>
-            <button class="btn btn-outline-primary">🤝 End Poverty</button> </a>
-            <a href="{% url "category_shortcut" category='End Hunger' %}" style=text-decoration:none;>
-            <button class="btn btn-outline-primary">🌾 End Hunger</button> </a>
-            <a href="{% url "category_shortcut" category='Good Health' %}" style=text-decoration:none;>
-            <button class="btn btn-outline-primary">⚕️ Good Health</button> </a>
-            <a href="{% url "category_shortcut" category='Quality Education' %}" style=text-decoration:none;>
-            <button class="btn btn-outline-primary">🎓 Quality Education</button> </a>
-            <a href="{% url "category_shortcut" category='Gender Equaluty' %}" style=text-decoration:none;>
-            <button class="btn btn-outline-primary">⚕️ Gender Equality</button> </a>
-            <a href="{% url "category_shortcut" category='Clean Water and Sanitation' %}" style=text-decoration:none;>
-            <button class="btn btn-outline-primary">🚰 Clean Water and Sanitation</button> </a>
-            <a href="{% url "category_shortcut" category='Clean Energy' %}" style=text-decoration:none;>
-            <button class="btn btn-outline-primary">⚡ Clean Energy</button> </a>
-            </div><div style="padding-top: 0.5%;">
-            <a href="{% url "category_shortcut" category='Economic Growth' %}" style=text-decoration:none;>
-            <button class="btn btn-outline-primary">📈 Economic Growth</button> </a>
-            <a href="{% url "category_shortcut" category='Reducing Inequalities' %}" style=text-decoration:none;>
-            <button class="btn btn-outline-primary">⚖️ Reducing Inequalities</button> </a>
-            <a href="{% url "category_shortcut" category='Sustainable Cities and Communities' %}" style=text-decoration:none;>
-            <button class="btn btn-outline-primary">🏙️ Sustainable Cities and Communities</button> </a>
-            <a href="{% url "category_shortcut" category='Responsible Consumption' %}" style=text-decoration:none;>
-            <button class="btn btn-outline-primary">♻️ Responsible Consumption</button> </a>
-            <a href="{% url "category_shortcut" category='Protect the Planet' %}" style=text-decoration:none;>
-            <button class="btn btn-outline-primary">🌍 Protect the Planet</button> </a>
-            <a href="{% url "category_shortcut" category='Peace and Justice' %}" style=text-decoration:none;>
-            <button class="btn btn-outline-primary">☮️ Peace and Justice</button> </a>
+        <div class="d-flex flex-wrap justify-content-center gap-3 mt-3">
+            {% for category in categories %}
+                <a href="{% url "category_shortcut" category=category %}" class="text-decoration-none">
+                    <button class="btn btn-outline-primary">
+                        {{ category }}
+                    </button>
+                </a>
+            {% endfor %}
         </div>
     </div>
 

@@ -19,7 +19,23 @@ def index(request: HttpRequest) -> HttpResponse:
     ordered_events = Event.objects.all().order_by("date")
     date_now = timezone.now().date()
     events = ordered_events.filter(approved="1",  date__date__gte=date_now)[:3]
-    return render(request, "home.html", {"events":events})
+    categories = [
+        "🤝 End Poverty",
+        "🌾 End Hunger",
+        "⚕️ Good Health",
+        "🎓 Quality Education",
+        "⚕️ Gender Equality",
+        "🚰 Clean Water and Sanitation",
+        "⚡ Clean Energy",
+        "📈 Economic Growth",
+        "⚖️ Reducing Inequalities",
+        "🏙️ Sustainable Cities and Communities",
+        "♻️ Responsible Consumption",
+        "🌍 Protect the Planet",
+        "☮️ Peace and Justice",
+    ]
+    return render(request, "home.html", {"events": events, "categories": categories})
+
 
 def discover(request: HttpRequest) -> HttpResponse:
     """Filter events based on user input.
