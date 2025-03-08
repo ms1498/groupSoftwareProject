@@ -148,9 +148,10 @@ def unregister_event(request: HttpRequest, event_id: int) -> HttpResponse:
     # Get the student
     student = get_object_or_404(Student, user=request.user)
     # Check if the booking exists to be deleted
-    booking = Booking.objects.filter(student=student, event=event)
-    if booking.exists():
-        booking.delete()
+    bookings = Booking.objects.filter(student=student, event=event)
+    if bookings.exists():
+        for booking in bookings:
+            booking.delete()
     return redirect("discover")
 
 @login_required
