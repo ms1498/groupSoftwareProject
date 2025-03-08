@@ -1,0 +1,44 @@
+<head>
+    <!-- Displays a leaderboard of students and their points 
+
+    @author Lia Fisher
+    -->
+</head>
+
+{% extends "base.html" %}
+{% block title %}Leaderboard - UWeave{% endblock %}
+{% block content %}
+<body>
+    <table class="table">
+        <tr>
+            <th>Rank</th>
+            <th>Student</th>
+            <th>Points</th>
+        </tr>
+        {% for student in students %}
+            <tr>
+                <td>{{ forloop.counter }}</td>
+                <td>{{ student.user.username }}</td>
+                <td>{{ student.points }}</td>
+            </tr>
+        {% endfor %}
+        <tr>
+            <td>...</td>
+            <td>...</td>
+            <td>...</td>
+        </tr>
+        {% if not top_ten %}
+            <tr>
+                <td>{{ rank }}</td>
+                <td>{{ user.username }}</td>
+                <td>{{ points }}</td>
+            </tr>
+            <tr>
+                <td>...</td>
+                <td>...</td>
+                <td>...</td>
+            </tr>
+        {% endif %}
+    </table>
+</body>
+{% endblock %}

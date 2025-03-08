@@ -52,6 +52,11 @@
                         </a>
                     </li>
                     <li>
+                        <a href="{% url "leaderboard" %}" class="nav-link text-white">
+                            <h3 class="bi d-block mx-auto mb-2">Leaderboard</h3>
+                        </a>
+                    </li>
+                    <li>
                         <a href="{% url "sign-in" %}" class="nav-link text-white">
                             {% if user.is_authenticated %}
                                 <h3 class="bi d-block mx-auto mb-2">{{ user.username }}</h3>

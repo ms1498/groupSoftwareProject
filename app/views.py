@@ -397,4 +397,20 @@ def my_events(request: HttpRequest) -> HttpResponse:
         bookings = Booking.objects.none()
 
     return render(request, "my_events.html", {"bookings": bookings})
+
+def leaderboard(request: HttpRequest) -> HttpResponse:
+    """Displays a leaderboard of students based on their points
+    
+    @author  Lia Fisher
+    """
+
+    students = Student.objects.all().order_by("-points")[:10]
+    top_ten = True
+    if request.user not in students:
+        top_ten = False
+        all_students = Student.objects.all().order_by("-points")
+        current_student = Student.objects.get(user = request.user)
+        points = current_student.points
+        rank = all_students.filter(points__gte = current_student.points).count()
+    return render(request, "leaderboard.html", {"students": students, "top_ten": top_ten, "rank": rank, "points": points})
 #endregion
