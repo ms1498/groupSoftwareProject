@@ -11,6 +11,7 @@ from django.utils import timezone
 from app.models import Event, Booking, Student, SocietyRepresentative, Location
 # backend imports
 from mysite.generators import get_qrcode_from_response
+from mysite.algorithms import get_event_search_priority
 from .forms import SignInForm, SignUpForm, CreateEventForm
 
 def index(request: HttpRequest) -> HttpResponse:
@@ -25,7 +26,7 @@ def discover(request: HttpRequest) -> HttpResponse:
 
     @author  Tilly Searle
     """
-    search_query = request.GET.get("search_query", "")
+    search_query = request.GET.get("search_query", "").lower()
     event_date = request.GET.get("event_date", "")
     category = request.GET.get("category", "")
     society = request.GET.get("society", "")
@@ -34,9 +35,8 @@ def discover(request: HttpRequest) -> HttpResponse:
     events = Event.objects.all()
     events = events.filter(approved="1",  date__date__gte=timezone.now().date())
 
-    if search_query:
-        events = events.filter(name__icontains=search_query)
-
+    #region Event filtering
+    # Filter out events explicitly excluded by the user
     if category:
         events = events.filter(category=category)
 
@@ -47,15 +47,21 @@ def discover(request: HttpRequest) -> HttpResponse:
         society_obj = society_rep.filter(society_name=society).first()
         events = events.filter(organiser=society_obj)
 
+    # Filter and sort by user search query - events will be removed if they have no relation to
+    # the search, and remainders will be ordered by priority - a full name match is higher priority
+    # than one word of the query matching for example.
+    if search_query:
+        events_for_ordering = [[event, search_query, 0] for event in events]
+        events_for_ordering.sort(key=get_event_search_priority)
+        events = [thing[0] for thing in events_for_ordering if thing[2] < 4]
+
     booked_events = set()
     if request.user.is_authenticated and Student.objects.filter(user=request.user).exists():
         student = get_object_or_404(Student, user=request.user)
         filtered_bookings = Booking.objects.filter(student=student)
         booked_events = set(filtered_bookings.values_list("event_id", flat=True))
 
-
     return render(request, "discover.html", {
-
         "events": events,
         "booked_events": booked_events,
         "societies": society_rep,
@@ -67,17 +73,17 @@ def discover_shortcut(request: HttpRequest, event_id: int) -> HttpResponse:
     @author  Maisie Marks
     """
     events = Event.objects.all()
+    events = events.filter(approved="1", date__date__gte=timezone.now().date())
     event = get_object_or_404(Event, id=event_id)
     society_rep = SocietyRepresentative.objects.all()
 
-    search_query = event.name
+    search_query = event.name.lower()
     event_date = event.date
     category = event.category
     society = event.organiser.society_name
 
-    if search_query:
-        events = events.filter(name__icontains=search_query)
-
+    #region Event filtering
+    # Filter out events explicitly excluded by the user
     if category:
         events = events.filter(category=category)
 
@@ -85,8 +91,15 @@ def discover_shortcut(request: HttpRequest, event_id: int) -> HttpResponse:
         events = events.filter(date__date=event_date)
 
     if society:
-        society_obj = society_rep.filter(society_name=society).first()
-        events = events.filter(organiser=society_obj)
+        events = events.filter(organiser=society_rep.filter(society_name=society).first())
+
+    # Filter and sort by user search query - events will be removed if they have no relation to
+    # the search, and remainders will be ordered by priority - a full name match is higher priority
+    # than one word of the query matching for example.
+    if search_query:
+        events_for_ordering = [[event, search_query, 0] for event in events]
+        events_for_ordering.sort(key=get_event_search_priority)
+        events = [thing[0] for thing in events_for_ordering if thing[2] < 4]
 
     booked_events = set()
     if request.user.is_authenticated:
@@ -135,9 +148,10 @@ def unregister_event(request: HttpRequest, event_id: int) -> HttpResponse:
     # Get the student
     student = get_object_or_404(Student, user=request.user)
     # Check if the booking exists to be deleted
-    booking = Booking.objects.filter(student=student, event=event)
-    if booking.exists():
-        booking.delete()
+    bookings = Booking.objects.filter(student=student, event=event)
+    if bookings.exists():
+        for booking in bookings:
+            booking.delete()
     return redirect("discover")
 
 @login_required
@@ -384,5 +398,4 @@ def my_events(request: HttpRequest) -> HttpResponse:
         bookings = Booking.objects.none()
 
     return render(request, "my_events.html", {"bookings": bookings})
-
 #endregion
