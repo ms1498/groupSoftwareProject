@@ -6,9 +6,15 @@
 <div class="container mt-5">
     <style>
         /* Position the QR code in the top right of the form */
-        .qr-code-container {
+        .qr-code-start-container {
         position: absolute;
-        top: 50px; /* Adjust this to control vertical spacing */
+        top: 100px; /* Adjust this to control vertical spacing */
+        right: 20px; /* Adjust this to control horizontal spacing */
+        z-index: 10; /* Ensure it is on top of other elements */
+        }
+        .qr-code-end-container {
+        position: absolute;
+        top: 350px; /* Adjust this to control vertical spacing */
         right: 20px; /* Adjust this to control horizontal spacing */
         z-index: 10; /* Ensure it is on top of other elements */
         }
@@ -60,14 +66,20 @@
     </style>
 
     <script>
-        function showPopup() {
+        function showStartPopup() {
             console.log("Popup opened!");
-            document.getElementById('qr_code').style.display = 'block';
+            document.getElementById("qr_code").style.display = 'block';
+            document.getElementById("full-size-qrcode").setAttribute("src", eventStartURL);
+        }
+        function showEndPopup() {
+            console.log("Popup opened!");
+            document.getElementById("qr_code").style.display = 'block';
+            document.getElementById("full-size-qrcode").setAttribute("src", eventEndURL);
         }
 
         function exitPopup() {
             console.log("Popup closed!");
-            document.getElementById('qr_code').style.display = 'none';
+            document.getElementById("qr_code").style.display = 'none';
         }
     </script>
 
@@ -90,17 +102,28 @@
         <h2 class="text-center mb-4">Edit Event: <strong class="text-primary">{{ event.name }}</strong></h2>
         
         <!-- QR Code: Positioned in the top-right corner -->
-        <div class="qr-code-container">
-            <img src="{% url 'generate_qr' %}?url=http://127.0.0.1:8000/?popup=thank-you"
+        <div class="qr-code-start-container">
+            <p> Event Start QR code: </p>
+            <img src="uninitialised"
+                id="qrcode-container-start"
                 alt="QR Code"
                 class="qr-code qr-normal"
-                onclick="showPopup()" />
+                onclick="showStartPopup()" />
+        </div>
+
+        <div class="qr-code-end-container">
+          <p> Event End QR code: </p>
+            <img src="uninitialised"
+                id="qrcode-container-end"
+                alt="QR Code"
+                class="qr-code qr-normal"
+                onclick="showEndPopup()" />
         </div>
 
         <!-- Popup for the image -->
         <div class="popup" id="qr_code">
             <button class="popup-close" onclick="exitPopup('qr_code')">X</button>
-            <img src="{% url 'generate_qr' %}?url=http://127.0.0.1:8000/?popup=thank-you" alt="Full Size Image">
+            <img src="uninitialised" id="full-size-qrcode", alt="Full Size Image">
         </div>
 
         <form method="POST" enctype="multipart/form-data" action="{% url 'edit_event' event.id %}">
@@ -188,5 +211,11 @@
       inputField.style.display = "block";
     }
 </script>
-
+<!-- JavaScript to load qrcode images -->
+<script>
+  eventStartURL = "http://" + window.location.host + "/qrgen?url=" + encodeURIComponent(window.location.host + "/home?id=" + "{{ event.id }}" + "&end=0&key=" + "{{ event.start_key }}");
+  document.getElementById("qrcode-container-start").setAttribute("src", eventStartURL);
+  eventEndURL = "http://" + window.location.host + "/qrgen?url=" + encodeURIComponent(window.location.host + "/home?id=" + "{{ event.id }}" + "&end=1&key=" + "{{ event.end_key }}");
+  document.getElementById("qrcode-container-end").setAttribute("src", eventEndURL);
+</script>
 {% endblock %}
