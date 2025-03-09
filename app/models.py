@@ -89,7 +89,7 @@ class Booking(models.Model):
 class Badge(models.Model):
     """Model to show a table of badges"""
     badgeName = models.CharField(max_length=50, primary_key=True)
-    badgeDescription = models.CharField(max_length=50)
+    badgeDescription = models.CharField(max_length=100)
     badgeImage = models.ImageField(upload_to="badges_images/", null=True, blank=True)
 
 class Award(models.Model):
