@@ -222,7 +222,7 @@
                 <p class="popup-date"><strong>Society:</strong> {{ event.organiser.society_name }}</p>
                 <p class="popup-description">{{ event.description }}</p>
                 <div class="popup-image">
-                    <img src="{{ event.image.url }}" alt="Event Image" class="img-fluid" style="max-height: 50%; max-width: onerror="this.src='/static/default-event.jpg';">
+                    <img src="{{ event.image.url }}" alt="Event Image" class="img-fluid" style="max-height: 50%; max-width: 50%;" onerror="this.src='/static/default-event.jpg';">
                 </div>
                 {% if user.is_authenticated and event.id in booked_events %}
                     <p class="text-muted text-center"><strong>Event Booked</strong></p>
