@@ -408,10 +408,16 @@ def leaderboard(request: HttpRequest) -> HttpResponse:
     top_ten = True
     rank = -1
     points = -1
-    if Student.objects.filter(user=request.user).exists() and Student.objects.get(user = request.user) not in students:
+    is_student = Student.objects.filter(user=request.user).exists()
+    if is_student and Student.objects.get(user = request.user) not in students:
         top_ten = False
         current_student = Student.objects.get(user = request.user)
         points = current_student.points
         rank = all_students.filter(points__gte = current_student.points).count()
-    return render(request, "leaderboard.html", {"students": students, "top_ten": top_ten, "rank": rank, "points": points})
+    return render(request, "leaderboard.html", {
+        "students": students, 
+        "top_ten": top_ten, 
+        "rank": rank, 
+        "points": points
+    })
 #endregion
