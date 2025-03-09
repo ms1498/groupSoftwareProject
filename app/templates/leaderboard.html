@@ -5,40 +5,99 @@
     -->
 </head>
 
+<style>
+    .leaderboard {
+        margin-top: 3%;
+        margin-bottom: 3%;
+        margin-left: auto;
+        margin-right: auto;
+        width: 70%;
+    }
+
+    .popup {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 50%;
+        max-width: 90%;
+        background: white;
+        display: none; /* Initially hidden */
+        z-index: 1000;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        border: solid black;
+        padding: 20px;
+        border-radius: 10px;
+    }
+
+    .popup-close {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 20px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: #888;
+        }
+</style>
+
+<script>
+    function showPopup(row) {
+        document.getElementById("popup" + row).style.display = "flex";
+    }
+
+    function exitPopup(row) {
+        document.getElementById("popup" + row).style.display = "none";
+    }
+</script>
+
 {% extends "base.html" %}
 {% block title %}Leaderboard - UWeave{% endblock %}
 {% block content %}
 <body>
-    <table class="table">
-        <tr>
-            <th>Rank</th>
-            <th>Student</th>
-            <th>Points</th>
-        </tr>
-        {% for student in students %}
-            <tr>
-                <td>{{ forloop.counter }}</td>
-                <td>{{ student.user.username }}</td>
-                <td>{{ student.points }}</td>
-            </tr>
-        {% endfor %}
-        <tr>
-            <td>...</td>
-            <td>...</td>
-            <td>...</td>
-        </tr>
-        {% if not top_ten %}
-            <tr>
-                <td>{{ rank }}</td>
-                <td>{{ user.username }}</td>
-                <td>{{ points }}</td>
-            </tr>
-            <tr>
-                <td>...</td>
-                <td>...</td>
-                <td>...</td>
-            </tr>
-        {% endif %}
-    </table>
+    <div class="leaderboard">
+        <table class="table table-striped table-hover table-bordered border-primary">
+            <thead>
+                <tr class="table-active">
+                    <th>#</th>
+                    <th>Student</th>
+                    <th>Points</th>
+                </tr>
+            </thead>
+            <tbody class="table-group-divider">
+                {% for student in students %}
+                    <tr onclick="showPopup('{{ forloop.counter }}')">
+                        <td>{{ forloop.counter }}</td>
+                        <td>{{ student.user.username }}</td>
+                        <td>{{ student.points }}</td>
+                    </tr>
+
+                    <!-- Pop-up -->
+                    <div class="popup" id="popup{{ forloop.counter }}">
+                        <button class="popup-close" onclick="exitPopup('{{ forloop.counter }}')">X</button>
+                        <p>{{ student.user.username }}</p>
+                    </div>
+                {% endfor %}
+                <tr>
+                    <td>...</td>
+                    <td>...</td>
+                    <td>...</td>
+                </tr>
+                {% if not top_ten %}
+                    <tr>
+                        <td>{{ rank }}</td>
+                        <td>{{ user.username }}</td>
+                        <td>{{ points }}</td>
+                    </tr>
+                    <tr>
+                        <td>...</td>
+                        <td>...</td>
+                        <td>...</td>
+                    </tr>
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
 </body>
 {% endblock %}

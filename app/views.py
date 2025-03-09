@@ -403,12 +403,13 @@ def leaderboard(request: HttpRequest) -> HttpResponse:
     
     @author  Lia Fisher
     """
-
-    students = Student.objects.all().order_by("-points")[:10]
+    all_students = Student.objects.all().order_by("-points")
+    students = all_students[:10]
     top_ten = True
-    if request.user not in students:
+    rank = -1
+    points = -1
+    if Student.objects.filter(user=request.user).exists() and Student.objects.get(user = request.user) not in students:
         top_ten = False
-        all_students = Student.objects.all().order_by("-points")
         current_student = Student.objects.get(user = request.user)
         points = current_student.points
         rank = all_students.filter(points__gte = current_student.points).count()
