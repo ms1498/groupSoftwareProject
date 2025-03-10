@@ -11,6 +11,7 @@ urlpatterns = [
     path("unregister_event/<int:event_id>/", views.unregister_event, name="unregister_event"),
     path("discover", views.discover, name="discover"),
     path("discover/<int:event_id>/", views.discover_shortcut, name="discover_shortcut"),
+    path("discover/<str:category>/", views.category_shortcut, name="category_shortcut"),
     path("approval", views.approval_page, name="approval"),
     path("approve_event/<int:event_id>/", views.approve_event, name="approve_event"),
     path("my-events", views.my_events, name="my-events"),

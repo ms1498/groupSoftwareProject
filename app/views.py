@@ -19,7 +19,23 @@ def index(request: HttpRequest) -> HttpResponse:
     ordered_events = Event.objects.all().order_by("date")
     date_now = timezone.now().date()
     events = ordered_events.filter(approved="1",  date__date__gte=date_now)[:3]
-    return render(request, "home.html", {"events":events})
+    categories = [
+        ["🤝", "End Poverty"],
+        ["🌾", "End Hunger"],
+        ["⚕️", "Good Health"],
+        ["🎓", "Quality Education"],
+        ["⚕️", "Gender Equality"],
+        ["🚰", "Clean Water and Sanitation"],
+        ["⚡", "Clean Energy"],
+        ["📈", "Economic Growth"],
+        ["⚖️", "Reducing Inequalities"],
+        ["🏙️", "Sustainable Cities and Communities"],
+        ["♻️", "Responsible Consumption"],
+        ["🌍", "Protect the Planet"],
+        ["☮️", "Peace and Justice"]
+    ]
+    return render(request, "home.html", {"events": events, "categories": categories})
+
 
 def discover(request: HttpRequest) -> HttpResponse:
     """Filter events based on user input.
@@ -101,6 +117,32 @@ def discover_shortcut(request: HttpRequest, event_id: int) -> HttpResponse:
         events_for_ordering.sort(key=get_event_search_priority)
         events = [thing[0] for thing in events_for_ordering if thing[2] < 4]
 
+    booked_events = set()
+    if request.user.is_authenticated:
+        student = get_object_or_404(Student, user=request.user)
+        filtered_bookings = Booking.objects.filter(student=student)
+        booked_events = set(filtered_bookings.values_list("event_id", flat=True))
+    return render(request, "discover.html", {
+        "events": events,
+        "booked_events": booked_events,
+        "societys": society_rep,
+    })
+
+def category_shortcut(request: HttpRequest, category: str) -> HttpResponse:
+    """Take the user straight to discover page with the chosen category.
+
+    @author  Maisie Marks
+    """
+    # Get all currently approved events and their organisers
+    events = Event.objects.all()
+    events = events.filter(approved="1", date__date__gte=timezone.now().date())
+    society_rep = SocietyRepresentative.objects.all()
+
+    # Filter events by category type
+    if category:
+        events = events.filter(category=category)
+
+    # Fetching user bookings to be rendered
     booked_events = set()
     if request.user.is_authenticated:
         student = get_object_or_404(Student, user=request.user)
