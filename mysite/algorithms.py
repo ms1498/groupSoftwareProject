@@ -5,7 +5,7 @@ from datetime import timedelta
 from django.utils import timezone
 from django.http import HttpRequest
 from django.shortcuts import get_object_or_404
-from app.models import Event, Student, Booking, Attendance
+from app.models import Event, Student, Booking
 
 def get_event_search_priority(data: list[Event | str | int]) -> int:
     """Get the priority of an event (paired with a user query) for ordering search results.
@@ -70,7 +70,7 @@ def process_qrcode_scan(request: HttpRequest) -> tuple[bool, str] | None:
         event = Event.objects.filter(pk=event_id, end_key=key).first()
         booking = Booking.objects.filter(student=student, event=event).first()
         # Register the student's attendance
-        if (booking.attended == Booking.AttendanceStatus.ABSENT):
+        if booking.attended == Booking.AttendanceStatus.ABSENT:
             # Field may be null - was that really a good idea?
             if event.actual_attendance:
                 event.actual_attendance += 1

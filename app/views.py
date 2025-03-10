@@ -35,7 +35,11 @@ def index(request: HttpRequest) -> HttpResponse:
         ["🌍", "Protect the Planet"],
         ["☮️", "Peace and Justice"]
     ]
-    return render(request, "home.html", {"events": events, "categories": categories, "qrcode_info":qrcode_info})
+    return render(request, "home.html", {
+        "events": events,
+        "categories": categories,
+        "qrcode_info":qrcode_info
+    })
 
 
 def discover(request: HttpRequest) -> HttpResponse:
