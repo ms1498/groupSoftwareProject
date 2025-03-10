@@ -238,9 +238,9 @@ def edit_event(request: HttpRequest, event_id: int) -> HttpResponse:
     )
     events = list(Event.objects.all())
     valid_events = []
-    for event in events:
-        if event.organiser in potential_organisers:
-            valid_events.append(event)
+    for event_iterator in events:
+        if event_iterator.organiser in potential_organisers:
+            valid_events.append(event_iterator)
 
     # If the request method is POST, process the form data
     if request.method == "POST":
@@ -293,6 +293,15 @@ def sign_in(request: HttpRequest) -> HttpResponse:
     else:
         form = SignInForm()
     return render(request, "sign_in.html", {"form": form})
+
+def terms_and_conditions(request: HttpRequest) -> HttpResponse:
+    """Allows users to look at the terms and conditions.
+
+    @param     user's request
+    @return    renders homepage
+    @author    Tilly Searle
+    """
+    return render(request, "terms_and_conditions.html")
 
 def sign_out(request: HttpRequest) -> HttpResponse:
     """Log the user out of the current session and redirect them to the homepage.
