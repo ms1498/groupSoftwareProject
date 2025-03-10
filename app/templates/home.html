@@ -10,15 +10,14 @@
         <p class="lead text-muted">Find exciting campus events while supporting our Carbon Zero 2030 goal! 🌍</p>
 
         <!-- Event Categories (Sustainability Focused) -->
-        <div class="d-flex justify-content-center gap-3 mt-3">
-            <button class="btn btn-outline-primary">🤝 End Poverty</button>
-            <button class="btn btn-outline-primary">♻️ Responsible Consumption</button>
-            <button class="btn btn-outline-primary">🚰 Clean Water and Sanitation</button>
-            <button class="btn btn-outline-primary">🤝 End Poverty</button>
-            <button class="btn btn-outline-primary">💪 Good Health</button>
-            <button class="btn btn-outline-primary">🌍 Low Carbon</button>
-            <button class="btn btn-outline-primary">⚕️ Good Health</button>
-        </div>
+        <div class="d-flex flex-wrap justify-content-center gap-3 mt-3">
+            {% for emoji, category in categories %}
+                <a href="{% url "category_shortcut" category=category %}" class="text-decoration-none">
+                    <button class="btn btn-outline-primary">
+                        {{emoji}} {{ category }}
+                    </button>
+                </a>
+            {% endfor %}
     </div>
 
     <div class="mt-4 text-center">

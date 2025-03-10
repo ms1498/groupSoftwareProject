@@ -83,10 +83,20 @@ class Event(models.Model):
 class Booking(models.Model):
     """Model for a Booking, which stores that a student has booked to attend an event."""
 
+    class AttendanceStatus(models.TextChoices): # pylint: disable=too-many-ancestors
+        """Enum which stores the possible attendance states of a booking."""
+        ABSENT = "AB"
+        START = "ST"
+        END = "EN"
+        ATTENDED = "AT"
     student = models.ForeignKey(Student, on_delete=models.CASCADE)
     event = models.ForeignKey(Event, on_delete=models.CASCADE)
-    start_attendance = models.BooleanField(default=False)
-    end_attendance = models.BooleanField(default=False)
+    attended = models.CharField(
+        max_length=2,
+        choices=AttendanceStatus,
+        default=AttendanceStatus.ABSENT
+    )
+
     def update_expected_attendance(self):
         """Update the expected_attendance field of the linked event."""
         bookings = Booking.objects.all()
