@@ -67,7 +67,10 @@ def process_qrcode_scan(request: HttpRequest) -> tuple[bool, str] | None:
 
     if error is None:
         student = get_object_or_404(Student, user=request.user)
-        event = Event.objects.filter(pk=event_id, end_key=key).first()
+        if event_end:
+            event = Event.objects.filter(pk=event_id, end_key=key).first()
+        else:
+            event = Event.objects.filter(pk=event_id, start_key=key).first()
         booking = Booking.objects.filter(student=student, event=event).first()
         # Register the student's attendance
         if booking.attended == Booking.AttendanceStatus.ABSENT:
