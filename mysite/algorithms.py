@@ -89,12 +89,18 @@ def process_qrcode_scan(request: HttpRequest) -> tuple[bool, str] | None:
     
     # Register the student's attendance
     if ((not booking.start_attendance) and (not booking.end_attendance)):
-        event.actual_attendance += 1
+        # Field may be null - is this really a good idea?
+        if event.actual_attendance:
+            event.actual_attendance += 1
+        else:
+            event.actual_attendance = 1
     if event_end:
         booking.end_attendance = True
     else:
         booking.start_attendance = True
+    booking.save()
 
     # This is a good student. They get points. Yay.
     student.points += points_reward
+    student.save()
     return (True, "🎉 Thank You for Attending! 🎉")

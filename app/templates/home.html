@@ -98,27 +98,12 @@
 
 <!-- Confetti Canvas -->
 <canvas id="confetti-canvas"></canvas>
+<!-- Confetti Library -->
+<script src="https://cdn.jsdelivr.net/npm/confetti-js"></script>
 
 <script>
-    document.addEventListener("DOMContentLoaded", function() {
-        const urlParams = new URLSearchParams(window.location.search);
-        if (urlParams.has("popup") && urlParams.get("popup") === "thank-you") {
-            document.getElementById("thank-you-popup").style.display = "flex";
-            startConfetti();
-        }
-    });
-
-    if ({{ qrcode_info }} != null) {
-        document.getElementById("thank-you-header").textContent = qrcode_info[1];
-    }
-
-    function closePopup() {
-        document.getElementById("thank-you-popup").style.display = "none";
-        stopConfetti();
-    }
-
     // Confetti Effect
-    let confetti;
+    let confetti = null;
     function startConfetti() {
         confetti = new ConfettiGenerator({ target: "confetti-canvas" });
         confetti.render();
@@ -127,6 +112,29 @@
     function stopConfetti() {
         confetti.clear();
     }
+
+    document.addEventListener("DOMContentLoaded", function() {
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.has("popup") && urlParams.get("popup") === "thank-you") {
+            document.getElementById("thank-you-popup").style.display = "flex";
+            startConfetti();
+        }
+    });
+
+    if ("{{ qrcode_info }}" != "None") {
+        success = Array.from("{{ qrcode_info }}".slice(1, -1).split(", "))[0];
+        document.getElementById("thank-you-header").textContent = Array.from("{{ qrcode_info }}".slice(1, -1).split(", "))[1].slice(6, -6);
+        document.getElementById("thank-you-popup").style.display = "flex";
+        if (success == "True") {
+            startConfetti();
+        }
+    }
+
+    function closePopup() {
+        document.getElementById("thank-you-popup").style.display = "none";
+        stopConfetti();
+    }
+
 </script>
 
 <style>
@@ -169,7 +177,5 @@
     }
 </style>
 
-<!-- Confetti Library -->
-<script src="https://cdn.jsdelivr.net/npm/confetti-js"></script>
 
 {% endblock %}
