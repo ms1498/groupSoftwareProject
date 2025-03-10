@@ -5,7 +5,7 @@ from datetime import timedelta
 from django.utils import timezone
 from django.http import HttpRequest
 from django.shortcuts import get_object_or_404
-from app.models import Event, Student, Booking
+from app.models import Event, Student, Booking, Attendance
 
 def get_event_search_priority(data: list[Event | str | int]) -> int:
     """Get the priority of an event (paired with a user query) for ordering search results.
@@ -70,16 +70,28 @@ def process_qrcode_scan(request: HttpRequest) -> tuple[bool, str] | None:
         event = Event.objects.filter(pk=event_id, end_key=key).first()
         booking = Booking.objects.filter(student=student, event=event).first()
         # Register the student's attendance
-        if ((not booking.start_attendance) and (not booking.end_attendance)):
+        if (booking.attended == Booking.AttendanceStatus.ABSENT):
             # Field may be null - was that really a good idea?
             if event.actual_attendance:
                 event.actual_attendance += 1
             else:
                 event.actual_attendance = 1
-        if event_end:
-            booking.end_attendance = True
+        # Update the booking's status
+        now_attended_start = (
+            booking.attended == Booking.AttendanceStatus.START
+            or not event_end
+        )
+        attended_end = (
+            booking.attended == Booking.AttendanceStatus.END
+            or event_end
+        )
+        if now_attended_start and attended_end:
+            booking.attended = Booking.AttendanceStatus.ATTENDED
+        elif now_attended_start:
+            booking.attended = Booking.AttendanceStatus.START
         else:
-            booking.start_attendance = True
+            booking.attended = Booking.AttendanceStatus.END
+
         booking.save()
 
         # This is a good student. They get points. Yay.
@@ -119,6 +131,11 @@ def validate_checkin_request(event_id: int, is_end: bool, key: str, student: Stu
         return "This event has not started yet."
 
     # User already scanned this code = fail
-    if (is_end and booking.end_attendance) or ((not is_end) and booking.start_attendance):
+    will_attend_twice = (
+        booking.attended == Booking.AttendanceStatus.ATTENDED
+        or booking.attended == Booking.AttendanceStatus.START and not is_end
+        or booking.attended == Booking.AttendanceStatus.END and is_end
+    )
+    if will_attend_twice:
         return "You have already attended this event."
     return None
