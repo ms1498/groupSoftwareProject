@@ -52,9 +52,18 @@ def process_qrcode_scan(request: HttpRequest) -> tuple[bool, str] | None:
     @author: Seth Mallinson
     """
     try:
-        error = validate_checkin_request(request)
+        event_id: int = int(request.GET["id"])
+        event_end: bool = int(request.GET["end"])
+        key: str = request.GET["key"]
     except KeyError:
         return None
+
+    # check if the requested user is a student here
+    student = Student.objects.filter(user=request.user).first()
+    if student is None:
+        error = "You must be signed in as a student to register attendance."
+    else:
+        error = validate_checkin_request(event_id, event_end, key, student)
 
     if error is None:
         event_id: int = int(request.GET["id"])
@@ -63,9 +72,9 @@ def process_qrcode_scan(request: HttpRequest) -> tuple[bool, str] | None:
         student = get_object_or_404(Student, user=request.user)
         event = Event.objects.filter(pk=event_id, end_key=key).first()
         booking = Booking.objects.filter(student=student, event=event).first()
-            # Register the student's attendance
+        # Register the student's attendance
         if ((not booking.start_attendance) and (not booking.end_attendance)):
-            # Field may be null - is this really a good idea?
+            # Field may be null - was that really a good idea?
             if event.actual_attendance:
                 event.actual_attendance += 1
             else:
@@ -85,23 +94,15 @@ def process_qrcode_scan(request: HttpRequest) -> tuple[bool, str] | None:
         return (True, "🎉 Thank You for Attending! 🎉")
     return (False, error)
 
-def validate_checkin_request(request: HttpRequest) -> str | None:
+def validate_checkin_request(event_id: int, is_end: bool, key: str, student: Student) -> str | None:
     """If the request is invalid, this finds out why and returns the error.
     
     @param: request - the HttpRequest
     @returns: a string of the error that was found, or None.
     @author: Seth Mallinson
     """
-    event_id: int = int(request.GET["id"])
-    event_end: bool = int(request.GET["end"])
-    key: str = request.GET["key"]
-    # Not logged in = fail
-    if not request.user.is_authenticated:
-        return "You must be signed in to register attendance."
-    student = get_object_or_404(Student, user=request.user)
-
     # No matching event = fail
-    if event_end:
+    if is_end:
         valid_events = Event.objects.filter(pk=event_id, end_key=key)
     else:
         valid_events = Event.objects.filter(pk=event_id, start_key=key)
@@ -119,6 +120,6 @@ def validate_checkin_request(request: HttpRequest) -> str | None:
         return "This event has not started yet."
 
     # User already scanned this code = fail
-    if (event_end and booking.end_attendance) or ((not event_end) and booking.start_attendance):
+    if (is_end and booking.end_attendance) or ((not is_end) and booking.start_attendance):
         return "You have already attended this event."
     return None
