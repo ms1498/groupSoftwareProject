@@ -46,7 +46,7 @@
                             </a>
                         </li>
                     {% endif %}
-                    {% if not perms.app.create_events %}
+                    {% if user.is_authenticated and not perms.app.create_events %}
                     <li>
                         <a href="{% url 'badge' %}" class="nav-link text-white">
                             <h3 class="bi d-block mx-auto mb-2">Badge</h3>
