@@ -57,7 +57,7 @@ def process_qrcode_scan(request: HttpRequest) -> tuple[bool, str] | None:
         key: str = request.GET["key"]
     except KeyError:
         return None
-    
+
     # Not logged in = fail
     if not request.user.is_authenticated:
         return (False, "You must be signed in to register attendance.")
@@ -76,17 +76,17 @@ def process_qrcode_scan(request: HttpRequest) -> tuple[bool, str] | None:
 
     # User not booked for the event = fail
     booking = Booking.objects.filter(student=student, event=event).first()
-    if booking == None:
+    if booking is None:
         return (False, "You are not booked for this event.")
-    
+
     # Event not begun = fail
     if timezone.now() + timedelta(minutes=5) < event.date:
         return (False, "This event has not started yet.")
-    
+
     # User already scanned this code = fail
     if (event_end and booking.end_attendance) or ((not event_end) and booking.start_attendance):
         return (False, "You have already attended this event.")
-    
+
     # Register the student's attendance
     if ((not booking.start_attendance) and (not booking.end_attendance)):
         # Field may be null - is this really a good idea?
