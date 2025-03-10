@@ -415,9 +415,9 @@ def leaderboard(request: HttpRequest) -> HttpResponse:
         points = current_student.points
         rank = all_students.filter(points__gte = current_student.points).count()
     return render(request, "leaderboard.html", {
-        "students": students, 
-        "top_ten": top_ten, 
-        "rank": rank, 
+        "students": students,
+        "top_ten": top_ten,
+        "rank": rank,
         "points": points
     })
 #endregion
