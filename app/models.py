@@ -95,3 +95,18 @@ class Booking(models.Model):
         choices=AttendanceStatus,
         default=AttendanceStatus.ABSENT
     )
+
+    def update_expected_attendance(self):
+        """Update the expected_attendance field of the linked event."""
+        bookings = Booking.objects.all()
+        bookings = bookings.filter(event=self.event)
+        self.event.expected_attendance = bookings.count()
+        self.event.save()
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        self.update_expected_attendance()
+
+    def delete(self, *args, **kwargs):
+        super().delete(*args, **kwargs)
+        self.update_expected_attendance()
