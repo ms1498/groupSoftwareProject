@@ -85,6 +85,8 @@ class Booking(models.Model):
 
     student = models.ForeignKey(Student, on_delete=models.CASCADE)
     event = models.ForeignKey(Event, on_delete=models.CASCADE)
+    start_attendance = models.BooleanField(default=False)
+    end_attendance = models.BooleanField(default=False)
     def update_expected_attendance(self):
         """Update the expected_attendance field of the linked event."""
         bookings = Booking.objects.all()

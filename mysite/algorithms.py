@@ -1,6 +1,11 @@
 """Algorithms for general use."""
 
-from app.models import Event
+
+from datetime import timedelta
+from django.utils import timezone
+from django.http import HttpRequest
+from django.shortcuts import get_object_or_404
+from app.models import Event, Student, Booking
 
 def get_event_search_priority(data: list[Event | str | int]) -> int:
     """Get the priority of an event (paired with a user query) for ordering search results.
@@ -36,3 +41,60 @@ def get_event_search_priority(data: list[Event | str | int]) -> int:
         return 3
     data[2] = 4
     return 4
+
+def process_qrcode_scan(request: HttpRequest) -> tuple[bool, str] | None:
+    """Validate a user's request to register attendance for an event, and register their attendance
+    and reward them points if valid.
+    
+    @param: request - the HttpRequest
+    @returns: a tuple containing whether the operation was successful and a string to be displayed
+              to the user. Returns None instead if the request was not related to a QR code scan.
+    @author: Seth Mallinson
+    """
+    try:
+        event_id: int = int(request.GET["id"])
+        event_end: bool = int(request.GET["end"])
+        key: str = request.GET["key"]
+    except KeyError:
+        return None
+    
+    # Not logged in = fail
+    if not request.user.is_authenticated:
+        return (False, "You must be signed in to register attendance.")
+    student = get_object_or_404(Student, user=request.user)
+
+    # No matching event = fail
+    if event_end:
+        valid_events = Event.objects.filter(pk=event_id, end_key=key)
+        points_reward: int = 10
+    else:
+        valid_events = Event.objects.filter(pk=event_id, start_key=key)
+        points_reward: int = 15
+    if len(valid_events) == 0:
+        return (False, "No event with matching key exists.")
+    event = valid_events.first()
+
+    # User not booked for the event = fail
+    booking = Booking.objects.filter(student=student, event=event).first()
+    if booking == None:
+        return (False, "You are not booked for this event.")
+    
+    # Event not begun = fail
+    if timezone.now() + timedelta(minutes=5) < event.date:
+        return (False, "This event has not started yet.")
+    
+    # User already scanned this code = fail
+    if (event_end and booking.end_attendance) or ((not event_end) and booking.start_attendance):
+        return (False, "You have already attended this event.")
+    
+    # Register the student's attendance
+    if ((not booking.start_attendance) and (not booking.end_attendance)):
+        event.actual_attendance += 1
+    if event_end:
+        booking.end_attendance = True
+    else:
+        booking.start_attendance = True
+
+    # This is a good student. They get points. Yay.
+    student.points += points_reward
+    return (True, "🎉 Thank You for Attending! 🎉")

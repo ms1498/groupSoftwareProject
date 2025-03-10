@@ -90,8 +90,8 @@
 <!-- Thank You Popup -->
 <div id="thank-you-popup" class="popup">
     <div class="popup-content">
-        <h2 class="fw-bold text-success">🎉 Thank You for Attending! 🎉</h2>
-        <p>We appreciate your support for sustainable events. See you at the next one!</p>
+        <h2 class="fw-bold text-success" id="thank-you-header">🎉 Thank You for Attending! 🎉</h2>
+        <p id="thank-you-body">We appreciate your support for sustainable events. See you at the next one!</p>
         <button class="btn btn-primary" onclick="closePopup()">OK</button>
     </div>
 </div>
@@ -107,6 +107,10 @@
             startConfetti();
         }
     });
+
+    if ({{ qrcode_info }} != null) {
+        document.getElementById("thank-you-header").textContent = qrcode_info[1];
+    }
 
     function closePopup() {
         document.getElementById("thank-you-popup").style.display = "none";

@@ -11,15 +11,16 @@ from django.utils import timezone
 from app.models import Event, Booking, Student, SocietyRepresentative, Location
 # backend imports
 from mysite.generators import get_qrcode_from_response
-from mysite.algorithms import get_event_search_priority
+from mysite.algorithms import get_event_search_priority, process_qrcode_scan
 from .forms import SignInForm, SignUpForm, CreateEventForm
 
 def index(request: HttpRequest) -> HttpResponse:
     """Display the home page."""
+    qrcode_info = process_qrcode_scan(request)
     ordered_events = Event.objects.all().order_by("date")
     date_now = timezone.now().date()
     events = ordered_events.filter(approved="1",  date__date__gte=date_now)[:3]
-    return render(request, "home.html", {"events":events})
+    return render(request, "home.html", {"events":events, "qrcode_info":qrcode_info})
 
 def discover(request: HttpRequest) -> HttpResponse:
     """Filter events based on user input.
