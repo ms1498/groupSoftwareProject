@@ -237,9 +237,9 @@ def edit_event(request: HttpRequest, event_id: int) -> HttpResponse:
     )
     events = list(Event.objects.all())
     valid_events = []
-    for event in events:
-        if event.organiser in potential_organisers:
-            valid_events.append(event)
+    for event_iterator in events:
+        if event_iterator.organiser in potential_organisers:
+            valid_events.append(event_iterator)
 
     # If the request method is POST, process the form data
     if request.method == "POST":
