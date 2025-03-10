@@ -399,7 +399,11 @@ def my_events(request: HttpRequest) -> HttpResponse:
     return render(request, "my_events.html", {"bookings": bookings})
 
 @login_required
-def badge_list(request):
+def badge_list(request: HttpRequest) -> HttpResponse:
+    """Show a list of all badges a user has earned.
+
+    @author  Tilly Searle
+    """
     badges = Badge.objects.all()
     student = request.user.student 
     owned_badges = Award.objects.filter(student=student).values_list('badgeName', flat=True)
