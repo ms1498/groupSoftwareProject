@@ -66,9 +66,6 @@ def process_qrcode_scan(request: HttpRequest) -> tuple[bool, str] | None:
         error = validate_checkin_request(event_id, event_end, key, student)
 
     if error is None:
-        event_id: int = int(request.GET["id"])
-        event_end: bool = int(request.GET["end"])
-        key: str = request.GET["key"]
         student = get_object_or_404(Student, user=request.user)
         event = Event.objects.filter(pk=event_id, end_key=key).first()
         booking = Booking.objects.filter(student=student, event=event).first()
@@ -103,12 +100,11 @@ def validate_checkin_request(event_id: int, is_end: bool, key: str, student: Stu
     """
     # No matching event = fail
     if is_end:
-        valid_events = Event.objects.filter(pk=event_id, end_key=key)
+        event = Event.objects.filter(pk=event_id, end_key=key).first()
     else:
-        valid_events = Event.objects.filter(pk=event_id, start_key=key)
-    if len(valid_events) == 0:
+        event = Event.objects.filter(pk=event_id, start_key=key).first()
+    if event is None:
         return "No event with matching key exists."
-    event = valid_events.first()
 
     # User not booked for the event = fail
     booking = Booking.objects.filter(student=student, event=event).first()
