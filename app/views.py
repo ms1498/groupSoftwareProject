@@ -148,9 +148,10 @@ def unregister_event(request: HttpRequest, event_id: int) -> HttpResponse:
     # Get the student
     student = get_object_or_404(Student, user=request.user)
     # Check if the booking exists to be deleted
-    booking = Booking.objects.filter(student=student, event=event)
-    if booking.exists():
-        booking.delete()
+    bookings = Booking.objects.filter(student=student, event=event)
+    if bookings.exists():
+        for booking in bookings:
+            booking.delete()
     return redirect("discover")
 
 @login_required
@@ -291,6 +292,15 @@ def sign_in(request: HttpRequest) -> HttpResponse:
     else:
         form = SignInForm()
     return render(request, "sign_in.html", {"form": form})
+
+def terms_and_conditions(request: HttpRequest) -> HttpResponse:
+    """Allows users to look at the terms and conditions.
+
+    @param     user's request
+    @return    renders homepage
+    @author    Tilly Searle
+    """
+    return render(request, "terms_and_conditions.html")
 
 def sign_out(request: HttpRequest) -> HttpResponse:
     """Log the user out of the current session and redirect them to the homepage.
