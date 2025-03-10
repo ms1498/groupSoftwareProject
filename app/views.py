@@ -399,8 +399,8 @@ def my_events(request: HttpRequest) -> HttpResponse:
     return render(request, "my_events.html", {"bookings": bookings})
 
 def leaderboard(request: HttpRequest) -> HttpResponse:
-    """Displays a leaderboard of students based on their points
-    
+    """Display a leaderboard of students based on their points.
+
     @author  Lia Fisher
     """
     all_students = Student.objects.all().order_by("-points")
