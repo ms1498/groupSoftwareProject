@@ -52,55 +52,73 @@ def process_qrcode_scan(request: HttpRequest) -> tuple[bool, str] | None:
     @author: Seth Mallinson
     """
     try:
-        event_id: int = int(request.GET["id"])
-        event_end: bool = int(request.GET["end"])
-        key: str = request.GET["key"]
+        error = validate_checkin_request(request)
     except KeyError:
         return None
 
+    if error is None:
+        event_id: int = int(request.GET["id"])
+        event_end: bool = int(request.GET["end"])
+        key: str = request.GET["key"]
+        student = get_object_or_404(Student, user=request.user)
+        event = Event.objects.filter(pk=event_id, end_key=key).first()
+        booking = Booking.objects.filter(student=student, event=event).first()
+            # Register the student's attendance
+        if ((not booking.start_attendance) and (not booking.end_attendance)):
+            # Field may be null - is this really a good idea?
+            if event.actual_attendance:
+                event.actual_attendance += 1
+            else:
+                event.actual_attendance = 1
+        if event_end:
+            booking.end_attendance = True
+        else:
+            booking.start_attendance = True
+        booking.save()
+
+        # This is a good student. They get points. Yay.
+        if event_end:
+            student.points += 10
+        else:
+            student.points += 15
+        student.save()
+        return (True, "🎉 Thank You for Attending! 🎉")
+    return (False, error)
+
+def validate_checkin_request(request: HttpRequest) -> str | None:
+    """If the request is invalid, this finds out why and returns the error.
+    
+    @param: request - the HttpRequest
+    @returns: a string of the error that was found, or None.
+    @author: Seth Mallinson
+    """
+    event_id: int = int(request.GET["id"])
+    event_end: bool = int(request.GET["end"])
+    key: str = request.GET["key"]
     # Not logged in = fail
     if not request.user.is_authenticated:
-        return (False, "You must be signed in to register attendance.")
+        return "You must be signed in to register attendance."
     student = get_object_or_404(Student, user=request.user)
 
     # No matching event = fail
     if event_end:
         valid_events = Event.objects.filter(pk=event_id, end_key=key)
-        points_reward: int = 10
     else:
         valid_events = Event.objects.filter(pk=event_id, start_key=key)
-        points_reward: int = 15
     if len(valid_events) == 0:
-        return (False, "No event with matching key exists.")
+        return "No event with matching key exists."
     event = valid_events.first()
 
     # User not booked for the event = fail
     booking = Booking.objects.filter(student=student, event=event).first()
     if booking is None:
-        return (False, "You are not booked for this event.")
+        return "You are not booked for this event."
 
     # Event not begun = fail
     if timezone.now() + timedelta(minutes=5) < event.date:
-        return (False, "This event has not started yet.")
+        return "This event has not started yet."
 
     # User already scanned this code = fail
     if (event_end and booking.end_attendance) or ((not event_end) and booking.start_attendance):
-        return (False, "You have already attended this event.")
-
-    # Register the student's attendance
-    if ((not booking.start_attendance) and (not booking.end_attendance)):
-        # Field may be null - is this really a good idea?
-        if event.actual_attendance:
-            event.actual_attendance += 1
-        else:
-            event.actual_attendance = 1
-    if event_end:
-        booking.end_attendance = True
-    else:
-        booking.start_attendance = True
-    booking.save()
-
-    # This is a good student. They get points. Yay.
-    student.points += points_reward
-    student.save()
-    return (True, "🎉 Thank You for Attending! 🎉")
+        return "You have already attended this event."
+    return None
