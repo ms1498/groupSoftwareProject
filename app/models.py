@@ -88,6 +88,7 @@ class Booking(models.Model):
         ABSENT = "AB"
         START = "ST"
         END = "EN"
+        ATTENDED = "AT"
     student = models.ForeignKey(Student, on_delete=models.CASCADE)
     event = models.ForeignKey(Event, on_delete=models.CASCADE)
     attended = models.CharField(
