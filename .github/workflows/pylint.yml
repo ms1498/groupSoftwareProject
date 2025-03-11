@@ -21,4 +21,4 @@ jobs:
         pip install -r requirements.txt
     - name: Analysing the code with pylint
       run: |
-        pylint --load-plugins pylint_django --django-settings-module=mysite.settings $(git ls-files -- '*.py' ':!:manage.py') --extension-pkg-allow-list=cv2
+        pylint --load-plugins pylint_django --django-settings-module=mysite.settings $(git ls-files -- '*.py' ':!:manage.py') --ignored-modules=cv2
