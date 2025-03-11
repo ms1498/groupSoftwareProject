@@ -20,6 +20,7 @@ urlpatterns = [
     path("qrgen/", views.generate_qr, name="generate_qr"),
     path("sign-in", views.sign_in, name="sign-in"),
     path("sign-up", views.sign_up, name="sign-up"),
+    path("sign-in-another", views.sign_in_as_another, name="sign-in-another"),
     path("terms", views.terms_and_conditions, name="terms_and_conditions"),
     path("sign-out", views.sign_out, name="sign-out"),
     path('password_reset/', views.password_reset, name='password_reset'),
