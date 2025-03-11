@@ -7,7 +7,10 @@ import numpy
 from mysite.generators import get_qrcode_from_response
 
 class QRFromRequestTestCase(TestCase):
-    """Test generating QR codes from requests."""
+    """Test generating QR codes from requests.
+
+    @author Tricia Sibley
+    """
 
     def setUp(self) -> None:
         """Set up the test with a URL, a request, and a reader."""
