@@ -354,6 +354,16 @@ def sign_out(request: HttpRequest) -> HttpResponse:
     logout(request)
     return redirect("home")
 
+def sign_in_as_another(request: HttpRequest) -> HttpResponse:
+    """Log the user out of the current session and redirect them to the homepage.
+
+    @param     user's request
+    @return    renders homepage
+    @author    Tilly Searle
+    """
+    logout(request)
+    return redirect("sign-in")
+
 def sign_up(request: HttpRequest) -> HttpResponse:
     """Allow the user to sign-up and make an account on the webpage.
 
