@@ -79,23 +79,7 @@ def process_qrcode_scan(request: HttpRequest) -> tuple[bool, str] | None:
                 event.actual_attendance += 1
             else:
                 event.actual_attendance = 1
-        # Update the booking's status
-        now_attended_start = (
-            booking.attended == Booking.AttendanceStatus.START
-            or not event_end
-        )
-        attended_end = (
-            booking.attended == Booking.AttendanceStatus.END
-            or event_end
-        )
-        if now_attended_start and attended_end:
-            booking.attended = Booking.AttendanceStatus.ATTENDED
-        elif now_attended_start:
-            booking.attended = Booking.AttendanceStatus.START
-        else:
-            booking.attended = Booking.AttendanceStatus.END
-
-        booking.save()
+        update_booking_status(booking, event_end)
 
         # This is a good student. They get points. Yay.
         if event_end:
@@ -142,3 +126,26 @@ def validate_checkin_request(event_id: int, is_end: bool, key: str, student: Stu
     if will_attend_twice:
         return "You have already attended this event."
     return None
+
+def update_booking_status(booking: Booking, is_end: bool) -> None:
+    """Updates the "attended" field of a booking based on whether the code being scanned is the
+    one for the end, or not.
+    @param: booking - the Booking
+    @param: is_end - whether this is the event end QR code or not
+    @author: Seth Mallinson
+    """
+    now_attended_start = (
+        booking.attended == Booking.AttendanceStatus.START
+        or not is_end
+    )
+    attended_end = (
+        booking.attended == Booking.AttendanceStatus.END
+        or is_end
+    )
+    if now_attended_start and attended_end:
+        booking.attended = Booking.AttendanceStatus.ATTENDED
+    elif now_attended_start:
+        booking.attended = Booking.AttendanceStatus.START
+    else:
+        booking.attended = Booking.AttendanceStatus.END
+    booking.save()
