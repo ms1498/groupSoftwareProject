@@ -191,6 +191,10 @@
             <small class="text-muted">Accepted formats: JPG, PNG, GIF</small>
           </div>
 
+          <div class="mb-3" id="attendance-counter">
+            <p>Currently signed up to this event: [loading]</p>
+          </div>
+
           <!-- Submit Button -->
           <div class="text-center">
             <button type="submit" class="btn btn-primary px-4">Save Changes</button>
@@ -210,6 +214,7 @@
       textField.style.display = "none";
       inputField.style.display = "block";
     }
+    document.getElementById("attendance-counter").textContent = "Currently signed up to this event: " + {{ event.expected_attendance }};
 </script>
 <!-- JavaScript to load qrcode images -->
 <script>
