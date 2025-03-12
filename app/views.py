@@ -270,24 +270,27 @@ def edit_event(request: HttpRequest, event_id: int) -> HttpResponse:
 
     @author    Tilly Searle
     """
-    # Fetch the event object using the event_id or return a 404 error if it doesn't exist
-    event = get_object_or_404(Event, id=event_id)
-
-    # Fetch all locations for the dropdown
-    locations = Location.objects.all()
-
     user_society_rep = get_object_or_404(SocietyRepresentative, user=request.user)
     # Find all the organisers with the same society as the requesting user, and filter the events
     # we display to only include ones submitted by any of them.
     potential_organisers = list(
         SocietyRepresentative.objects.filter(society_name=user_society_rep.society_name)
     )
+
+    # Fetch all locations for the dropdown
+    locations = Location.objects.all()
+
     events = list(Event.objects.all())
-    valid_events = []
+    valid_events: list[Event] = []
     for event_iterator in events:
         if event_iterator.organiser in potential_organisers:
             valid_events.append(event_iterator)
 
+    # Get the event requested, if it is in the valid events.
+    event = [x for x in valid_events if x.organiser in potential_organisers and x.id == event_id]
+    if len(event) == 0:
+        return HttpResponse("You do not have permissions to access an event with the given ID.", status=404)
+    event = event[0]
     # If the request method is POST, process the form data
     if request.method == "POST":
         form = CreateEventForm(request.POST, request.FILES, instance=event)
