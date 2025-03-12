@@ -91,17 +91,6 @@ class Booking(models.Model):
         ATTENDED = "AT"
     student = models.ForeignKey(Student, on_delete=models.CASCADE)
     event = models.ForeignKey(Event, on_delete=models.CASCADE)
-
-class Badge(models.Model):
-    """Model to show a table of badges"""
-    badgeName = models.CharField(max_length=50, primary_key=True)
-    badgeDescription = models.CharField(max_length=100)
-    badgeImage = models.ImageField(upload_to="badges_images/", null=True, blank=True)
-
-class Award(models.Model):
-    """Model for awards, joins students to badges"""
-    student = models.ForeignKey(Student, on_delete=models.CASCADE)
-    badgeName = models.ForeignKey(Badge, on_delete=models.CASCADE)
     attended = models.CharField(
         max_length=2,
         choices=AttendanceStatus,
@@ -122,3 +111,14 @@ class Award(models.Model):
     def delete(self, *args, **kwargs):
         super().delete(*args, **kwargs)
         self.update_expected_attendance()
+
+class Badge(models.Model):
+    """Model to show a table of badges"""
+    badgeName = models.CharField(max_length=50, primary_key=True)
+    badgeDescription = models.CharField(max_length=100)
+    badgeImage = models.ImageField(upload_to="badges_images/", null=True, blank=True)
+
+class Award(models.Model):
+    """Model for awards, joins students to badges"""
+    student = models.ForeignKey(Student, on_delete=models.CASCADE)
+    badgeName = models.ForeignKey(Badge, on_delete=models.CASCADE)
