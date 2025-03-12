@@ -289,7 +289,10 @@ def edit_event(request: HttpRequest, event_id: int) -> HttpResponse:
     # Get the event requested, if it is in the valid events.
     event = [x for x in valid_events if x.organiser in potential_organisers and x.id == event_id]
     if len(event) == 0:
-        return HttpResponse("You do not have permissions to access an event with the given ID.", status=404)
+        return HttpResponse(
+            "You do not have permissions to access an event with the given ID.",
+            status=404
+        )
     event = event[0]
     # If the request method is POST, process the form data
     if request.method == "POST":
