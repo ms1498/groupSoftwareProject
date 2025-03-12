@@ -192,7 +192,7 @@
           </div>
 
           <div class="mb-3" id="attendance-counter">
-            <p>Currently signed up to this event: [loading]</p>
+            <p>Currently signed up to this event: {{ event.expected_attendance }}</p>
           </div>
 
           <!-- Submit Button -->
@@ -214,7 +214,6 @@
       textField.style.display = "none";
       inputField.style.display = "block";
     }
-    document.getElementById("attendance-counter").textContent = "Currently signed up to this event: " + {{ event.expected_attendance }};
 </script>
 <!-- JavaScript to load qrcode images -->
 <script>
