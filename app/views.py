@@ -472,7 +472,7 @@ def badge_list(request: HttpRequest) -> HttpResponse:
     @author  Tilly Searle
     """
     badges = Badge.objects.all()
-    student = request.user.student 
+    student = request.user.student
     owned_badges = Award.objects.filter(student=student).values_list('badgeName', flat=True)
 
     return render(request, 'badges.html', {'badges': badges,'owned_badges': owned_badges})

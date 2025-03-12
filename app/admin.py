@@ -1,6 +1,7 @@
 """Configures the admin interface, registering models."""
 from django.contrib import admin
-from .models import Booking, SocietyRepresentative, Student, Developer, Moderator, Location, Event, Badge, Award
+from .models import Booking, SocietyRepresentative, Student, Developer, Moderator
+from .models import Location, Event, Badge, Award
 
 # registering models
 admin.site.register(Booking)
