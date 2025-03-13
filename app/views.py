@@ -297,7 +297,7 @@ def edit_event(request: HttpRequest, event_id: int) -> HttpResponse:
             event.approved = False
             event.save()
 
-            return redirect("home")
+            return redirect("organise")
         print("Form errors:", form.errors)
         return render(request, "edit_event.html", {
             "form": form,
