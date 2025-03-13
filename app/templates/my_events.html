@@ -5,18 +5,16 @@
 {% block content %}
 <div class="container mt-5">
     <div class="row">
-        
     <!-- Event Cards -->
         <div class="row">
             {% for booking in bookings %}
-                <div class="col-md-6 mb-4">
+                <div class="col-md-6 mb-4 col-lg-4 col-12">
                     <div class="card shadow-sm">
                         {% if booking.event.image %}
-                            <img src="{{ booking.event.image.url }}" alt="Event Image" class="img-fluid" onerror="this.src='/static/default-event.jpg';">
+                            <img src="{{ booking.event.image.url }}" alt="Event Image" class="img-fluid" style="max-height: 25%; max-width: 50%;" onerror="this.src='/static/default-event.jpg';">
                         {% else %}
                             <img src="/static/default-event.jpg" alt="Default Event Image" class="img-fluid">
                         {% endif %}
-
                         <div class="card-body">
                             <h2 style="color: #0d6efd;">{{ booking.event.name }}</h2>
                             <p class="mb-2"><strong>Date:</strong> {{ booking.event.date }}</p>
