@@ -4,6 +4,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.forms import PasswordResetForm
 from django.contrib.auth.views import PasswordResetConfirmView
+from django.contrib.auth.models import User # pylint: disable=imported-auth-user
 from django.http import HttpResponse, HttpRequest
 from django.contrib.auth.decorators import login_required, permission_required
 from django.utils import timezone
@@ -45,7 +46,8 @@ def index(request: HttpRequest) -> HttpResponse:
 def discover(request: HttpRequest) -> HttpResponse:
     """Filter events based on user input.
 
-    @author  Tilly Searle
+    @author Tilly Searle
+    @author Seth Mallinson
     """
     search_query = request.GET.get("search_query", "").lower()
     event_date = request.GET.get("event_date", "")
@@ -72,9 +74,15 @@ def discover(request: HttpRequest) -> HttpResponse:
     # the search, and remainders will be ordered by priority - a full name match is higher priority
     # than one word of the query matching for example.
     if search_query:
-        events_for_ordering = [[event, search_query, 0] for event in events]
-        events_for_ordering.sort(key=get_event_search_priority)
-        events = [thing[0] for thing in events_for_ordering if thing[2] < 4]
+        # Temporary function to bind search query to the priority calculation
+        def sorter(event: Event) -> int:
+            return get_event_search_priority(event, search_query)
+
+        # Filter out events with a priority of 0 (no relation to query)
+        events = [event for event in events if sorter(event) > 0]
+
+        # Sort remaining events
+        events.sort(key=sorter, reverse=True)
 
     booked_events = set()
     if request.user.is_authenticated and Student.objects.filter(user=request.user).exists():
@@ -500,3 +508,36 @@ def leaderboard(request: HttpRequest) -> HttpResponse:
         "points": points
     })
 #endregion
+
+@login_required
+def user_data(request: HttpRequest) -> HttpResponse:
+    """Display all data that relates to the user on request.
+    
+    @author Seth Mallinson
+    """
+    user: User = request.user
+    student = Student.objects.filter(user=user).first()
+    soc_rep = SocietyRepresentative.objects.filter(user=user).first()
+
+    # Students may have bookings linked to them
+    bookings = []
+    points = None
+    if student:
+        bookings = Booking.objects.filter(student=student)
+        points = student.points
+
+    # Soc reps may have events linked to them
+    events = []
+    society_name = None
+    if soc_rep:
+        events = Event.objects.filter(organiser=soc_rep)
+        society_name = soc_rep.society_name
+
+    return render(request, "user_data.html", {
+        "username": user.username,
+        "email": user.email,
+        "points": points,
+        "society_name": society_name,
+        "bookings": bookings,
+        "events": events
+    })
