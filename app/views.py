@@ -9,7 +9,7 @@ from django.http import HttpResponse, HttpRequest
 from django.contrib.auth.decorators import login_required, permission_required
 from django.utils import timezone
 # model imports
-from app.models import Event, Booking, Student, SocietyRepresentative, Location
+from app.models import Event, Booking, Student, SocietyRepresentative, Location, Badge, Award
 # backend imports
 from mysite.generators import get_qrcode_from_response
 from mysite.algorithms import get_event_search_priority, process_qrcode_scan
@@ -472,6 +472,18 @@ def my_events(request: HttpRequest) -> HttpResponse:
         bookings = Booking.objects.none()
 
     return render(request, "my_events.html", {"bookings": bookings})
+
+@login_required
+def badge_list(request: HttpRequest) -> HttpResponse:
+    """Show a list of all badges a user has earned.
+
+    @author  Tilly Searle
+    """
+    badges = Badge.objects.all()
+    student = request.user.student
+    owned_badges = Award.objects.filter(student=student).values_list("badge_name", flat=True)
+
+    return render(request, "badges.html", {"badges": badges,"owned_badges": owned_badges})
 
 def leaderboard(request: HttpRequest) -> HttpResponse:
     """Display a leaderboard of students based on their points.

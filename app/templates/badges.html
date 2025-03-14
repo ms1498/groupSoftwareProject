@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% block title %}Badges - UWeave{% endblock %}
+
+{% block content %}
+<div class="container text-center mt-4">
+    <h1 class="text-primary fw-bold">All Badges</h1>
+    
+    <div class="mt-3 mb-4">
+        <strong class="fs-5">Filter Your Badges</strong><br>
+        <label for="filter-owned-badges" class="form-check-label">
+            <input type="checkbox" id="filter-owned-badges" class="form-check-input" onclick="filterBadges()">
+            Only show badges I own
+        </label>
+    </div>
+    
+    <div id="badges-list" class="row justify-content-center">
+        {% for badge in badges %}
+            <div class="col-md-4 col-sm-6 mb-4 badge-card" data-owned="{% if badge.badgeName in owned_badges %}true{% else %}false{% endif %}">
+                <div class="card shadow-lg border-0 rounded-4 p-3 text-center bg-light">
+                    {% if badge.badge_name in owned_badges %}
+                        <img src="{{ badge.badge_image.url }}" alt="{{ badge.badge_name }}" class="card-img-top mx-auto rounded-circle border border-success p-2" style="width: 120px; height: 120px;">
+                    {% else %}
+                        <img src="https://static.vecteezy.com/system/resources/previews/020/576/749/original/game-badges-button-in-circle-frame-with-wings-and-heart-png.png" class="card-img-top mx-auto rounded-circle border border-secondary p-2" style="width: 120px; height: 120px;">
+                    {% endif %}
+                    <div class="card-body">
+                        <h5 class="card-title text-primary fw-bold">{{ badge.badge_name }}</h5>
+                        <p class="card-text text-muted">{{ badge.badge_description }}</p>
+                        {% if badge.badge_name in owned_badges %}
+                            <span class="badge bg-success">You own this badge!</span>
+                        {% else %}
+                            <span class="badge bg-danger">You don't own this badge yet.</span>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+
+<script>
+    function filterBadges() {
+        const showOwnedOnly = document.getElementById("filter-owned-badges").checked;
+        const badgeCards = document.querySelectorAll(".badge-card");
+
+        badgeCards.forEach(card => {
+            const isOwned = card.getAttribute("data-owned") === "true";
+            card.style.display = (showOwnedOnly && !isOwned) ? "none" : "block";
+        });
+    }
+</script>
+{% endblock %}
