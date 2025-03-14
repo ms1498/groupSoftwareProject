@@ -131,7 +131,7 @@ def discover_shortcut(request: HttpRequest, event_id: int) -> HttpResponse:
         events = [thing[0] for thing in events_for_ordering if thing[2] < 4]
 
     booked_events = set()
-    if request.user.is_authenticated:
+    if request.user.is_authenticated and Student.objects.filter(user=request.user).exists():
         student = get_object_or_404(Student, user=request.user)
         filtered_bookings = Booking.objects.filter(student=student)
         booked_events = set(filtered_bookings.values_list("event_id", flat=True))
@@ -495,12 +495,13 @@ def leaderboard(request: HttpRequest) -> HttpResponse:
     top_ten = True
     rank = -1
     points = -1
-    is_student = Student.objects.filter(user=request.user).exists()
-    if is_student and Student.objects.get(user = request.user) not in students:
-        top_ten = False
-        current_student = Student.objects.get(user = request.user)
-        points = current_student.points
-        rank = all_students.filter(points__gte = current_student.points).count()
+    if request.user.is_authenticated:
+        is_student = Student.objects.filter(user=request.user).exists()
+        if is_student and Student.objects.get(user = request.user) not in students:
+            top_ten = False
+            current_student = Student.objects.get(user = request.user)
+            points = current_student.points
+            rank = all_students.filter(points__gte = current_student.points).count()
     return render(request, "leaderboard.html", {
         "students": students,
         "top_ten": top_ten,
