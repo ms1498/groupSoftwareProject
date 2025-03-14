@@ -28,6 +28,6 @@ urlpatterns = [
     path('password_reset/done/', views.password_reset_done, name='password_reset_done'),
     path('reset/<uidb64>/<token>/', views.password_reset_confirm, name='password_reset_confirm'),
     path('reset/done/', views.password_reset_complete, name='password_reset_complete'),
-    path("badge", views.badge_list, name='badge'),
+    path("badge", views.badge_list, name="badge"),
     path("leaderboard", views.leaderboard, name="leaderboard"),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
