@@ -14,10 +14,12 @@
                         {{ form.username.label_tag }}
                         {{ form.username }}
                     </div>
+                
                     <div class="mb-3">
                         {{ form.email.label_tag }}
                         {{ form.email }}
                     </div>
+
                     <div class="mb-3">
                         {{ form.password1.label_tag }}
                         {{ form.password1 }}
@@ -25,6 +27,7 @@
                             <small class="form-text text-muted">{{ form.password1.help_text }}</small>
                         {% endif %}
                     </div>
+
                     <div class="mb-3">
                         {{ form.password2.label_tag }}
                         {{ form.password2 }}
@@ -35,7 +38,7 @@
                     <div class="mt-3 text-center">
                         <p>
                             By signing up, you agree to our 
-                            <a href="{% url 'terms' %}" data-bs-toggle="modal" data-bs-target="#termsModal">Terms and Conditions</a>.
+                            <a href="{% url "terms_and_conditions" %}" data-bs-toggle="modal" data-bs-target="#termsModal">Terms and Conditions</a>.
                         </p>
                     </div>
 
