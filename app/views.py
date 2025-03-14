@@ -4,6 +4,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.forms import PasswordResetForm
 from django.contrib.auth.views import PasswordResetConfirmView
+from django.contrib.auth.models import User
 from django.http import HttpResponse, HttpRequest
 from django.contrib.auth.decorators import login_required, permission_required
 from django.utils import timezone
@@ -488,3 +489,32 @@ def leaderboard(request: HttpRequest) -> HttpResponse:
         "points": points
     })
 #endregion
+
+@login_required
+def user_data(request: HttpRequest) -> HttpResponse:
+    """Display all data that relates to the user on request.
+    
+    @author Seth Mallinson
+    """
+    user: User = request.user
+    student = Student.objects.filter(user=user).first()
+    soc_rep = SocietyRepresentative.objects.filter(user=user).first()
+
+    # Students may have bookings linked to them
+    bookings = []
+    if student:
+        bookings = Booking.objects.filter(student=student)
+
+    # Soc reps may have events linked to them
+    events = []
+    if soc_rep:
+        events = Event.objects.filter(organiser=soc_rep)
+
+    return render(request, "user_data.html", {
+        "username": user.username,
+        "email": user.email,
+        "bookings": bookings,
+        "events": events
+    })
+        
+

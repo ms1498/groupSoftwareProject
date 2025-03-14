@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block title %}User Data - UWeave{% endblock %}
+
+{% block content %}
+    <p class="card-text">Here is all the information we have that is linked to you.</p>
+    <b>
+    <p class="card-text">Your username: {{ username }}</p>
+    <p class="card-text">Your email address: {{ email }}</p>
+    {% for booking in bookings %}
+        <p class="card-text">A booking for the event "{{ booking.event.name }}" is linked to your account.</p>
+    {% endfor %}
+    {% for event in events %}
+        <p class="card-text">An event named "{{ event.name }}" is linked to your account.</p>
+    {% endfor %}
+{% endblock %}
