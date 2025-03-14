@@ -502,17 +502,23 @@ def user_data(request: HttpRequest) -> HttpResponse:
 
     # Students may have bookings linked to them
     bookings = []
+    points = None
     if student:
         bookings = Booking.objects.filter(student=student)
+        points = student.points
 
     # Soc reps may have events linked to them
     events = []
+    society_name = None
     if soc_rep:
         events = Event.objects.filter(organiser=soc_rep)
+        society_name = soc_rep.society_name
 
     return render(request, "user_data.html", {
         "username": user.username,
         "email": user.email,
+        "points": points,
+        "society_name": society_name,
         "bookings": bookings,
         "events": events
     })
