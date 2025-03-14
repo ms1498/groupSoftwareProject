@@ -114,11 +114,11 @@ class Booking(models.Model):
 
 class Badge(models.Model):
     """Model to show a table of badges"""
-    badgeName = models.CharField(max_length=50, primary_key=True)
-    badgeDescription = models.CharField(max_length=100)
-    badgeImage = models.ImageField(upload_to="badges_images/", null=True, blank=True)
+    badge_name = models.CharField(max_length=50, primary_key=True)
+    badge_description = models.CharField(max_length=100)
+    badge_image = models.ImageField(upload_to="badges_images/", blank=True)
 
 class Award(models.Model):
     """Model for awards, joins students to badges"""
     student = models.ForeignKey(Student, on_delete=models.CASCADE)
-    badgeName = models.ForeignKey(Badge, on_delete=models.CASCADE)
+    badge_name = models.ForeignKey(Badge, on_delete=models.CASCADE)
