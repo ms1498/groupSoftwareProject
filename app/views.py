@@ -185,7 +185,6 @@ def register_event(request: HttpRequest, event_id: int) -> HttpResponse:
     # Check if the booking already exists
     if not Booking.objects.filter(student=student, event=event).exists():
         Booking.objects.create(student=student, event=event)
-
     return redirect("discover")
 
 @login_required
