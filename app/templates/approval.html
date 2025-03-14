@@ -108,8 +108,7 @@
             background-color: white;
             padding: 30px;
             border-radius: 10px;
-            width: 60%;
-            max-width: 600px;
+            width: 75%;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             text-align: center;
             position: relative;
@@ -187,7 +186,7 @@
                 <p class="popup-date"><strong>Society:</strong> {{ event.organiser.society_name }}</p>
                 <p class="popup-description">{{ event.description }}</p>
                 <div class="popup-image">
-                    <img src="{{ event.image.url }}" alt="Event Image" class="img-fluid" style="max-height: 50%; max-width: 50%;" onerror="this.src='/static/default-event.jpg';">
+                    <img src="{{ event.image.url }}" alt="Event Image" class="img-fluid" style="max-width: 70%;" onerror="this.src='/static/default-event.jpg';">
                 </div>
                 <form id="approveForm{{ forloop.counter }}" method="POST" action="{% url 'approve_event' event.id %}">
                     {% csrf_token %}
