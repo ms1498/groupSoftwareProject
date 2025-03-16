@@ -28,5 +28,7 @@ urlpatterns = [
     path('password_reset/done/', views.password_reset_done, name='password_reset_done'),
     path('reset/<uidb64>/<token>/', views.password_reset_confirm, name='password_reset_confirm'),
     path('reset/done/', views.password_reset_complete, name='password_reset_complete'),
+    path("delete-account", views.delete_account_confirm, name="delete_account"),
+    path("delete-account-complete", views.delete_account_complete, name="delete_account_complete"),
     path("leaderboard", views.leaderboard, name="leaderboard"),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

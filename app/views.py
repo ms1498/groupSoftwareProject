@@ -42,7 +42,6 @@ def index(request: HttpRequest) -> HttpResponse:
         "qrcode_info":qrcode_info
     })
 
-
 def discover(request: HttpRequest) -> HttpResponse:
     """Filter events based on user input.
 
@@ -438,6 +437,13 @@ def password_reset_complete(request: HttpRequest) -> HttpResponse:
     """
     return render(request, "password_reset_complete.html")
 
+def delete_account_confirm(request: HttpRequest) -> HttpResponse:
+    return render(request, "delete_account.html")
+
+def delete_account_complete(request: HttpRequest) -> HttpResponse:
+    return redirect("home")
+#endregion
+
 def generate_qr(request: HttpRequest) -> HttpResponse:
     """Generate a QR code from a given request.
 
@@ -491,4 +497,4 @@ def leaderboard(request: HttpRequest) -> HttpResponse:
         "rank": rank,
         "points": points
     })
-#endregion
+
