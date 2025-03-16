@@ -4,12 +4,13 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.forms import PasswordResetForm
 from django.contrib.auth.views import PasswordResetConfirmView
+from django.contrib.auth.models import User # pylint: disable=imported-auth-user
 from django.http import HttpResponse, HttpRequest
 from django.contrib.auth.decorators import login_required, permission_required
 from django.core.exceptions import PermissionDenied
 from django.utils import timezone
 # model imports
-from app.models import Event, Booking, Student, SocietyRepresentative, Location
+from app.models import Event, Booking, Student, SocietyRepresentative, Location, Badge, Award
 # backend imports
 from mysite.generators import get_qrcode_from_response
 from mysite.algorithms import get_event_search_priority, process_qrcode_scan
@@ -45,7 +46,8 @@ def index(request: HttpRequest) -> HttpResponse:
 def discover(request: HttpRequest) -> HttpResponse:
     """Filter events based on user input.
 
-    @author  Tilly Searle
+    @author Tilly Searle
+    @author Seth Mallinson
     """
     search_query = request.GET.get("search_query", "").lower()
     event_date = request.GET.get("event_date", "")
@@ -72,9 +74,15 @@ def discover(request: HttpRequest) -> HttpResponse:
     # the search, and remainders will be ordered by priority - a full name match is higher priority
     # than one word of the query matching for example.
     if search_query:
-        events_for_ordering = [[event, search_query, 0] for event in events]
-        events_for_ordering.sort(key=get_event_search_priority)
-        events = [thing[0] for thing in events_for_ordering if thing[2] < 4]
+        # Temporary function to bind search query to the priority calculation
+        def sorter(event: Event) -> int:
+            return get_event_search_priority(event, search_query)
+
+        # Filter out events with a priority of 0 (no relation to query)
+        events = [event for event in events if sorter(event) > 0]
+
+        # Sort remaining events
+        events.sort(key=sorter, reverse=True)
 
     booked_events = set()
     if request.user.is_authenticated and Student.objects.filter(user=request.user).exists():
@@ -123,7 +131,7 @@ def discover_shortcut(request: HttpRequest, event_id: int) -> HttpResponse:
         events = [thing[0] for thing in events_for_ordering if thing[2] < 4]
 
     booked_events = set()
-    if request.user.is_authenticated:
+    if request.user.is_authenticated and Student.objects.filter(user=request.user).exists():
         student = get_object_or_404(Student, user=request.user)
         filtered_bookings = Booking.objects.filter(student=student)
         booked_events = set(filtered_bookings.values_list("event_id", flat=True))
@@ -177,7 +185,6 @@ def register_event(request: HttpRequest, event_id: int) -> HttpResponse:
     # Check if the booking already exists
     if not Booking.objects.filter(student=student, event=event).exists():
         Booking.objects.create(student=student, event=event)
-
     return redirect("discover")
 
 @login_required
@@ -475,6 +482,18 @@ def my_events(request: HttpRequest) -> HttpResponse:
 
     return render(request, "my_events.html", {"bookings": bookings})
 
+@login_required
+def badge_list(request: HttpRequest) -> HttpResponse:
+    """Show a list of all badges a user has earned.
+
+    @author  Tilly Searle
+    """
+    badges = Badge.objects.all()
+    student = request.user.student
+    owned_badges = Award.objects.filter(student=student).values_list("badge_name", flat=True)
+
+    return render(request, "badges.html", {"badges": badges,"owned_badges": owned_badges})
+
 def leaderboard(request: HttpRequest) -> HttpResponse:
     """Display a leaderboard of students based on their points.
 
@@ -485,16 +504,50 @@ def leaderboard(request: HttpRequest) -> HttpResponse:
     top_ten = True
     rank = -1
     points = -1
-    is_student = Student.objects.filter(user=request.user).exists()
-    if is_student and Student.objects.get(user = request.user) not in students:
-        top_ten = False
-        current_student = Student.objects.get(user = request.user)
-        points = current_student.points
-        rank = all_students.filter(points__gte = current_student.points).count()
+    if request.user.is_authenticated:
+        is_student = Student.objects.filter(user=request.user).exists()
+        if is_student and Student.objects.get(user = request.user) not in students:
+            top_ten = False
+            current_student = Student.objects.get(user = request.user)
+            points = current_student.points
+            rank = all_students.filter(points__gte = current_student.points).count()
     return render(request, "leaderboard.html", {
         "students": students,
         "top_ten": top_ten,
         "rank": rank,
         "points": points
     })
+#endregion
 
+@login_required
+def user_data(request: HttpRequest) -> HttpResponse:
+    """Display all data that relates to the user on request.
+    
+    @author Seth Mallinson
+    """
+    user: User = request.user
+    student = Student.objects.filter(user=user).first()
+    soc_rep = SocietyRepresentative.objects.filter(user=user).first()
+
+    # Students may have bookings linked to them
+    bookings = []
+    points = None
+    if student:
+        bookings = Booking.objects.filter(student=student)
+        points = student.points
+
+    # Soc reps may have events linked to them
+    events = []
+    society_name = None
+    if soc_rep:
+        events = Event.objects.filter(organiser=soc_rep)
+        society_name = soc_rep.society_name
+
+    return render(request, "user_data.html", {
+        "username": user.username,
+        "email": user.email,
+        "points": points,
+        "society_name": society_name,
+        "bookings": bookings,
+        "events": events
+    })
