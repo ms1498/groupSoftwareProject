@@ -72,12 +72,12 @@ class Event(models.Model):
     organiser = models.ForeignKey(SocietyRepresentative, on_delete=models.CASCADE, null=True)
     date = models.DateTimeField()
     location = models.ForeignKey(Location, on_delete=models.CASCADE, null=True)
-    name = models.CharField(max_length=50)
+    name = models.CharField(max_length=23)
     expected_attendance = models.IntegerField(null=True)
     actual_attendance = models.IntegerField(null=True)
     maximum_attendance = models.IntegerField(null=True)
     approved = models.BooleanField(default=False)
-    description = models.CharField(max_length=500, blank=True)
+    description = models.CharField(max_length=300, blank=True)
     image = models.ImageField(upload_to="event_images/", null=True, blank=True)
 
 class Booking(models.Model):
