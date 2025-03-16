@@ -6,6 +6,7 @@ from django.contrib.auth.forms import PasswordResetForm
 from django.contrib.auth.views import PasswordResetConfirmView
 from django.http import HttpResponse, HttpRequest
 from django.contrib.auth.decorators import login_required, permission_required
+from django.core.exceptions import PermissionDenied
 from django.utils import timezone
 # model imports
 from app.models import Event, Booking, Student, SocietyRepresentative, Location
