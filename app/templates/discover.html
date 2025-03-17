@@ -225,7 +225,7 @@
                 </div>
                 {% if user.is_authenticated and event.id in booked_events %}
                     <p class="text-muted text-center"><strong>Event Booked</strong></p>
-                    {% if event.date > datetime.now() %}
+                    {% if (event.date - datetime.timedelta(minutes=5)) > datetime.now() %}
                         <form id="registerForm{{ forloop.counter }}" method="POST" action="{% url 'unregister_event' event.id %}">
                             {% csrf_token %}
                             <button type="submit" class="btn register-btn">Unregister Here</button>
