@@ -2,6 +2,7 @@
 from django.contrib.auth.forms import UserCreationForm
 # pylint: disable=imported-auth-user
 from django.contrib.auth.models import User
+from django.core.exceptions import ValidationError
 from django import forms
 from .models import Event, Booking, Location
 
@@ -67,3 +68,20 @@ class BookingForm(forms.ModelForm):
         model = Booking
         # the user will select the event they're interested in
         fields = ("event",)
+
+class DeleteAccountForm(forms.Form):
+    """Form for the user to provide confirmation of an account deletion.
+    
+    @param input:   the text input by the user
+    @author         Seth Mallinson
+    """
+
+    user_input = forms.CharField(label="user_input", max_length=200)
+    class Meta:
+        fields = ("user_input",)
+    
+    def clean(self) -> bool:
+        cleaned_data = super().clean()
+        user_input = cleaned_data.get("user_input")
+        if user_input != "delete":
+            raise ValidationError("Type 'delete' exactly to delete your account.")
