@@ -133,23 +133,23 @@
   }
 </style>
 
-<div class="container">
-    <div class="event-form-container">
+<div class="container mt-5">
+    <div class="event-form-container row">
         <!-- Left Sidebar -->
-        <div class="sidebar">
+        <div class="sidebar col-md-3">
             <div class="card">
                 <h4 class="text-center">Manage Events</h4>
                 <a class="btn btn-primary w-100 my-2" href="{% url 'organise' %}">➕ Add New Event</a>
                 <hr>
                 {% for event in events %}
-                    <a class="btn btn-outline-primary w-100 my-2" href="{% url 'edit_event' event.id %}">{{ event.name }}</a>
+                    <a class="btn btn-primary w-100 my-2" href="{% url 'edit_event' event.id %}">{{ event.name }}</a>
                 {% endfor %}
             </div>
         </div>
 
         <!-- Right Content -->
-        <div class="form-section">
-            <div class="card">
+        <div class="form-section col-md-9 pb-3">
+            <div class="card p-4">
                 <h2>Edit Event: <strong class="text-primary">{{ event.name }}</strong></h2>
 
                 <!-- Form -->
