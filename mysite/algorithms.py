@@ -6,7 +6,7 @@ from django.contrib.auth.models import User # pylint: disable=imported-auth-user
 from django.utils import timezone
 from django.http import HttpRequest
 from django.shortcuts import get_object_or_404
-from app.models import Event, Student, SocietyRepresentative, Booking, Award
+from app.models import Event, Student, SocietyRepresentative, Booking, Award, Badge
 
 def get_event_search_priority(event: Event, search_query: str) -> int:
     """Get the priority of an event (paired with a user query) for ordering search results.
@@ -178,7 +178,69 @@ def delete_account(user: User) -> None:
 
 def apply_awards_after_attendance(request: HttpRequest) -> None:
     """A function to determine whether the user now meets the criteria for any badges to be
-    awarded, and awards those badges to them.
+    awarded, and awards those badges to them. This function assumes that it is being called
+    after the request has already been validated as a valid event attendance registration.
     
     @request:   the user's request
-    @author:    Seth Mallinson"""
+    @author:    Seth Mallinson
+    """
+
+    event = Event.objects.get(id=int(request.GET["id"]))
+    student = Student.objects.get(user=request.user)
+    booking = Booking.objects.get(student=student, event=event)
+    already_awarded = [award.badge_name for award in Award.objects.filter(student=student)]
+    new_awards: list[Award] = []
+
+    def at_least_x_events(x: int) -> bool:
+        return len([booking for booking in Booking.objects.filter(student=student)
+                if booking.AttendanceStatus != Booking.AttendanceStatus.ABSENT]) >= x
+
+    def test1():
+        return
+    def test1():
+        return
+    def test1():
+        return
+    def test1():
+        return
+    def test1():
+        return
+    def test1():
+        return
+    def test1():
+        return
+    def test1():
+        return
+    def test1():
+        return
+    def test1():
+        return
+    def test1():
+        return
+    def test1():
+        return
+    def test1():
+        return
+    def test1():
+        return
+    def test1():
+        return
+    conditions = {
+        # attend at least one event
+        "Getting Started": [],
+        # attend at least five events
+        "On a Roll": [lambda: at_least_x_events(5)],
+        # attend at least ten events
+        "Locked In": [lambda: at_least_x_events(10)],
+    }
+
+    for badge_name in conditions.keys():
+        if badge_name not in already_awarded:
+            if False not in [condition for condition in conditions[badge_name]]:
+                badge = Badge.objects.get(badge_name=badge_name)
+                new_awards.append(Award(student=student, badge_name=badge))
+
+
+    # Save any new badges
+    for award in new_awards:
+        award.save()
