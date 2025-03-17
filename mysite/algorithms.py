@@ -187,7 +187,7 @@ def apply_awards_after_attendance(request: HttpRequest) -> None:
 
     event = Event.objects.get(id=int(request.GET["id"]))
     student = Student.objects.get(user=request.user)
-    booking = Booking.objects.get(student=student, event=event)
+    # booking = Booking.objects.get(student=student, event=event)
     already_awarded = [award.badge_name for award in Award.objects.filter(student=student)]
     new_awards: list[Award] = []
 
@@ -204,10 +204,10 @@ def apply_awards_after_attendance(request: HttpRequest) -> None:
         "Locked In": [lambda: at_least_x_events(10)],
     }
 
-    for badge_name in conditions.keys():
-        if badge_name not in already_awarded:
-            if all(condition() for condition in conditions[badge_name]):
-                badge = Badge.objects.get(badge_name=badge_name)
+    for item in conditions.items():
+        if item[0] not in already_awarded:
+            if all(condition() for condition in item[1]):
+                badge = Badge.objects.get(badge_name=item[0])
                 new_awards.append(Award(student=student, badge_name=badge))
 
 
