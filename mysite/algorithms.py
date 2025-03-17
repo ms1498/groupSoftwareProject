@@ -197,33 +197,33 @@ def apply_awards_after_attendance(request: HttpRequest) -> None:
 
     def test1():
         return
-    def test1():
+    def test2():
         return
-    def test1():
+    def test3():
         return
-    def test1():
+    def test4():
         return
-    def test1():
+    def test5():
         return
-    def test1():
+    def test6():
         return
-    def test1():
+    def test7():
         return
-    def test1():
+    def test8():
         return
-    def test1():
+    def test9():
         return
-    def test1():
+    def test10():
         return
-    def test1():
+    def test11():
         return
-    def test1():
+    def test12():
         return
-    def test1():
+    def test13():
         return
-    def test1():
+    def test14():
         return
-    def test1():
+    def test15():
         return
     conditions = {
         # attend at least one event
@@ -236,7 +236,7 @@ def apply_awards_after_attendance(request: HttpRequest) -> None:
 
     for badge_name in conditions.keys():
         if badge_name not in already_awarded:
-            if False not in [condition for condition in conditions[badge_name]]:
+            if False not in list(conditions[badge_name]):
                 badge = Badge.objects.get(badge_name=badge_name)
                 new_awards.append(Award(student=student, badge_name=badge))
 
