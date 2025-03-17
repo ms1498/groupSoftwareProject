@@ -273,6 +273,43 @@ def organise(request: HttpRequest) -> HttpResponse:
             valid_events.append(event)
     return render(request, "organise.html", {"events": valid_events, "locations": locations})
 
+@login_required
+@permission_required("app.create_events", raise_exception=True)
+def event_analytics(request: HttpRequest, event_id: int) -> HttpResponse:
+    """Display a page for editing events.
+
+    @author    Tilly Searle
+    """
+    user_society_rep = get_object_or_404(SocietyRepresentative, user=request.user)
+    # Find all the organisers with the same society as the requesting user, and filter the events
+    # we display to only include ones submitted by any of them.
+    potential_organisers = list(
+        SocietyRepresentative.objects.filter(society_name=user_society_rep.society_name)
+    )
+
+    # Fetch all locations for the dropdown
+    locations = Location.objects.all()
+
+    events = list(Event.objects.all())
+    valid_events: list[Event] = []
+    for event_iterator in events:
+        if event_iterator.organiser in potential_organisers:
+            valid_events.append(event_iterator)
+
+    # Get the event requested, if it is in the valid events.
+    event = [x for x in valid_events if x.organiser in potential_organisers and x.id == event_id]
+    if len(event) == 0:
+        raise PermissionDenied("You do not have permissions to access an event with the given ID.")
+    event = event[0]
+
+    return render(
+        request, "events_analytics.html", {
+        "locations": locations,
+        "event": event,
+        "events": valid_events,
+    })
+
+
 def edit_event(request: HttpRequest, event_id: int) -> HttpResponse:
     """Display a page for editing events.
 
