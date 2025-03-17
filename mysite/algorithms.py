@@ -176,5 +176,9 @@ def delete_account(user: User) -> None:
     # Delete the account.
     user.delete()
 
-def determine_awards_from_booking():
-    pass
+def apply_awards_after_attendance(request: HttpRequest) -> None:
+    """A function to determine whether the user now meets the criteria for any badges to be
+    awarded, and awards those badges to them.
+    
+    @request:   the user's request
+    @author:    Seth Mallinson"""

@@ -13,12 +13,14 @@ from django.utils import timezone
 from app.models import Event, Booking, Student, SocietyRepresentative, Location, Badge, Award
 # backend imports
 from mysite.generators import get_qrcode_from_response
-from mysite.algorithms import get_event_search_priority, process_qrcode_scan, delete_account
+from mysite.algorithms import get_event_search_priority, process_qrcode_scan, delete_account, apply_awards_after_attendance
 from .forms import SignInForm, SignUpForm, CreateEventForm, DeleteAccountForm
 
 def index(request: HttpRequest) -> HttpResponse:
     """Display the home page."""
     qrcode_info = process_qrcode_scan(request)
+    if qrcode_info and qrcode_info[0]:
+        apply_awards_after_attendance(request)
     ordered_events = Event.objects.all().order_by("date")
     date_now = timezone.now().date()
     events = ordered_events.filter(approved="1",  date__date__gte=date_now)[:3]
