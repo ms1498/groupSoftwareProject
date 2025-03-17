@@ -175,3 +175,6 @@ def delete_account(user: User) -> None:
 
     # Delete the account.
     user.delete()
+
+def determine_awards_from_booking():
+    pass
