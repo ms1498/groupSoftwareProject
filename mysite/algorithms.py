@@ -192,39 +192,9 @@ def apply_awards_after_attendance(request: HttpRequest) -> None:
     new_awards: list[Award] = []
 
     def at_least_x_events(x: int) -> bool:
-        return len([booking for booking in Booking.objects.filter(student=student)
-                if booking.AttendanceStatus != Booking.AttendanceStatus.ABSENT]) >= x
+        bookings = Booking.objects.filter(student=student)
+        return x <= bookings.exclude(attended=Booking.AttendanceStatus.ABSENT).count()
 
-    def test1():
-        return
-    def test2():
-        return
-    def test3():
-        return
-    def test4():
-        return
-    def test5():
-        return
-    def test6():
-        return
-    def test7():
-        return
-    def test8():
-        return
-    def test9():
-        return
-    def test10():
-        return
-    def test11():
-        return
-    def test12():
-        return
-    def test13():
-        return
-    def test14():
-        return
-    def test15():
-        return
     conditions = {
         # attend at least one event
         "Getting Started": [],
@@ -236,7 +206,7 @@ def apply_awards_after_attendance(request: HttpRequest) -> None:
 
     for badge_name in conditions.keys():
         if badge_name not in already_awarded:
-            if False not in list(conditions[badge_name]):
+            if all(condition() for condition in conditions[badge_name]):
                 badge = Badge.objects.get(badge_name=badge_name)
                 new_awards.append(Award(student=student, badge_name=badge))
 
