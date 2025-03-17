@@ -446,6 +446,11 @@ def password_reset_complete(request: HttpRequest) -> HttpResponse:
 
 @login_required
 def delete_account_confirm(request: HttpRequest) -> HttpResponse:
+    """A confirmation page for deleting the user's account.
+    @param     user's request
+    @return    either re-renders the page with an error, or redirects to the home page
+    @author    Seth Mallinson
+    """
     if request.method == "POST":
         form = DeleteAccountForm(request.POST)
         if form.is_valid():
@@ -454,9 +459,11 @@ def delete_account_confirm(request: HttpRequest) -> HttpResponse:
             logout(request)
             delete_account(user)
             return redirect("home")
-        else:
-            errors = form.errors["__all__"]
-            return render(request, "delete_account.html", {"form": DeleteAccountForm(), "errors": errors})
+        errors = form.errors["__all__"]
+        return render(request, "delete_account.html", {
+            "form": DeleteAccountForm(),
+            "errors": errors
+        })
     return render(request, "delete_account.html", {"form": DeleteAccountForm(), "errors": {}})
 #endregion
 

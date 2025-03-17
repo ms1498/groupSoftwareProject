@@ -79,7 +79,7 @@ class DeleteAccountForm(forms.Form):
     user_input = forms.CharField(label="user_input", max_length=200)
     class Meta:
         fields = ("user_input",)
-    
+
     def clean(self) -> bool:
         cleaned_data = super().clean()
         user_input = cleaned_data.get("user_input")

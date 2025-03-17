@@ -162,11 +162,6 @@ def delete_account(user: User) -> None:
     if student:
         related_bookings = Booking.objects.filter(student=student)
         for booking in related_bookings:
-            """ related_event = booking.event
-            # the expected attendance is reduced for the sake of the organiser; if the booking has
-            # incremented the actual attendance, there's no need to erase that info.
-            related_event.expected_attendance -= 1
-            related_event.save() """
             booking.delete()
         related_awards = Award.objects.filter(student=student)
         for award in related_awards:
