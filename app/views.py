@@ -13,7 +13,11 @@ from django.utils import timezone
 from app.models import Event, Booking, Student, SocietyRepresentative, Location, Badge, Award
 # backend imports
 from mysite.generators import get_qrcode_from_response
-from mysite.algorithms import get_event_search_priority, process_qrcode_scan, delete_account, apply_awards_after_attendance
+from mysite.algorithms import (
+    get_event_search_priority,
+    process_qrcode_scan, delete_account,
+    apply_awards_after_attendance
+)
 from .forms import SignInForm, SignUpForm, CreateEventForm, DeleteAccountForm
 
 def index(request: HttpRequest) -> HttpResponse:
