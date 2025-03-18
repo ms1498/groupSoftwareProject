@@ -184,7 +184,7 @@ def apply_awards_after_attendance(request: HttpRequest) -> None:
     @param request:   the user's request
     @author:          Seth Mallinson
     """
-
+    # pylint: disable=too-many-locals
     # event = Event.objects.get(id=int(request.GET["id"]))
     student = Student.objects.get(user=request.user)
     all_bookings = Booking.objects.filter(student=student)
@@ -295,7 +295,6 @@ def apply_awards_after_attendance(request: HttpRequest) -> None:
             if all(condition() for condition in item[1]):
                 badge = Badge.objects.get(badge_name=item[0])
                 new_awards.append(Award(student=student, badge_name=badge))
-
 
     # Save any new badges
     for award in new_awards:
