@@ -189,11 +189,12 @@ def apply_awards_after_attendance(request: HttpRequest) -> None:
     student = Student.objects.get(user=request.user)
     all_bookings = Booking.objects.filter(student=student)
     attended_bookings = all_bookings.exclude(attended=Booking.AttendanceStatus.ABSENT)
-    already_awarded = [award.badge_name for award in Award.objects.filter(student=student)]
+    # already_awarded = [award.badge_name for award in Award.objects.filter(student=student)]
+    already_awarded = []
     new_awards: list[Award] = []
 
     def at_least_x_events(x: int) -> bool:
-        return attended_bookings >= x
+        return attended_bookings.count() >= x
 
     def at_least_x_events_one_soc(x: int) -> bool:
         counts = {}
@@ -239,6 +240,7 @@ def apply_awards_after_attendance(request: HttpRequest) -> None:
 
     def at_least_x_week_streak(x: int) -> bool:
         this_week_start = datetime.today() - timedelta(days=datetime.today().weekday())
+        this_week_start = timezone.make_aware(this_week_start, timezone.get_current_timezone())
         week_starts = [this_week_start - timedelta(days=i*7) for i in range(x+1)]
         event_dates = [booking.event.date for booking in attended_bookings]
         streak = True
