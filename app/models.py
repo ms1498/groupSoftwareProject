@@ -114,7 +114,7 @@ class Booking(models.Model):
 
 class Badge(models.Model):
     """Model to show a table of badges"""
-    # TODO: currently there is no way to award the soc-rep badge, because we don't actually have a
+    # notice: currently there is no way to award the soc-rep badge, because we don't actually have a
     # way to create soc-rep accounts outside of the admin tools.
     badge_name = models.CharField(max_length=50, primary_key=True)
     badge_description = models.CharField(max_length=100)

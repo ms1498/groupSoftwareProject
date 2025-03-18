@@ -181,8 +181,8 @@ def apply_awards_after_attendance(request: HttpRequest) -> None:
     awarded, and awards those badges to them. This function assumes that it is being called
     after the request has already been validated as a valid event attendance registration.
     
-    @request:   the user's request
-    @author:    Seth Mallinson
+    @param request:   the user's request
+    @author:          Seth Mallinson
     """
 
     # event = Event.objects.get(id=int(request.GET["id"]))
@@ -194,7 +194,7 @@ def apply_awards_after_attendance(request: HttpRequest) -> None:
 
     def at_least_x_events(x: int) -> bool:
         return attended_bookings >= x
-    
+
     def at_least_x_events_one_soc(x: int) -> bool:
         counts = {}
         for booking in attended_bookings:
@@ -232,25 +232,26 @@ def apply_awards_after_attendance(request: HttpRequest) -> None:
         booked_categories = set(booking.event.category for booking in attended_bookings)
         return all(category in booked_categories for category in categories)
 
-    def at_least_x_outdoor_events(x: int) -> bool:
-        # TODO: actually create some outdoor locations.
-        # This badge is unattainable.
+    def at_least_x_outdoor_events(_: int) -> bool:
+        # to do: actually create some outdoor locations.
+        # This badge is currently unattainable.
         return False
-    
+
     def at_least_x_week_streak(x: int) -> bool:
         this_week_start = datetime.today() - timedelta(days=datetime.today().weekday())
         week_starts = [this_week_start - timedelta(days=i*7) for i in range(x+1)]
         event_dates = [booking.event.date for booking in attended_bookings]
         streak = True
         for i in range(1, len(week_starts)):
-            if not any(date > week_starts[i] and date < week_starts[i-1] for date in event_dates):
+            if not any(week_starts[i] <= date <= week_starts[i-1] for date in event_dates):
                 streak = False
         return streak
 
     def top_x_on_leaderboard(x: int, badge_name: str) -> bool:
         # TODO: we don't have a model representing the leaderboard. Thus, the method of referencing
         # it here (basically just assembling it) would not scale well with large numbers of users.
-        leaderboard = list(Student.objects.all()).sort(key=lambda x: x.points, reverse=True)
+        leaderboard = list(Student.objects.all())
+        leaderboard.sort(key=lambda x: x.points, reverse=True)
         # Similarly we must remove the badge another student may have here.
         if student in leaderboard[0:5] and len(leaderboard) > x:
             badge = Badge.objects.get(badge_name=badge_name)
