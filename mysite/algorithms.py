@@ -199,7 +199,7 @@ def apply_awards_after_attendance(request: HttpRequest) -> None:
         counts = {}
         for booking in attended_bookings:
             society = booking.event.organiser.society_name
-            if society in counts.keys():
+            if society in counts:
                 counts.update({society : counts[society] + 1})
             else:
                 counts.update({society : 1})
@@ -248,7 +248,7 @@ def apply_awards_after_attendance(request: HttpRequest) -> None:
         return streak
 
     def top_x_on_leaderboard(x: int, badge_name: str) -> bool:
-        # TODO: we don't have a model representing the leaderboard. Thus, the method of referencing
+        # notice: we don't have a model representing the leaderboard. Thus, the method of referencing
         # it here (basically just assembling it) would not scale well with large numbers of users.
         leaderboard = list(Student.objects.all())
         leaderboard.sort(key=lambda x: x.points, reverse=True)
