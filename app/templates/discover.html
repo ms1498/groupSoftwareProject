@@ -226,11 +226,13 @@
                 </div>
                 {% if user.is_authenticated and event.id in booked_events %}
                     <p class="text-muted text-center"><strong>Event Booked</strong></p>
-                    <form id="registerForm{{ forloop.counter }}" method="POST" action="{% url 'unregister_event' event.id %}">
-                        {% csrf_token %}
-                        <button type="submit" class="btn register-btn">Unregister Here</button>
-                    </form>
-                {%elif user.is_authenticated and perms.app.sign_up %}
+                    {% if (event.date - datetime.timedelta(minutes=5)) > datetime.now() %}
+                        <form id="registerForm{{ forloop.counter }}" method="POST" action="{% url 'unregister_event' event.id %}">
+                            {% csrf_token %}
+                            <button type="submit" class="btn register-btn">Unregister Here</button>
+                        </form>
+                    {% endif %}
+                {%elif user.is_authenticated %}
                     <form id="registerForm{{ forloop.counter }}" method="POST" action="{% url 'register_event' event.id %}">
                         {% csrf_token %}
                         <button type="submit" class="btn register-btn">Register Here</button>
