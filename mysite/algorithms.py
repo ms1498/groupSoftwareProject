@@ -7,40 +7,40 @@ from django.http import HttpRequest
 from django.shortcuts import get_object_or_404
 from app.models import Event, Student, Booking
 
-def get_event_search_priority(data: list[Event | str | int]) -> int:
+def get_event_search_priority(event: Event, search_query: str) -> int:
     """Get the priority of an event (paired with a user query) for ordering search results.
-    The priority passed in is modified in-place.
-    
-    @param: data - a list containing an event, the user's query (str) and the event's priority.
-    @returns: the priority of the event as an integer, from 0-4.
-    @author: Seth Mallinson
-    """
-    event = data[0]
-    search_query = data[1]
-    # if there is no search query, no ordering needs to be applied by us.
-    if not search_query:
-        data[2] = 0
-        return 0
 
-    society_name = event.organiser.society_name
+    @param event - the event to calculate the priority of.
+    @param search_query - the user's search query to match against.
+    @return the priority of the event as an integer, from 0-5.
+    @author Seth Mallinson
+    @author Tricia Sibley
+    """
+    society_name = event.organiser.society_name.lower()
+    event_name = event.name.lower()
+    search_query = search_query.lower()
+
+    # Query matches event name exactly.
+    if search_query == event_name:
+        return 5
+
     # Query is in event name.
-    if search_query in event.name.lower():
-        data[2] = 0
-        return 0
+    if search_query in event_name:
+        return 4
+
     # Query is in event description.
     if search_query in event.description.lower():
-        data[2] = 1
-        return 1
-    # True if at least one word in the user's query is in the event name.
-    if any(query in event.name.lower() for query in search_query.split(" ")):
-        data[2] = 2
-        return 2
-    # Query is in society name.
-    if search_query in society_name.lower():
-        data[2] = 3
         return 3
-    data[2] = 4
-    return 4
+
+    # At least one word in the user's query is in the event name.
+    if any(query in event_name for query in search_query.split(" ")):
+        return 2
+
+    # Query is in society name.
+    if search_query in society_name:
+        return 1
+
+    return 0
 
 def process_qrcode_scan(request: HttpRequest) -> tuple[bool, str] | None:
     """Validate a user's request to register attendance for an event, and register their attendance

@@ -10,7 +10,7 @@
         <p class="lead text-muted">Find exciting campus events while supporting our Carbon Zero 2030 goal! 🌍</p>
 
         <!-- Event Categories (Sustainability Focused) -->
-        <div class="d-flex flex-wrap justify-content-center gap-3 mt-3">
+        <div class="d-flex flex-wrap justify-content-center gap-3">
             {% for emoji, category in categories %}
                 <a href="{% url "category_shortcut" category=category %}" class="text-decoration-none">
                     <button class="btn btn-outline-primary">
@@ -23,7 +23,7 @@
     <div class="mt-4 text-center">
         {% if user.is_authenticated and perms.app.approve_event %}
             <h3 class="mb-3">Hello, {{ user.username }}! Ready to approve events?</h3>
-            <a href="{% url 'organise' %}" class="btn btn-primary btn-lg">
+            <a href="{% url 'approval' %}" class="btn btn-primary btn-lg">
                 <i class="bi bi-calendar-plus"></i> Approve Events
             </a>
         {% elif user.is_authenticated and perms.app.create_events %}
@@ -63,13 +63,13 @@
 
     <!-- Featured Sustainable Events -->
     <div class="mt-5">
-        <h2 class="fw-bold text-primary">♻️ Sustainable Event Highlights</h2>
+        <h2 class="fw-bold text-primary" style="margin-bottom: 10px;">♻️ Sustainable Event Highlights</h2>
 
         <div class="row">
             {% for event in events %}
             <div class="col-md-4 mb-4">
-                <div class="card shadow-sm">
-                    <img src="{{ event.image_url }}" class="card-img-top" alt="{{ event.title }}">
+                <div class="card shadow-sm" style="height: 500px;">
+                    <img src="{{ event.image.url }}" class="card-img-top" alt="{{ event.title }}" style="max-height: 250px; object-fit: contain; margin-top: 10px;">
                     <div class="card-body">
                         <a href="{% url "discover_shortcut" event.id %}" style=text-decoration:none;>
                           <h5 class="card-title">{{ event.name }}</h5>

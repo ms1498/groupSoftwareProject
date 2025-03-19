@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block title %}User Data - UWeave{% endblock %}
+
+{% block content %}
+    <p class="card-text" style="padding-left:25px;">Here is all the information we have that is linked to you.</p>
+    <b>
+    <p class="card-text" style="padding-left:25px;">Your username: {{ username }}</p>
+    <p class="card-text" style="padding-left:25px;">Your email address: {{ email }}</p>
+    {% if points %}
+        <p class="card-text" style="padding-left:25px;">Your account has {{ points }} points.</p>
+    {% endif %}
+    {% if society_name %}
+        <p class="card-text" style="padding-left:25px;">Your account is part of {{ society_name }}.</p>
+    {% endif %}
+    {% for booking in bookings %}
+        <p class="card-text" style="padding-left:25px;">A booking for the event "{{ booking.event.name }}" is linked to your account.</p>
+    {% endfor %}
+    {% for event in events %}
+        <p class="card-text" style="padding-left:25px;">An event named "{{ event.name }}" is linked to your account.</p>
+    {% endfor %}
+{% endblock %}
