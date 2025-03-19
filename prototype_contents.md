@@ -1,0 +1,5 @@
+# Prototype Contents
+- HTML templates for the webpage, including the home, book, organise, approve, discover, register and login/logout pages.
+- Database models for the webapp
+- A basic sample database including different user types
+- The back-end code for the webapp
