@@ -73,23 +73,6 @@
             border-radius: 10px;
         }
 
-        /* Responsive adjustments */
-        @media (max-width: 768px) {
-            .event-card {
-                flex-direction: column;
-                width: 90%;
-            }
-
-            .event-card .col-md-8, .event-card .col-md-4 {
-                width: 100%;
-                text-align: center;
-            }
-
-            .event-card img {
-                max-height: 200px;
-            }
-        }
-
         /* Popup Styling */
         .popup-container {
             display: none;
@@ -140,6 +123,23 @@
         .register-btn:hover {
             background-color: #0056b3 !important;
         }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .event-card {
+                flex-direction: column;
+                width: 90%;
+            }
+
+            .event-card .col-md-8, .event-card .col-md-4 {
+                width: 100%;
+                text-align: center;
+            }
+
+            .event-card img {
+                max-height: 200px;
+            }
+        }
     </style>
 </head>
 
@@ -185,9 +185,7 @@
                 <p class="popup-date"><strong>Date:</strong> {{ event.date }}</p>
                 <p class="popup-date"><strong>Society:</strong> {{ event.organiser.society_name }}</p>
                 <p class="popup-description">{{ event.description }}</p>
-                <div class="popup-image">
-                    <img src="{{ event.image.url }}" alt="Event Image" class="img-fluid" style="max-width: 70%;" onerror="this.src='/static/default-event.jpg';">
-                </div>
+                <img src="{{ event.image.url }}" alt="Event Image" class="img-fluid" style="height: 40%;" onerror="this.src='/static/default-event.jpg';">
                 <form id="approveForm{{ forloop.counter }}" method="POST" action="{% url 'approve_event' event.id %}">
                     {% csrf_token %}
                     <button type="submit" class="btn register-btn">Approve</button>
