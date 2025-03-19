@@ -129,7 +129,7 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 # credentials for the email we will use to contact users
 EMAIL_CREDS = Path("email_creds.txt")
-def get_email_creds() -> (str, str):
+def get_email_creds() -> tuple[str, str]:
     """Get the credentials required to use email.
 
     @author Maisie Marks

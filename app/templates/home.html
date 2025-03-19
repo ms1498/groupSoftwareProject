@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% block title %}Home - UWeave{% endblock %}
 
 {% block content %}
 
@@ -9,21 +10,20 @@
         <p class="lead text-muted">Find exciting campus events while supporting our Carbon Zero 2030 goal! 🌍</p>
 
         <!-- Event Categories (Sustainability Focused) -->
-        <div class="d-flex justify-content-center gap-3 mt-3">
-            <button class="btn btn-outline-primary">🤝 End Poverty</button>
-            <button class="btn btn-outline-primary">♻️ Responsible Consumption</button>
-            <button class="btn btn-outline-primary">🚰 Clean Water and Sanitation</button>
-            <button class="btn btn-outline-primary">🤝 End Poverty</button>
-            <button class="btn btn-outline-primary">💪 Good Health</button>
-            <button class="btn btn-outline-primary">🌍 Low Carbon</button>
-            <button class="btn btn-outline-primary">⚕️ Good Health</button>
-        </div>
+        <div class="d-flex flex-wrap justify-content-center gap-3">
+            {% for emoji, category in categories %}
+                <a href="{% url "category_shortcut" category=category %}" class="text-decoration-none">
+                    <button class="btn btn-outline-primary">
+                        {{emoji}} {{ category }}
+                    </button>
+                </a>
+            {% endfor %}
     </div>
 
     <div class="mt-4 text-center">
         {% if user.is_authenticated and perms.app.approve_event %}
             <h3 class="mb-3">Hello, {{ user.username }}! Ready to approve events?</h3>
-            <a href="{% url 'organise' %}" class="btn btn-primary btn-lg">
+            <a href="{% url 'approval' %}" class="btn btn-primary btn-lg">
                 <i class="bi bi-calendar-plus"></i> Approve Events
             </a>
         {% elif user.is_authenticated and perms.app.create_events %}
@@ -63,13 +63,13 @@
 
     <!-- Featured Sustainable Events -->
     <div class="mt-5">
-        <h2 class="fw-bold text-primary">♻️ Sustainable Event Highlights</h2>
+        <h2 class="fw-bold text-primary" style="margin-bottom: 10px;">♻️ Sustainable Event Highlights</h2>
 
         <div class="row">
             {% for event in events %}
             <div class="col-md-4 mb-4">
-                <div class="card shadow-sm">
-                    <img src="{{ event.image_url }}" class="card-img-top" alt="{{ event.title }}">
+                <div class="card shadow-sm" style="height: 500px;">
+                    <img src="{{ event.image.url }}" class="card-img-top" alt="{{ event.title }}" style="max-height: 250px; object-fit: contain; margin-top: 10px;">
                     <div class="card-body">
                         <a href="{% url "discover_shortcut" event.id %}" style=text-decoration:none;>
                           <h5 class="card-title">{{ event.name }}</h5>
@@ -89,31 +89,20 @@
 <!-- Thank You Popup -->
 <div id="thank-you-popup" class="popup">
     <div class="popup-content">
-        <h2 class="fw-bold text-success">🎉 Thank You for Attending! 🎉</h2>
-        <p>We appreciate your support for sustainable events. See you at the next one!</p>
+        <h2 class="fw-bold text-success" id="thank-you-header">🎉 Thank You for Attending! 🎉</h2>
+        <p id="thank-you-body">We appreciate your support for sustainable events. See you at the next one!</p>
         <button class="btn btn-primary" onclick="closePopup()">OK</button>
     </div>
 </div>
 
 <!-- Confetti Canvas -->
 <canvas id="confetti-canvas"></canvas>
+<!-- Confetti Library -->
+<script src="https://cdn.jsdelivr.net/npm/confetti-js"></script>
 
 <script>
-    document.addEventListener("DOMContentLoaded", function() {
-        const urlParams = new URLSearchParams(window.location.search);
-        if (urlParams.has("popup") && urlParams.get("popup") === "thank-you") {
-            document.getElementById("thank-you-popup").style.display = "flex";
-            startConfetti();
-        }
-    });
-
-    function closePopup() {
-        document.getElementById("thank-you-popup").style.display = "none";
-        stopConfetti();
-    }
-
     // Confetti Effect
-    let confetti;
+    let confetti = null;
     function startConfetti() {
         confetti = new ConfettiGenerator({ target: "confetti-canvas" });
         confetti.render();
@@ -122,6 +111,29 @@
     function stopConfetti() {
         confetti.clear();
     }
+
+    document.addEventListener("DOMContentLoaded", function() {
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.has("popup") && urlParams.get("popup") === "thank-you") {
+            document.getElementById("thank-you-popup").style.display = "flex";
+            startConfetti();
+        }
+    });
+
+    if ("{{ qrcode_info }}" != "None") {
+        success = Array.from("{{ qrcode_info }}".slice(1, -1).split(", "))[0];
+        document.getElementById("thank-you-header").textContent = Array.from("{{ qrcode_info }}".slice(1, -1).split(", "))[1].slice(6, -6);
+        document.getElementById("thank-you-popup").style.display = "flex";
+        if (success == "True") {
+            startConfetti();
+        }
+    }
+
+    function closePopup() {
+        document.getElementById("thank-you-popup").style.display = "none";
+        stopConfetti();
+    }
+
 </script>
 
 <style>
@@ -164,7 +176,5 @@
     }
 </style>
 
-<!-- Confetti Library -->
-<script src="https://cdn.jsdelivr.net/npm/confetti-js"></script>
 
 {% endblock %}

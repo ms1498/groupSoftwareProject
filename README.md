@@ -21,4 +21,3 @@ This will then give you a local URL to access the website from.
 - To test registering for an event, log in as a Student (username: sampleStudent password: studentPassword), click on Discover Events, then click on an existing event, then click Register Here. 
 - To test logging in as a moderator, use this login (username: tillysearle password: myPassword123), and you should be able to see the Approve Events button in the middle of the screen.
 The `resources/` directory contains an example database, along with further information.
-

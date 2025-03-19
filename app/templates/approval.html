@@ -155,6 +155,7 @@
 </script>
 
 {% extends "base.html" %}
+{% block title %}Approval - UWeave{% endblock %}
 {% block content %}
 <body>
     <h2 class="page-title">Approve Events</h2>
@@ -186,7 +187,7 @@
                 <p class="popup-date"><strong>Society:</strong> {{ event.organiser.society_name }}</p>
                 <p class="popup-description">{{ event.description }}</p>
                 <div class="popup-image">
-                    <img src="{{ event.image.url }}" alt="Event Image" class="img-fluid" style="height: 50%;" onerror="this.src='/static/default-event.jpg';">
+                    <img src="{{ event.image.url }}" alt="Event Image" class="img-fluid" style="max-height: 50%; max-width: 50%;" onerror="this.src='/static/default-event.jpg';">
                 </div>
                 <form id="approveForm{{ forloop.counter }}" method="POST" action="{% url 'approve_event' event.id %}">
                     {% csrf_token %}
