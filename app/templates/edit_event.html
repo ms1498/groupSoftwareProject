@@ -192,13 +192,25 @@
                   </select>
                 </div>
 
+                <!-- Event location -->
+                <div class="mb-3">
+                  <label for="location" class="form-label"><strong>Select location:</strong></label>
+                  <div class="editable-text" id="event-location" onclick="editField('event-location')">{{ event.location }}</div>
+                  <select class="form-select" id="event-location-input" name="location" style="display:none;">
+                    <option selected disabled value="">Choose a location</option>
+                    {% for location in locations %}
+                      <option value="{{ location.name }}">{{ location.name}}</option>
+                    {% endfor %}
+                  </select>
+                </div>
 
-                    <!-- Event Description -->
-                    <div class="mb-3">
-                        <label for="event-description" class="form-label"><strong>Event Description:</strong></label>
-                        <div class="editable-text" id="event-description" onclick="editField('event-description')">{{ event.description }}</div>
-                        <textarea class="form-control" id="event-description-input" name="description" rows="3" style="display:none;">{{ event.description }}</textarea>
-                    </div>
+
+                  <!-- Event Description -->
+                  <div class="mb-3">
+                    <label for="event-description" class="form-label"><strong>Event Description:</strong></label>
+                      <div class="editable-text" id="event-description" onclick="editField('event-description')">{{ event.description }}</div>
+                      <textarea class="form-control" id="event-description-input" name="description" rows="3" style="display:none;">{{ event.description }}</textarea>
+                  </div>
 
                     <!-- Upload Image -->
                     <div class="mb-3">
