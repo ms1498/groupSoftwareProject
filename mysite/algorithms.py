@@ -185,12 +185,10 @@ def apply_awards_after_attendance(request: HttpRequest) -> None:
     @author:          Seth Mallinson
     """
     # pylint: disable=too-many-locals
-    # event = Event.objects.get(id=int(request.GET["id"]))
     student = Student.objects.get(user=request.user)
     all_bookings = Booking.objects.filter(student=student)
     attended_bookings = all_bookings.exclude(attended=Booking.AttendanceStatus.ABSENT)
-    # already_awarded = [award.badge_name for award in Award.objects.filter(student=student)]
-    already_awarded = []
+    already_awarded = [award.badge_name for award in Award.objects.filter(student=student)]
     new_awards: list[Award] = []
 
     def at_least_x_events(x: int) -> bool:
