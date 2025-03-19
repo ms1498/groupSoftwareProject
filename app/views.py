@@ -1,4 +1,5 @@
 """Views used to display content to the user based on their request."""
+from datetime import datetime, timedelta
 #django imports
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login, logout
@@ -13,12 +14,18 @@ from django.utils import timezone
 from app.models import Event, Booking, Student, SocietyRepresentative, Location, Badge, Award
 # backend imports
 from mysite.generators import get_qrcode_from_response
-from mysite.algorithms import get_event_search_priority, process_qrcode_scan, delete_account
+from mysite.algorithms import (
+    get_event_search_priority,
+    process_qrcode_scan, delete_account,
+    apply_awards_after_attendance
+)
 from .forms import SignInForm, SignUpForm, CreateEventForm, DeleteAccountForm
 
 def index(request: HttpRequest) -> HttpResponse:
     """Display the home page."""
     qrcode_info = process_qrcode_scan(request)
+    if qrcode_info and qrcode_info[0]:
+        apply_awards_after_attendance(request)
     ordered_events = Event.objects.all().order_by("date")
     date_now = timezone.now().date()
     events = ordered_events.filter(approved="1",  date__date__gte=date_now)[:3]
@@ -85,14 +92,21 @@ def discover(request: HttpRequest) -> HttpResponse:
         events.sort(key=sorter, reverse=True)
 
     booked_events = set()
+    can_be_unbooked = set()
     if request.user.is_authenticated and Student.objects.filter(user=request.user).exists():
         student = get_object_or_404(Student, user=request.user)
         filtered_bookings = Booking.objects.filter(student=student)
+        current_time = timezone.make_aware(datetime.now(), timezone.get_current_timezone())
+        can_be_unbooked = set(
+            booking.event for booking in list(filtered_bookings)
+            if current_time < booking.event.date - timedelta(minutes=5)
+        )
         booked_events = set(filtered_bookings.values_list("event_id", flat=True))
 
     return render(request, "discover.html", {
         "events": events,
         "booked_events": booked_events,
+        "can_be_unbooked": can_be_unbooked,
         "societies": society_rep,
     })
 
@@ -131,13 +145,20 @@ def discover_shortcut(request: HttpRequest, event_id: int) -> HttpResponse:
         events = [thing[0] for thing in events_for_ordering if thing[2] < 4]
 
     booked_events = set()
+    can_be_unbooked = set()
     if request.user.is_authenticated and Student.objects.filter(user=request.user).exists():
         student = get_object_or_404(Student, user=request.user)
         filtered_bookings = Booking.objects.filter(student=student)
+        current_time = timezone.make_aware(datetime.now(), timezone.get_current_timezone())
+        can_be_unbooked = set(
+            booking.event for booking in list(filtered_bookings)
+            if current_time < booking.event.date - timedelta(minutes=5)
+        )
         booked_events = set(filtered_bookings.values_list("event_id", flat=True))
     return render(request, "discover.html", {
         "events": events,
         "booked_events": booked_events,
+        "can_be_unbooked": can_be_unbooked,
         "societys": society_rep,
     })
 
