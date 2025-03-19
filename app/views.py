@@ -13,8 +13,8 @@ from django.utils import timezone
 from app.models import Event, Booking, Student, SocietyRepresentative, Location, Badge, Award
 # backend imports
 from mysite.generators import get_qrcode_from_response
-from mysite.algorithms import get_event_search_priority, process_qrcode_scan
-from .forms import SignInForm, SignUpForm, CreateEventForm
+from mysite.algorithms import get_event_search_priority, process_qrcode_scan, delete_account
+from .forms import SignInForm, SignUpForm, CreateEventForm, DeleteAccountForm
 
 def index(request: HttpRequest) -> HttpResponse:
     """Display the home page."""
@@ -42,7 +42,6 @@ def index(request: HttpRequest) -> HttpResponse:
         "categories": categories,
         "qrcode_info":qrcode_info
     })
-
 
 def discover(request: HttpRequest) -> HttpResponse:
     """Filter events based on user input.
@@ -445,6 +444,29 @@ def password_reset_complete(request: HttpRequest) -> HttpResponse:
     """
     return render(request, "password_reset_complete.html")
 
+@login_required
+def delete_account_confirm(request: HttpRequest) -> HttpResponse:
+    """A confirmation page for deleting the user's account.
+    @param     user's request
+    @return    either re-renders the page with an error, or redirects to the home page
+    @author    Seth Mallinson
+    """
+    if request.method == "POST":
+        form = DeleteAccountForm(request.POST)
+        if form.is_valid():
+            # sign the user out, and then delete their account.
+            user = request.user
+            logout(request)
+            delete_account(user)
+            return redirect("home")
+        errors = form.errors["__all__"]
+        return render(request, "delete_account.html", {
+            "form": DeleteAccountForm(),
+            "errors": errors
+        })
+    return render(request, "delete_account.html", {"form": DeleteAccountForm(), "errors": {}})
+#endregion
+
 def generate_qr(request: HttpRequest) -> HttpResponse:
     """Generate a QR code from a given request.
 
@@ -511,7 +533,6 @@ def leaderboard(request: HttpRequest) -> HttpResponse:
         "rank": rank,
         "points": points
     })
-#endregion
 
 @login_required
 def user_data(request: HttpRequest) -> HttpResponse:
