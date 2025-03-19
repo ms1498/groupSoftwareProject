@@ -152,7 +152,7 @@ def update_booking_status(booking: Booking, is_end: bool) -> None:
     booking.save()
 
 def delete_account(user: User) -> None:
-    """Deletes the account of a given user and all data related to them.
+    """Delete a given user's account, along with all data related to them.
     
     @param user:    the account
     @author         Seth Mallinson
