@@ -145,13 +145,20 @@ def discover_shortcut(request: HttpRequest, event_id: int) -> HttpResponse:
         events = [thing[0] for thing in events_for_ordering if thing[2] < 4]
 
     booked_events = set()
+    can_be_unbooked = set()
     if request.user.is_authenticated and Student.objects.filter(user=request.user).exists():
         student = get_object_or_404(Student, user=request.user)
         filtered_bookings = Booking.objects.filter(student=student)
+        current_time = timezone.make_aware(datetime.now(), timezone.get_current_timezone())
+        can_be_unbooked = set(
+            booking.event for booking in list(filtered_bookings)
+            if current_time < booking.event.date - timedelta(minutes=5)
+        )
         booked_events = set(filtered_bookings.values_list("event_id", flat=True))
     return render(request, "discover.html", {
         "events": events,
         "booked_events": booked_events,
+        "can_be_unbooked": can_be_unbooked,
         "societys": society_rep,
     })
 
