@@ -128,6 +128,7 @@
             cursor: pointer;
             font-size: 16px;
             margin-top: 15px;
+            margin: auto;
         }
 
         .register-btn:hover {
@@ -221,11 +222,11 @@
                 <p class="popup-date"><strong>Date:</strong> {{ event.date }}</p>
                 <p class="popup-date"><strong>Society:</strong> {{ event.organiser.society_name }}</p>
                 <p class="popup-description" style="word-break: break-all; font-size: 14px;">{{ event.description }}</p>
-                <div style="display: grid; grid-template-areas: 'image booking';">
-                    <div class="popup-image" style="height: 50%; grid-area: image;">
+                <div style="display: grid; grid-template-columns: repeat(10, minmax(0, 1fr))">
+                    <div class="popup-image" style="height: 50%; grid-row: 1; grid-column: 1 / span 7;">
                         <img src="{{ event.image.url }}" alt="Event Image" class="img-fluid" style="height: 100%; object-fit: contain;" onerror="this.src='/static/default-event.jpg';">
                     </div>
-                    <div style="grid-area: booking; margin-top: 20%;">
+                    <div style="grid-column: 8 / span 3; grid-row: 1; margin-top: 20%;">
                         {% if user.is_authenticated and event.id in booked_events %}
                             <p class="text-muted text-center"><strong>Event Booked</strong></p>
                             <form id="registerForm{{ forloop.counter }}" method="POST" action="{% url 'unregister_event' event.id %}">
