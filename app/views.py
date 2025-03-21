@@ -1,4 +1,5 @@
 """Views used to display content to the user based on their request."""
+from datetime import datetime, timedelta
 #django imports
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login, logout
@@ -7,17 +8,24 @@ from django.contrib.auth.views import PasswordResetConfirmView
 from django.contrib.auth.models import User # pylint: disable=imported-auth-user
 from django.http import HttpResponse, HttpRequest
 from django.contrib.auth.decorators import login_required, permission_required
+from django.core.exceptions import PermissionDenied
 from django.utils import timezone
 # model imports
 from app.models import Event, Booking, Student, SocietyRepresentative, Location, Badge, Award
 # backend imports
 from mysite.generators import get_qrcode_from_response
-from mysite.algorithms import get_event_search_priority, process_qrcode_scan
-from .forms import SignInForm, SignUpForm, CreateEventForm
+from mysite.algorithms import (
+    get_event_search_priority,
+    process_qrcode_scan, delete_account,
+    apply_awards_after_attendance
+)
+from .forms import SignInForm, SignUpForm, CreateEventForm, DeleteAccountForm
 
 def index(request: HttpRequest) -> HttpResponse:
     """Display the home page."""
     qrcode_info = process_qrcode_scan(request)
+    if qrcode_info and qrcode_info[0]:
+        apply_awards_after_attendance(request)
     ordered_events = Event.objects.all().order_by("date")
     date_now = timezone.now().date()
     events = ordered_events.filter(approved="1",  date__date__gte=date_now)[:3]
@@ -41,7 +49,6 @@ def index(request: HttpRequest) -> HttpResponse:
         "categories": categories,
         "qrcode_info":qrcode_info
     })
-
 
 def discover(request: HttpRequest) -> HttpResponse:
     """Filter events based on user input.
@@ -85,14 +92,21 @@ def discover(request: HttpRequest) -> HttpResponse:
         events.sort(key=sorter, reverse=True)
 
     booked_events = set()
+    can_be_unbooked = set()
     if request.user.is_authenticated and Student.objects.filter(user=request.user).exists():
         student = get_object_or_404(Student, user=request.user)
         filtered_bookings = Booking.objects.filter(student=student)
+        current_time = timezone.make_aware(datetime.now(), timezone.get_current_timezone())
+        can_be_unbooked = set(
+            booking.event for booking in list(filtered_bookings)
+            if current_time < booking.event.date - timedelta(minutes=5)
+        )
         booked_events = set(filtered_bookings.values_list("event_id", flat=True))
 
     return render(request, "discover.html", {
         "events": events,
         "booked_events": booked_events,
+        "can_be_unbooked": can_be_unbooked,
         "societies": society_rep,
     })
 
@@ -131,13 +145,20 @@ def discover_shortcut(request: HttpRequest, event_id: int) -> HttpResponse:
         events = [thing[0] for thing in events_for_ordering if thing[2] < 4]
 
     booked_events = set()
+    can_be_unbooked = set()
     if request.user.is_authenticated and Student.objects.filter(user=request.user).exists():
         student = get_object_or_404(Student, user=request.user)
         filtered_bookings = Booking.objects.filter(student=student)
+        current_time = timezone.make_aware(datetime.now(), timezone.get_current_timezone())
+        can_be_unbooked = set(
+            booking.event for booking in list(filtered_bookings)
+            if current_time < booking.event.date - timedelta(minutes=5)
+        )
         booked_events = set(filtered_bookings.values_list("event_id", flat=True))
     return render(request, "discover.html", {
         "events": events,
         "booked_events": booked_events,
+        "can_be_unbooked": can_be_unbooked,
         "societys": society_rep,
     })
 
@@ -277,24 +298,27 @@ def edit_event(request: HttpRequest, event_id: int) -> HttpResponse:
 
     @author    Tilly Searle
     """
-    # Fetch the event object using the event_id or return a 404 error if it doesn't exist
-    event = get_object_or_404(Event, id=event_id)
-
-    # Fetch all locations for the dropdown
-    locations = Location.objects.all()
-
     user_society_rep = get_object_or_404(SocietyRepresentative, user=request.user)
     # Find all the organisers with the same society as the requesting user, and filter the events
     # we display to only include ones submitted by any of them.
     potential_organisers = list(
         SocietyRepresentative.objects.filter(society_name=user_society_rep.society_name)
     )
+
+    # Fetch all locations for the dropdown
+    locations = Location.objects.all()
+
     events = list(Event.objects.all())
-    valid_events = []
+    valid_events: list[Event] = []
     for event_iterator in events:
         if event_iterator.organiser in potential_organisers:
             valid_events.append(event_iterator)
 
+    # Get the event requested, if it is in the valid events.
+    event = [x for x in valid_events if x.organiser in potential_organisers and x.id == event_id]
+    if len(event) == 0:
+        raise PermissionDenied("You do not have permissions to access an event with the given ID.")
+    event = event[0]
     # If the request method is POST, process the form data
     if request.method == "POST":
         form = CreateEventForm(request.POST, request.FILES, instance=event)
@@ -304,7 +328,7 @@ def edit_event(request: HttpRequest, event_id: int) -> HttpResponse:
             event.approved = False
             event.save()
 
-            return redirect("home")
+            return redirect("organise")
         print("Form errors:", form.errors)
         return render(request, "edit_event.html", {
             "form": form,
@@ -441,6 +465,29 @@ def password_reset_complete(request: HttpRequest) -> HttpResponse:
     """
     return render(request, "password_reset_complete.html")
 
+@login_required
+def delete_account_confirm(request: HttpRequest) -> HttpResponse:
+    """A confirmation page for deleting the user's account.
+    @param     user's request
+    @return    either re-renders the page with an error, or redirects to the home page
+    @author    Seth Mallinson
+    """
+    if request.method == "POST":
+        form = DeleteAccountForm(request.POST)
+        if form.is_valid():
+            # sign the user out, and then delete their account.
+            user = request.user
+            logout(request)
+            delete_account(user)
+            return redirect("home")
+        errors = form.errors["__all__"]
+        return render(request, "delete_account.html", {
+            "form": DeleteAccountForm(),
+            "errors": errors
+        })
+    return render(request, "delete_account.html", {"form": DeleteAccountForm(), "errors": {}})
+#endregion
+
 def generate_qr(request: HttpRequest) -> HttpResponse:
     """Generate a QR code from a given request.
 
@@ -507,7 +554,6 @@ def leaderboard(request: HttpRequest) -> HttpResponse:
         "rank": rank,
         "points": points
     })
-#endregion
 
 @login_required
 def user_data(request: HttpRequest) -> HttpResponse:

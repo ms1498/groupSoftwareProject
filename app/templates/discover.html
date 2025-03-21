@@ -229,15 +229,17 @@
                     <div style="grid-column: 8 / span 3; grid-row: 1; margin-top: 20%;">
                         {% if user.is_authenticated and event.id in booked_events %}
                             <p class="text-muted text-center"><strong>Event Booked</strong></p>
-                            <form id="registerForm{{ forloop.counter }}" method="POST" action="{% url 'unregister_event' event.id %}">
-                                {% csrf_token %}
-                                <button type="submit" class="btn register-btn">Unregister Here</button>
-                            </form>
+                            {% if event in can_be_unbooked %}
+                              <form id="registerForm{{ forloop.counter }}" method="POST" action="{% url 'unregister_event' event.id %}">
+                                  {% csrf_token %}
+                                  <button type="submit" class="btn register-btn">Unregister Here</button>
+                              </form>
+                            {% endif %}
                         {%elif user.is_authenticated %}
-                        <form id="registerForm{{ forloop.counter }}" method="POST" action="{% url 'register_event' event.id %}">
-                            {% csrf_token %}
-                            <button type="submit" class="btn register-btn">Register Here</button>
-                        </form>
+                          <form id="registerForm{{ forloop.counter }}" method="POST" action="{% url 'register_event' event.id %}">
+                              {% csrf_token %}
+                              <button type="submit" class="btn register-btn">Register Here</button>
+                          </form>
                         {%else%}
                             <p class="text-muted text-center">Sign in to register!</p>
                         {%endif%}
