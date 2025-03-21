@@ -209,8 +209,11 @@
                 <p style="word-break: break-all;">{{ event.description }}</p>
             </div>
             <div class="col-md-3">
-                <img src="{{ event.image.url }}" alt="Event Image" class="img-fluid" onerror="this.src='/static/default-event.jpg';">
-
+                {% if event.image %}
+                    <img src="{{ event.image.url }}" alt="Event Image" class="img-fluid" onerror="this.src='/static/default-event.jpg';">
+                {% else %}
+                    <img src="/static/default-event.jpg" alt="Default Event Image" class="img-fluid">
+                {% endif %}
             </div>
         </div>
         
