@@ -140,9 +140,15 @@ def discover_shortcut(request: HttpRequest, event_id: int) -> HttpResponse:
     # the search, and remainders will be ordered by priority - a full name match is higher priority
     # than one word of the query matching for example.
     if search_query:
-        events_for_ordering = [[event, search_query, 0] for event in events]
-        events_for_ordering.sort(key=get_event_search_priority)
-        events = [thing[0] for thing in events_for_ordering if thing[2] < 4]
+        # Temporary function to bind search query to the priority calculation
+        def sorter(event: Event) -> int:
+            return get_event_search_priority(event, search_query)
+
+        # Filter out events with a priority of 0 (no relation to query)
+        events = [event for event in events if sorter(event) > 0]
+
+        # Sort remaining events
+        events.sort(key=sorter, reverse=True)
 
     booked_events = set()
     can_be_unbooked = set()
@@ -525,8 +531,8 @@ def badge_list(request: HttpRequest) -> HttpResponse:
 
     @author  Tilly Searle
     """
+    student = get_object_or_404(Student, user=request.user)
     badges = Badge.objects.all()
-    student = request.user.student
     owned_badges = Award.objects.filter(student=student).values_list("badge_name", flat=True)
 
     return render(request, "badges.html", {"badges": badges,"owned_badges": owned_badges})
