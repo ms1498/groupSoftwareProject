@@ -235,7 +235,6 @@
 
 
 <script>
-  
   function editField(fieldId) {
       var textField = document.getElementById(fieldId);
       var inputField = document.getElementById(fieldId + "-input");
@@ -243,6 +242,10 @@
       inputField.style.display = "block";
     }
 
+  eventStartURL = "http://" + window.location.host + "/qrgen?url=" + encodeURIComponent(window.location.host + "/home?id=" + "{{ event.id }}" + "&end=0&key=" + "{{ event.start_key }}");
+  document.getElementById("qrcode-container-start").setAttribute("src", eventStartURL);
+  eventEndURL = "http://" + window.location.host + "/qrgen?url=" + encodeURIComponent(window.location.host + "/home?id=" + "{{ event.id }}" + "&end=1&key=" + "{{ event.end_key }}");
+  document.getElementById("qrcode-container-end").setAttribute("src", eventEndURL);
 </script>
 
 {% endblock %}
