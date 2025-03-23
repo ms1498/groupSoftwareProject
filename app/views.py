@@ -387,7 +387,7 @@ def sign_up(request: HttpRequest) -> HttpResponse:
         form = SignUpForm(request.POST)
         if form.is_valid():
             user = form.save()
-            Student.objects.create(user=user, points=0)
+            Student.objects.create(user=user)
             login(request, user)
             return redirect("home")
     else:

@@ -1,6 +1,6 @@
 """Test cases for the app."""
 
-from datetime import datetime
+from datetime import datetime, timedelta
 from zoneinfo import ZoneInfo
 from uuid import uuid4
 from django.test import TestCase
@@ -10,8 +10,8 @@ from django.contrib.auth.models import User
 import cv2
 import numpy as np
 from mysite.generators import get_qrcode_from_response
-from mysite.algorithms import get_event_search_priority
-from .models import Event, SocietyRepresentative
+from mysite.algorithms import get_event_search_priority, validate_checkin_request
+from .models import Event, SocietyRepresentative, Student, Booking
 
 class QRFromRequestTestCase(TestCase):
     """Test generating QR codes from requests.
@@ -68,3 +68,87 @@ class EventSearchTestCase(TestCase):
         query = "whole test query"
         for event, priority in self.test_events:
             self.assertEqual(get_event_search_priority(event, query), priority)
+
+class CheckInTestCase(TestCase):
+    """Test the checkin system.
+
+    @author Tricia Sibley
+    """
+
+    def setUp(self) -> None:
+        rep_user = User.objects.create(username=uuid4())
+        student_user = User.objects.create(username=uuid4())
+        rep = SocietyRepresentative.objects.create(user=rep_user, society_name="a")
+        self.student = Student.objects.create(user=student_user)
+        date = datetime.now(tz=ZoneInfo("Europe/London"))
+        early = date + timedelta(minutes=10)
+
+        self.good = Event.objects.create(name="a", description="a", date=date, organiser=rep)
+        Booking.objects.create(student=self.student, event=self.good)
+
+        self.too_early = Event.objects.create(name="a", description="a", date=early, organiser=rep)
+        Booking.objects.create(student=self.student, event=self.too_early)
+
+        self.unbooked = Event.objects.create(name="a", description="a", date=date, organiser=rep)
+
+        self.already_a = Event.objects.create(name="a", description="a", date=date, organiser=rep)
+        Booking.objects.create(
+            student=self.student, event=self.already_a, attended=Booking.AttendanceStatus.ATTENDED
+        )
+        self.already_s = Event.objects.create(name="a", description="a", date=date, organiser=rep)
+        Booking.objects.create(
+            student=self.student, event=self.already_s, attended=Booking.AttendanceStatus.START
+        )
+        self.already_e = Event.objects.create(name="a", description="a", date=date, organiser=rep)
+        Booking.objects.create(
+            student=self.student, event=self.already_e, attended=Booking.AttendanceStatus.END
+        )
+
+    def test_validate_checkin_request(self) -> None:
+        self.assertIsNone(
+            validate_checkin_request(self.good.id, False, self.good.start_key, self.student)
+        )
+        self.assertIsNone(
+            validate_checkin_request(self.good.id, True, self.good.end_key, self.student)
+        )
+        self.assertEqual(
+            validate_checkin_request(self.good.id, True, "aaaaaaa", self.student),
+            "No event with matching key exists.",
+        )
+        self.assertEqual(
+            validate_checkin_request(self.good.id, True, self.good.start_key, self.student),
+            "No event with matching key exists.",
+        )
+        self.assertEqual(
+            validate_checkin_request(self.good.id, False, self.good.end_key, self.student),
+            "No event with matching key exists.",
+        )
+        self.assertEqual(
+            validate_checkin_request(self.too_early.id, True, self.too_early.end_key, self.student),
+            "This event has not started yet.",
+        )
+        self.assertEqual(
+            validate_checkin_request(self.unbooked.id, True, self.unbooked.end_key, self.student),
+            "You are not booked for this event.",
+        )
+        self.assertEqual(
+            validate_checkin_request(self.already_a.id, True, self.already_a.end_key, self.student),
+            "You have already attended this event.",
+        )
+        self.assertEqual(
+            validate_checkin_request(
+                self.already_s.id, False, self.already_s.start_key, self.student,
+            ),
+            "You have already attended this event.",
+        )
+        self.assertEqual(
+            validate_checkin_request(
+                self.already_e.id, True, self.already_e.end_key, self.student,
+            ),
+            "You have already attended this event.",
+        )
+        self.assertIsNone(
+            validate_checkin_request(
+                self.already_s.id, True, self.already_s.end_key, self.student,
+            ),
+        )
