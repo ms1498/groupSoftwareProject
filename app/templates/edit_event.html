@@ -157,21 +157,21 @@
                     {% csrf_token %}
 
                 <!-- Event Name -->
-                <div class="mb-3" >
+                <div class="mb-3 text-center" >
                   <label for="event-name" class="form-label"><strong>Event Name:</strong></label>
                   <div class="editable-text" id="event-name" onclick="editField('event-name')">{{ event.name }}</div>
                   <input type="text" class="form-control" id="event-name-input" name="name" value="{{ event.name }}" style="display:none;">
                 </div>
 
                 <!-- Event Date -->
-                <div class="mb-3" >
+                <div class="mb-3 text-center" >
                   <label for="event-date" class="form-label"><strong>Event Date:</strong></label>
                   <div class="editable-text" id="event-date" onclick="editField('event-date')">{{ event.date }}</div>
                   <input type="datetime-local" class="form-control" id="event-date-input" name="date" value="{{ event.date|date:'Y-m-d\TH:i' }}" style="display:none;">
                 </div>
 
                 <!-- Event Category -->
-                <div class="mb-3" >
+                <div class="mb-3 text-center" >
                   <label for="category" class="form-label"><strong>Category:</strong></label>
                   <div class="editable-text" id="event-category" onclick="editField('event-category')">{{ event.category }}</div>
                   <select class="form-select" id="event-category-input" name="category" style="display:none;">
@@ -193,7 +193,7 @@
                 </div>
 
                 <!-- Event location -->
-                <div class="mb-3">
+                <div class="mb-3 text-center">
                   <label for="location" class="form-label"><strong>Select location:</strong></label>
                   <div class="editable-text" id="event-location" onclick="editField('event-location')">{{ event.location }}</div>
                   <select class="form-select" id="event-location-input" name="location" style="display:none;">
@@ -206,60 +206,35 @@
 
 
                   <!-- Event Description -->
-                  <div class="mb-3">
+                  <div class="mb-3 text-center">
                     <label for="event-description" class="form-label"><strong>Event Description:</strong></label>
                       <div class="editable-text" id="event-description" onclick="editField('event-description')">{{ event.description }}</div>
                       <textarea class="form-control" id="event-description-input" name="description" rows="3" style="display:none;">{{ event.description }}</textarea>
                   </div>
 
                     <!-- Upload Image -->
-                    <div class="mb-3">
+                    <div class="mb-3 text-center">
                         <label for="event-image" class="form-label">Event Image:</label><br>
                         <img src = "{{event.image.url}}" height="100px" id ="image" onclick="editField('image')">
                         <input class="form-control" type="file" name="image" accept="image/*" id="image-input" style="display:none;">
                     </div>
 
                     <!-- Submit Button -->
-                    <div class="text-center">
+                    <div class="text-center text-center">
                         <button type="submit" class="btn btn-primary">Save Changes</button>
                     </div>
                 </form>
 
-                <!-- QR Codes -->
-                <div class="qr-codes">
-                  Start of Event:
-                  <img src="uninitialised" id="qrcode-container-start" class="qr-code" onclick="showStartPopup()">
-                  End of Event:
-                  <img src="uninitialised" id="qrcode-container-end" class="qr-code" onclick="showEndPopup()">
-                </div>
+                <div class="text-center">
+                  <a href="{% url 'event_analytics' event.id %}" class="btn btn-primary text-white">View analytics</a>
+              </div>
             </div>
         </div>
     </div>
 </div>
 
-<!-- Popup -->
-<div class="popup" id="qr_code">
-    <button class="popup-close" onclick="exitPopup()">X</button>
-    <img id="full-size-qrcode" src="" alt="QR Code">
-</div>
 
 <script>
-  function showStartPopup() {
-      console.log("Popup opened!");
-      document.getElementById("qr_code").style.display = "block";
-      document.getElementById("full-size-qrcode").setAttribute("src", eventStartURL);
-  }
-  function showEndPopup() {
-      console.log("Popup opened!");
-      document.getElementById("qr_code").style.display = "block";
-      document.getElementById("full-size-qrcode").setAttribute("src", eventEndURL);
-  }
-
-  function exitPopup() {
-      console.log("Popup closed!");
-      document.getElementById("qr_code").style.display = "none";
-  }
-  
   function editField(fieldId) {
       var textField = document.getElementById(fieldId);
       var inputField = document.getElementById(fieldId + "-input");
