@@ -580,6 +580,8 @@ def leaderboard(request: HttpRequest) -> HttpResponse:
     @author  Lia Fisher
     """
     all_students = Student.objects.all().order_by("-points")
+    badge_links = Award.objects.all()
+    badges = Badge.objects.all()
     students = all_students[:10]
     top_ten = True
     rank = -1
@@ -595,7 +597,9 @@ def leaderboard(request: HttpRequest) -> HttpResponse:
         "students": students,
         "top_ten": top_ten,
         "rank": rank,
-        "points": points
+        "points": points,
+        "badge_links": badge_links,
+        "badges": badges
     })
 
 @login_required
