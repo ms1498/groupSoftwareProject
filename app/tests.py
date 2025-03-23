@@ -76,6 +76,7 @@ class CheckInTestCase(TestCase):
     """
 
     def setUp(self) -> None:
+        """Create some sample events to check into, and book them to a student."""
         rep_user = User.objects.create(username=uuid4())
         student_user = User.objects.create(username=uuid4())
         rep = SocietyRepresentative.objects.create(user=rep_user, society_name="a")
@@ -105,6 +106,7 @@ class CheckInTestCase(TestCase):
         )
 
     def test_validate_checkin_request(self) -> None:
+        """Test if the correct response is given for different checkin conditions."""
         self.assertIsNone(
             validate_checkin_request(self.good.id, False, self.good.start_key, self.student)
         )
