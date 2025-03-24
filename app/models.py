@@ -10,11 +10,17 @@ class Student(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     points = models.IntegerField()
     class Meta:
-        permissions = (("sign_up", "Can sign up for events"),)
+        permissions = (
+            ("sign_up", "Can sign up for events"),
+            ("badges", "Can be awarded badges and can access the badges page")
+        )
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
         signup_perm = Permission.objects.get(codename="sign_up")
-        self.user.user_permissions.add(signup_perm)
+        badges_perm = Permission.objects.get(codename="badges")
+        self.user.user_permissions.add(signup_perm, badges_perm)
+        self.user.save()
+
 
 class Developer(models.Model):
     """Model for a Developer user, who can make system changes."""
@@ -72,13 +78,12 @@ class Event(models.Model):
     organiser = models.ForeignKey(SocietyRepresentative, on_delete=models.CASCADE, null=True)
     date = models.DateTimeField()
     location = models.ForeignKey(Location, on_delete=models.CASCADE, null=True)
-    name = models.CharField(max_length=50)
+    name = models.CharField(max_length=23)
     expected_attendance = models.IntegerField(null=True)
     actual_attendance = models.IntegerField(null=True)
     maximum_attendance = models.IntegerField(null=True)
     approved = models.BooleanField(default=False)
-    rejected = models.BooleanField(default=False)
-    description = models.CharField(max_length=500, blank=True)
+    description = models.CharField(max_length=300, blank=True)
     image = models.ImageField(upload_to="event_images/", null=True, blank=True)
 
 class Booking(models.Model):
@@ -115,6 +120,8 @@ class Booking(models.Model):
 
 class Badge(models.Model):
     """Model to show a table of badges"""
+    # notice: currently there is no way to award the soc-rep badge, because we don't actually have a
+    # way to create soc-rep accounts outside of the admin tools.
     badge_name = models.CharField(max_length=50, primary_key=True)
     badge_description = models.CharField(max_length=100)
     badge_image = models.ImageField(upload_to="badges_images/", blank=True)
