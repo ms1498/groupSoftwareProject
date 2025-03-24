@@ -18,7 +18,7 @@ This will then give you a local URL to access the website from.
 Below is how we hosted our Uweave online. Though there are many ways to do this, this was our method of choice.
 
 ### Purchase a domain
-To host on a domain, you need to pruchase a domain name, this can be from any domain registrar of your choosing, but we chose [Porkbun](https://porkbun.com/) for simplicity and affordability.
+To host on a domain, you need to purchase a domain name, this can be from any domain registrar of your choosing, but we chose [Porkbun](https://porkbun.com/) for simplicity and affordability.
 
 ### Choose a reverse proxy
  Proxies are a much better alternative to hosting fully-locally. Not only a workaround for hosting inaccessibility, (e.g. port forwarding and other router-related settings) but also offer protection against DDossing and IP privacy. We used [Cloudflare](https://www.cloudflare.com/) for this.
