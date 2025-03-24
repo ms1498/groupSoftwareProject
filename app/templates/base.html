@@ -123,12 +123,12 @@
 
   <script>
     $(function(){
-        $('a').each(function(){
-            const link = $(this).prop('href');
+        $("a").each(function(){
+            const link = $(this).prop("href");
             if (window.location.href.includes(link)) {
-                $(this).addClass('active'); $(this).parents('a').addClass('active');
+                $(this).addClass("active"); $(this).parents("a").addClass("active");
             } else if(link.includes("organise") && window.location.href.includes("edit_event")){
-                $(this).addClass('active'); $(this).parents('a').addClass('active');
+                $(this).addClass("active"); $(this).parents("a").addClass("active");
             }
         });
     });
