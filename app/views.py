@@ -481,6 +481,8 @@ def sign_up(request: HttpRequest) -> HttpResponse:
             Student.objects.create(user=user)
             login(request, user)
             return redirect("home")
+    else:
+        form = SignUpForm()
     return render(request, "sign_up.html", {"form": form})
 
 def password_reset(request: HttpRequest) -> HttpResponse:
