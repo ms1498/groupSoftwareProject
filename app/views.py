@@ -298,8 +298,8 @@ def organise(request: HttpRequest) -> HttpResponse:
     potential_organisers = SocietyRepresentative.objects.filter(society_name=user_society_rep)
     valid_events = Event.objects.filter(organiser__in=potential_organisers)
 
-    return render(request, "organise.html", {"form": form, 
-                                             "events": valid_events, 
+    return render(request, "organise.html", {"form": form,
+                                             "events": valid_events,
                                              "locations": locations})
 
 @login_required
