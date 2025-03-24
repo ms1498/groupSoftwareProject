@@ -27,7 +27,7 @@ Proxies are a much better alternative to hosting fully-locally. Not only a worka
 You will need to copy the nameservers given to you by your reverse proxy and paste them into your nameservers on the domain registrar. This can take up to 72 hours to take effect.
 
 ### Computer for Deployment
-Once domain and reverse proxy are linked, you will need a computer to run your webserver. Connectors can be installed on Windows, Linux or Mac. We used (ubuntu)linux for simplicity to tunnel the traffic to and from the website and the server. Since we're using cloudflare, we also used their [Cloudflared](https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/downloads/) daemon.
+Once domain and reverse proxy are linked, you will need a computer to run your webserver. Connectors can be installed on Windows, Linux or Mac. We used Linux (Ubuntu) for simplicity to tunnel the traffic to and from the website and the server. Since we're using Cloudflare, we also used their [Cloudflared](https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/downloads/) daemon.
 
 ### Running the Webserver
 You need to make some changes to settings.py before running the local webserver, replacing ``uweave.online`` with your domain name. :
