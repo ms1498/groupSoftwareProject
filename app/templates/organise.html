@@ -3,12 +3,33 @@
 {% block title %}Organise - UWeave{% endblock %}
 
 {% block content %}
+<style>
+  .scrollable-sidebar {
+    max-height: 100vh; /* Adjust based on your layout */
+    overflow-y: auto;
+  }
+
+  .main-container {
+    max-height: 100vh; /* Adjust based on your layout */
+    overflow-y: auto;
+  }
+
+  .btn-primary {
+    transition: 0.3s;
+  }
+
+  .btn-primary:hover {
+      transform: scale(1.05);
+      box-shadow: 0px 0px 10px rgba(0, 255, 255, 0.6);
+  }
+</style>
+
 <div class="container mt-5">
   <div class="row">
     
     <!-- Left Sidebar -->
     <div class="col-md-3">
-      <div class="card p-3">
+      <div class="card p-3 scrollable-sidebar">
         <h4 class="text-center">Manage Events</h4>
         <button class="btn btn-primary w-100 my-2">➕ Add New Event</button>
         <hr>
@@ -20,11 +41,14 @@
 
     <!-- Right Content: Event Form -->
     <div class="col-md-9 pb-3">
-      <div class="card p-4">
+      <div class="card p-4 main-container">
         <h2 class="text-center mb-4">Create Event</h2>
 
         <form method="POST" enctype="multipart/form-data" action="{% url 'organise' %}">
-	  {% csrf_token %}
+          <div class="progress">
+            <div id="form-progress" class="progress-bar bg-info" style="width: 0%;">0% Completed</div>
+          </div>
+	        {% csrf_token %}
           <!-- Event Name -->
           <div class="mb-3">
             <label for="event-name" class="form-label">Event Name:</label>
@@ -77,6 +101,12 @@
             </select>
           </div>
 
+          <!-- Event max size -->
+          <div class="mb-3">
+            <label for= "maximum_attendance" class="form-label">Select ticket number:</label>
+            <input type="number" class="form-control" id= "maximum_attendance" name= "maximum_attendance" min="1" required>
+          </div>
+
           <!-- Image Upload -->
           <div class="mb-3">
             <label for="event-image" class="form-label">Upload Event Image:</label>
@@ -95,4 +125,21 @@
   </div>
 </div>
 
+<script>
+  document.getElementById("event-date").min  = new Date().toISOString().slice(0, 16);
+  document.addEventListener("DOMContentLoaded", function () {
+    const formFields = document.querySelectorAll("input, select, textarea");
+    const progressBar = document.getElementById("form-progress");
+
+    formFields.forEach(field => {
+        field.addEventListener("input", () => {
+            let filledFields = [...formFields].filter(f => f.value.trim() !== "").length;
+            let totalFields = formFields.length;
+            let progress = (filledFields / totalFields) * 100;
+            progressBar.style.width = `${progress}%`;
+            progressBar.innerText = `${Math.round(progress)}% Completed`;
+        });
+    });
+});
+</script>
 {% endblock %}
