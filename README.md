@@ -3,13 +3,8 @@
 ## System Requirements
 - See requirements.txt
 - If the included requirements are not present on your device, use pip install
-- Before running any migrations, please make sure to replace any db.sqlite3 file in the repository directory with the one from the ELE submission zip file, as this contains the sample data required for testing.
-- Before running the app, from the repository directory, be sure to run the following commands to ensure all migrations are made properly:
-```bash
-python manage.py makemigrations
-python manage.py migrate
-python manage.py migrate --run-syncdb
-```
+- Please make sure to replace any db.sqlite3 file in the repository directory with the one from the ELE submission zip file, as this contains the sample data required for testing.
+
 ## Running the App (locally)
 To run the app locally, run the command python manage.py runserver from the repository directory.
 This will then give you a local URL to access the website from.
