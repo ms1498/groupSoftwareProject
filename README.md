@@ -21,7 +21,7 @@ Below is how we hosted our Uweave online. Though there are many ways to do this,
 To host on a domain, you need to purchase a domain name, this can be from any domain registrar of your choosing, but we chose [Porkbun](https://porkbun.com/) for simplicity and affordability.
 
 ### Choose a Reverse Proxy
- Proxies are a much better alternative to hosting fully-locally. Not only a workaround for hosting inaccessibility, (e.g. port forwarding and other router-related settings) but also offer protection against DDossing and IP privacy. We used [Cloudflare](https://www.cloudflare.com/) for this.
+Proxies are a much better alternative to hosting fully-locally. Not only a workaround for hosting inaccessibility, (e.g. port forwarding and other router-related settings) but also offer protection against DDossing and IP privacy. We used [Cloudflare](https://www.cloudflare.com/) for this.
 
 ### Connect Your Domain to the Reverse Proxy
 You will need to copy the nameservers given to you by your reverse proxy and paste them into your nameservers on the domain registrar. This can take up to 72 hours to take effect.
