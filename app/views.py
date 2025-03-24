@@ -185,9 +185,12 @@ def category_shortcut(request: HttpRequest, category: str) -> HttpResponse:
     # Fetching user bookings to be rendered
     booked_events = set()
     if request.user.is_authenticated:
-        student = get_object_or_404(Student, user=request.user)
-        filtered_bookings = Booking.objects.filter(student=student)
-        booked_events = set(filtered_bookings.values_list("event_id", flat=True))
+        try:
+            student = Student.objects.get(user=request.user)
+            filtered_bookings = Booking.objects.filter(student=student)
+            booked_events = set(filtered_bookings.values_list("event_id", flat=True))
+        except Student.DoesNotExist:
+            pass
     return render(request, "discover.html", {
         "events": events,
         "booked_events": booked_events,
