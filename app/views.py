@@ -185,9 +185,12 @@ def category_shortcut(request: HttpRequest, category: str) -> HttpResponse:
     # Fetching user bookings to be rendered
     booked_events = set()
     if request.user.is_authenticated:
-        student = get_object_or_404(Student, user=request.user)
-        filtered_bookings = Booking.objects.filter(student=student)
-        booked_events = set(filtered_bookings.values_list("event_id", flat=True))
+        try:
+            student = Student.objects.get(user=request.user)
+            filtered_bookings = Booking.objects.filter(student=student)
+            booked_events = set(filtered_bookings.values_list("event_id", flat=True))
+        except Student.DoesNotExist:
+            pass
     return render(request, "discover.html", {
         "events": events,
         "booked_events": booked_events,
@@ -243,7 +246,7 @@ def approval_page(request: HttpRequest) -> HttpResponse:
     @author  Tilly Searle
     """
     events = Event.objects.all()
-    events = events.filter(approved="0")
+    events = events.filter(approved="0", rejected="0")
 
     return render(request, "approval.html", {"events": events})
 
@@ -261,7 +264,25 @@ def approve_event(request: HttpRequest, event_id: int) -> HttpResponse:
 
     event.approved = "1"
     event.save()
-    events = Event.objects.filter(approved="0")
+    events = Event.objects.filter(approved="0", rejected="0")
+
+    return render(request, "approval.html", {"events": events})
+
+@login_required
+@permission_required("app.approve_events", raise_exception=True)
+def reject_event(request: HttpRequest, event_id: int) -> HttpResponse:
+    """Approve an event.
+
+    Only moderators may approve events.
+
+    @author Tilly Searle
+    """
+    # Get the event
+    event = get_object_or_404(Event, id=event_id)
+
+    event.rejected = "1"
+    event.save()
+    events = Event.objects.filter(approved="0", rejected="0")
 
     return render(request, "approval.html", {"events": events})
 
@@ -457,7 +478,7 @@ def sign_up(request: HttpRequest) -> HttpResponse:
         form = SignUpForm(request.POST)
         if form.is_valid():
             user = form.save()
-            Student.objects.create(user=user, points=0)
+            Student.objects.create(user=user)
             login(request, user)
             return redirect("home")
     else:

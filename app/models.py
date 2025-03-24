@@ -8,7 +8,7 @@ class Student(models.Model):
     """Model for a Student user, who can sign up to events."""
 
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    points = models.IntegerField()
+    points = models.IntegerField(default=0)
     class Meta:
         permissions = (
             ("sign_up", "Can sign up for events"),

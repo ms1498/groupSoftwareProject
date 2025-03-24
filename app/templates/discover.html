@@ -203,10 +203,10 @@
                 <p class="booked-label text-muted text-center"><strong>Booked</strong></p>
             {%endif%}
             <div class="col-md-8 text-left" style="width: 50%;">
-                <h2 style="color: #0d6efd; word-break: break-all;">{{ event.name }}</h2>
+                <h2 style="color: #0d6efd; word-break: break-word;">{{ event.name }}</h2>
                 <p class="mb-2"><strong>Date:</strong> {{ event.date }}</p>
                 <p class="mb-2"><strong>Society:</strong> {{ event.organiser.society_name }}</p>
-                <p style="word-break: break-all;">{{ event.description }}</p>
+                <p style="word-break: break-word;">{{ event.description }}</p>
             </div>
             <div class="col-md-3">
                 <img src="{{ event.image.url }}" alt="Event Image" class="img-fluid" onerror="this.src='/static/default-event.jpg';">
@@ -218,10 +218,10 @@
         <div class="popup-container" id="popup{{ forloop.counter }}">
             <div class="popup">
                 <button class="popup-close" onclick="exitPopup('{{ forloop.counter }}')">X</button>
-                <h2 class="popup-title" style="color: #0d6efd; word-break: break-all; font-size: 20px;">{{ event.name }}</h2>
+                <h2 class="popup-title" style="color: #0d6efd; word-break: break-word; font-size: 20px;">{{ event.name }}</h2>
                 <p class="popup-date"><strong>Date:</strong> {{ event.date }}</p>
                 <p class="popup-date"><strong>Society:</strong> {{ event.organiser.society_name }}</p>
-                <p class="popup-description" style="word-break: break-all; font-size: 14px;">{{ event.description }}</p>
+                <p class="popup-description" style="word-break: break-word; font-size: 14px;">{{ event.description }}</p>
                 <div style="display: grid; grid-template-columns: repeat(10, minmax(0, 1fr))">
                     <div class="popup-image" style="height: 50%; grid-row: 1; grid-column: 1 / span 7;">
                         <img src="{{ event.image.url }}" alt="Event Image" class="img-fluid" style="height: 100%; object-fit: contain;" onerror="this.src='/static/default-event.jpg';">
