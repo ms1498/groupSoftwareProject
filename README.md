@@ -30,7 +30,7 @@ You will need to copy the nameservers given to you by your reverse proxy and pas
 Once domain and reverse proxy are linked, you will need a computer to run your webserver. Connectors can be installed on Windows, Linux or Mac. We used Linux (Ubuntu) for simplicity to tunnel the traffic to and from the website and the server. Since we're using Cloudflare, we also used their [Cloudflared](https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/downloads/) daemon.
 
 ### Running the Webserver
-You need to make some changes to settings.py before running the local webserver, replacing ``uweave.online`` with your domain name. :
+You need to make some changes to settings.py before running the local webserver, replacing ``uweave.online`` with your domain name:
 ```
 DEBUG = False
 ALLOWED_HOSTS = ["uweave.online", "127.0.0.1"]
