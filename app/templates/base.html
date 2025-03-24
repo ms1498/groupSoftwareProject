@@ -21,6 +21,8 @@
                 margin-left: 10%;;
             }
             .links {
+                display:flex;
+                align-items: center;
                 grid-row: 1;
                 grid-column: 4 / span 7;
                 right: 0;
@@ -34,7 +36,6 @@
                 justify-content: center;
             }
             #page-link {
-                text-shadow: 1px 1px black;
                 height: 100%;
             }
             #page-link.active {
@@ -104,12 +105,7 @@
                                     {% if user.is_authenticated %}
                                         <h3 class="bi d-block mx-auto mb-2 link-name">{{ user.username }}</h3>
                                     {% else %}
-                                    <h3 class="bi d-block mx-auto mb-2 link-name">Sign in</h3>
-                                    {% endif %}
-                                    {% if user.is_authenticated and user.groups.all.0.name == "moderator" %}
-                                        <p>Welcome, Admin! You have access to this secret panel teehee</p>
-                                    {% else %}
-                                    <p></p>
+                                        <h3 class="bi d-block mx-auto mb-2 link-name">Sign in</h3>
                                     {% endif %}
                                 </a>
                             </li>
