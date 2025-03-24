@@ -77,6 +77,7 @@ class Event(models.Model):
     actual_attendance = models.IntegerField(null=True)
     maximum_attendance = models.IntegerField(null=True)
     approved = models.BooleanField(default=False)
+    rejected = models.BooleanField(default=False)
     description = models.CharField(max_length=500, blank=True)
     image = models.ImageField(upload_to="event_images/", null=True, blank=True)
 
