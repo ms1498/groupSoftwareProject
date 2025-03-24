@@ -38,7 +38,7 @@ CSRF_TRUSTED_ORIGINS = [
     "https://uweave.online",
 ]
 ```
-Running the django server now should display your website on your purchased domain.
+Running the Django server now should display your website on your purchased domain.
 
 ## Testing Basic Functionality
 - To test registering for the website, click the black "Sign Up" button in the middle of the screen when logged out, enter some details, then click Sign Up.
