@@ -433,6 +433,9 @@ def sign_in(request: HttpRequest) -> HttpResponse:
                     "error": "Invalid username or password",
                 })
             login(request, user)
+            if request.GET:
+                next_page = request.GET.get("next", "home")
+                return redirect(next_page)
             return redirect("home")
     else:
         form = SignInForm()
