@@ -273,31 +273,32 @@ def organise(request: HttpRequest) -> HttpResponse:
     @author    Tricia Sibley
     """
     locations = Location.objects.all()  # Fetch locations for dropdown
+
     if request.method == "POST":
         form = CreateEventForm(request.POST, request.FILES)
         if form.is_valid():
-            event: Event = form.save(commit=False)  # Prevent immediate saving
-            event.organiser = SocietyRepresentative.objects.get(user=request.user)
-            event.location = Location.objects.get(name=request.POST["location"])
-            event.approved = False  # Auto-approve event
-            event.save()  # Save to database
-            return redirect("organise")  # Redirect to home page
-        print("Form errors:", form.errors)
-        return render(request, "organise.html", {"form": form, "errors": form.errors})
+            event = form.save(commit=False)  # Prevent immediate saving
+            event.organiser = get_object_or_404(SocietyRepresentative, user=request.user)
+            
+            # Ensure location exists before using it
+            location_name = request.POST.get("location")
+            event.location = get_object_or_404(Location, name=location_name)
 
-    form = CreateEventForm()
+            event.approved = False  # Auto-approve event
+            event.rejected = False  # Auto-reject event
+            event.expected_attendance = 0
+            event.actual_attendance = 0
+            event.save()
+
+            return redirect("organise")  # Redirect to organise page
+    else:
+        form = CreateEventForm()
+
     user_society_rep = get_object_or_404(SocietyRepresentative, user=request.user)
-    # Find all the organisers with the same society as the requesting user, and filter the events
-    # we display to only include ones submitted by any of them.
-    potential_organisers = list(
-        SocietyRepresentative.objects.filter(society_name=user_society_rep.society_name)
-    )
-    events = list(Event.objects.all())
-    valid_events = []
-    for event in events:
-        if event.organiser in potential_organisers:
-            valid_events.append(event)
-    return render(request, "organise.html", {"events": valid_events, "locations": locations})
+    potential_organisers = SocietyRepresentative.objects.filter(society_name=user_society_rep.society_name)
+    valid_events = Event.objects.filter(organiser__in=potential_organisers)
+
+    return render(request, "organise.html", {"form": form, "events": valid_events, "locations": locations})
 
 @login_required
 @permission_required("app.create_events", raise_exception=True)

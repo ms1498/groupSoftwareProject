@@ -48,7 +48,7 @@ class CreateEventForm(forms.ModelForm):
 
     class Meta:
         model = Event
-        fields = ("name", "date", "category", "description", "location", "image")
+        fields = ("name", "date", "category", "description", "location", "image", "maximum_attendance")
 
     # Ensure location field uses a ModelChoiceField
     location = forms.ModelChoiceField(
