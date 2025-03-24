@@ -32,6 +32,7 @@ Once domain and reverse proxy are linked, you will need a computer to run your w
 ### Running the webserver
 You need to make some changes to settings.py before running the local webserver, replacing ``uweave.online`` with your domain name. :
 ```
+DEBUG = False
 ALLOWED_HOSTS = ["uweave.online", "127.0.0.1"]
 CSRF_TRUSTED_ORIGINS = [
     "https://uweave.online",
