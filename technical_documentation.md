@@ -1,4 +1,5 @@
-Here's info on the structure of the project. Most of it is in app/, but generators.py and algorithms.py are in the mysite directory, where the justification is that they don't have any references to the frontend in them. Many of the files are quite self explanatory in their function but they will be listed here:
+# Project structure
+Most code is stored in the `app/` directory, but generators.py and algorithms.py are in the mysite directory, since they are purely backend modules. While the purpose of code can be determined from docstrings, a summary of each file is as follows:
 app/*.html - HTML files for different pages.
 app/\__init__.py - Django needs this.
 app/admin.py - registers database models so that the admin panel can manipulate them.
