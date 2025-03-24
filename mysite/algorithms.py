@@ -93,13 +93,13 @@ def process_qrcode_scan(request: HttpRequest) -> tuple[bool, str] | None:
 
 def validate_checkin_request(event_id: int, is_end: bool, key: str, student: Student) -> str | None:
     """If the request is invalid, this finds out why and returns the error.
-    
-    @param:     event_id - the id of the event.
-    @param:     is_end - is this the QR code that should be scanned at the end of the event?
-    @param:     key - the key from the request.
-    @param:     student - the Student making the request.
-    @returns:   a string of the error that was found, or None.
-    @author:    Seth Mallinson
+
+    @param      event_id - the id of the event.
+    @param      is_end - is this the QR code that should be scanned at the end of the event?
+    @param      key - the key from the request.
+    @param      student - the Student making the request.
+    @return     a string of the error that was found, or None.
+    @author     Seth Mallinson
     """
     # No matching event = fail
     if is_end:
