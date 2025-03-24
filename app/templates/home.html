@@ -41,11 +41,11 @@
         {% else %}
             <h3 class="mb-3">Join us today and start exploring exciting events!</h3>
             <div class="d-flex justify-content-center gap-3">
-                <a href="{% url 'discover' %}" class="btn btn-primary btn-lg">
-                    <i class="bi bi-search"></i> Discover Events
-                </a>
                 <a href="{% url 'sign-in' %}" class="btn btn-outline-dark btn-lg">
                     <i class="bi bi-box-arrow-in-right"></i> Sign In
+                </a>
+                <a href="{% url 'discover' %}" class="btn btn-primary btn-lg">
+                    <i class="bi bi-search"></i> Discover Events
                 </a>
                 <a href="{% url 'sign-up' %}" class="btn btn-dark btn-lg">
                     <i class="bi bi-person-plus"></i> Sign Up
