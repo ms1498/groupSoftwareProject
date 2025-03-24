@@ -10,9 +10,34 @@ python manage.py makemigrations
 python manage.py migrate
 python manage.py migrate --run-syncdb
 ```
-## Running the App
+## Running the App (locally)
 To run the app locally, run the command python manage.py runserver from the repository directory.
 This will then give you a local URL to access the website from.
+
+## Deploying the app (online)
+Below is how we hosted our Uweave online. Though there are many ways to do this, this was our method of choice.
+
+### Purchase a domain
+-To host on a domain, you need to pruchase a domain name, this can be from any domain registrar of your choosing, but we chose [Porkbun](https://porkbun.com/) for simplicity and affordability.
+
+### Choose a reverse proxy
+ Proxies are a much better alternative to hosting fully-locally. Not only a workaround for hosting inaccessibility, (e.g. port forwarding and other router-related settings) but also offer protection against DDossing and IP privacy. We used [Cloudflare](https://www.cloudflare.com/) for this.
+
+### Connect your domain to the reverse proxy
+You will need to copy the nameservers given to you by your reverse proxy and paste them into your nameservers on the domain registrar. This can take up to 72 hours to take effect.
+
+### Computer for deployment
+Once domain and reverse proxy are linked, you will need a computer to run your webserver. Connectors can be installed on Windows, Linux or Mac. We used (ubuntu)linux for simplicity to tunnel the traffic to and from the website and the server. Since we're using cloudflare, we also used their [Cloudflared](https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/downloads/) daemon.
+
+### Running the webserver
+You need to make some changes to settings.py before running the local webserver, replacing ``uweave.online`` with your domain name. :
+```
+ALLOWED_HOSTS = ["uweave.online", "127.0.0.1"]
+CSRF_TRUSTED_ORIGINS = [
+    "https://uweave.online",
+]
+```
+Running the django server now should display your website on your purchased domain.
 
 ## Testing Basic Functionality
 - To test registering for the website, click the black "Sign Up" button in the middle of the screen when logged out, enter some details, then click Sign Up.
