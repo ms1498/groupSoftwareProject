@@ -279,7 +279,7 @@ def organise(request: HttpRequest) -> HttpResponse:
         if form.is_valid():
             event = form.save(commit=False)  # Prevent immediate saving
             event.organiser = get_object_or_404(SocietyRepresentative, user=request.user)
-            
+
             # Ensure location exists before using it
             location_name = request.POST.get("location")
             event.location = get_object_or_404(Location, name=location_name)
@@ -294,11 +294,13 @@ def organise(request: HttpRequest) -> HttpResponse:
     else:
         form = CreateEventForm()
 
-    user_society_rep = get_object_or_404(SocietyRepresentative, user=request.user)
-    potential_organisers = SocietyRepresentative.objects.filter(society_name=user_society_rep.society_name)
+    user_society_rep = get_object_or_404(SocietyRepresentative, user=request.user).society_name
+    potential_organisers = SocietyRepresentative.objects.filter(society_name=user_society_rep)
     valid_events = Event.objects.filter(organiser__in=potential_organisers)
 
-    return render(request, "organise.html", {"form": form, "events": valid_events, "locations": locations})
+    return render(request, "organise.html", {"form": form, 
+                                             "events": valid_events, 
+                                             "locations": locations})
 
 @login_required
 @permission_required("app.create_events", raise_exception=True)
