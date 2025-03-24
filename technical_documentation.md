@@ -20,6 +20,6 @@ mysite/wsgi.py - Django needs this.
 Files typically have more granular documentation within them.
 
 There were definitely a lot of important design decisions, but that is terribly broad. Here's some subset of them:
-We decided to use QR codes to enforce location based engagement.
-We decided to enforce event approval by moderators.
-We decided to only allow Student accounts to attend events.
+- We decided to use QR codes to enforce location based engagement.
+- We decided to enforce event approval by moderators.
+- We decided to only allow Student accounts to attend events.
