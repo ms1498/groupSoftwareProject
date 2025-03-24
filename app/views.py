@@ -140,9 +140,15 @@ def discover_shortcut(request: HttpRequest, event_id: int) -> HttpResponse:
     # the search, and remainders will be ordered by priority - a full name match is higher priority
     # than one word of the query matching for example.
     if search_query:
-        events_for_ordering = [[event, search_query, 0] for event in events]
-        events_for_ordering.sort(key=get_event_search_priority)
-        events = [thing[0] for thing in events_for_ordering if thing[2] < 4]
+        # Temporary function to bind search query to the priority calculation
+        def sorter(event: Event) -> int:
+            return get_event_search_priority(event, search_query)
+
+        # Filter out events with a priority of 0 (no relation to query)
+        events = [event for event in events if sorter(event) > 0]
+
+        # Sort remaining events
+        events.sort(key=sorter, reverse=True)
 
     booked_events = set()
     can_be_unbooked = set()
@@ -237,7 +243,7 @@ def approval_page(request: HttpRequest) -> HttpResponse:
     @author  Tilly Searle
     """
     events = Event.objects.all()
-    events = events.filter(approved="0")
+    events = events.filter(approved="0", rejected="0")
 
     return render(request, "approval.html", {"events": events})
 
@@ -255,7 +261,25 @@ def approve_event(request: HttpRequest, event_id: int) -> HttpResponse:
 
     event.approved = "1"
     event.save()
-    events = Event.objects.filter(approved="0")
+    events = Event.objects.filter(approved="0", rejected="0")
+
+    return render(request, "approval.html", {"events": events})
+
+@login_required
+@permission_required("app.approve_events", raise_exception=True)
+def reject_event(request: HttpRequest, event_id: int) -> HttpResponse:
+    """Approve an event.
+
+    Only moderators may approve events.
+
+    @author Tilly Searle
+    """
+    # Get the event
+    event = get_object_or_404(Event, id=event_id)
+
+    event.rejected = "1"
+    event.save()
+    events = Event.objects.filter(approved="0", rejected="0")
 
     return render(request, "approval.html", {"events": events})
 
@@ -292,6 +316,43 @@ def organise(request: HttpRequest) -> HttpResponse:
         if event.organiser in potential_organisers:
             valid_events.append(event)
     return render(request, "organise.html", {"events": valid_events, "locations": locations})
+
+@login_required
+@permission_required("app.create_events", raise_exception=True)
+def event_analytics(request: HttpRequest, event_id: int) -> HttpResponse:
+    """Display a page for editing events.
+
+    @author    Tilly Searle
+    """
+    user_society_rep = get_object_or_404(SocietyRepresentative, user=request.user)
+    # Find all the organisers with the same society as the requesting user, and filter the events
+    # we display to only include ones submitted by any of them.
+    potential_organisers = list(
+        SocietyRepresentative.objects.filter(society_name=user_society_rep.society_name)
+    )
+
+    # Fetch all locations for the dropdown
+    locations = Location.objects.all()
+
+    events = list(Event.objects.all())
+    valid_events: list[Event] = []
+    for event_iterator in events:
+        if event_iterator.organiser in potential_organisers:
+            valid_events.append(event_iterator)
+
+    # Get the event requested, if it is in the valid events.
+    event = [x for x in valid_events if x.organiser in potential_organisers and x.id == event_id]
+    if len(event) == 0:
+        raise PermissionDenied("You do not have permissions to access an event with the given ID.")
+    event = event[0]
+
+    return render(
+        request, "events_analytics.html", {
+        "locations": locations,
+        "event": event,
+        "events": valid_events,
+    })
+
 
 def edit_event(request: HttpRequest, event_id: int) -> HttpResponse:
     """Display a page for editing events.
@@ -525,8 +586,8 @@ def badge_list(request: HttpRequest) -> HttpResponse:
 
     @author  Tilly Searle
     """
+    student = get_object_or_404(Student, user=request.user)
     badges = Badge.objects.all()
-    student = request.user.student
     owned_badges = Award.objects.filter(student=student).values_list("badge_name", flat=True)
 
     return render(request, "badges.html", {"badges": badges,"owned_badges": owned_badges})
@@ -537,6 +598,8 @@ def leaderboard(request: HttpRequest) -> HttpResponse:
     @author  Lia Fisher
     """
     all_students = Student.objects.all().order_by("-points")
+    badge_links = Award.objects.all()
+    badges = Badge.objects.all()
     students = all_students[:10]
     top_ten = True
     rank = -1
@@ -552,7 +615,9 @@ def leaderboard(request: HttpRequest) -> HttpResponse:
         "students": students,
         "top_ten": top_ten,
         "rank": rank,
-        "points": points
+        "points": points,
+        "badge_links": badge_links,
+        "badges": badges
     })
 
 @login_required

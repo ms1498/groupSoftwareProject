@@ -10,11 +10,17 @@ class Student(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     points = models.IntegerField()
     class Meta:
-        permissions = (("sign_up", "Can sign up for events"),)
+        permissions = (
+            ("sign_up", "Can sign up for events"),
+            ("badges", "Can be awarded badges and can access the badges page")
+        )
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
         signup_perm = Permission.objects.get(codename="sign_up")
-        self.user.user_permissions.add(signup_perm)
+        badges_perm = Permission.objects.get(codename="badges")
+        self.user.user_permissions.add(signup_perm, badges_perm)
+        self.user.save()
+
 
 class Developer(models.Model):
     """Model for a Developer user, who can make system changes."""

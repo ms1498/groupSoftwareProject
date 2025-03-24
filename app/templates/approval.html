@@ -3,60 +3,45 @@
 
     @author Tilly Searle
     -->
+
     <style>
         /* Page Title Styling */
         .page-title {
             font-size: 2.5rem;
             font-weight: bold;
-            color: #0d6efd;
+            color: #4e73df;
             text-align: center;
-            margin: 20px 0;
-        }
-
-        /* Navbar Styling */
-        .navbar-custom {
-            background-color: #3c5376 !important;
-            padding: 10px 20px;
-            border-radius: 0 0 10px 10px;
-            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
-        }
-
-        /* Search Button Styling */
-        .searcher {
-            color: #ffffff !important;
-            background-color: #0d6efd !important;
-            border: none;
-            border-radius: 6px !important;
-            transition: background-color 0.3s ease-in-out !important;
-            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1) !important;
-            padding: 8px 15px;
-        }
-
-        .searcher:hover {
-            background-color: #0056b3;
+            margin: 40px 0;
         }
 
         /* Event Card Styling */
         .event-container {
             display: flex;
-            flex-direction: column;
-            align-items: center;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+            padding: 20px;
         }
 
         .event-card {
             display: flex;
             flex-wrap: wrap;
             align-items: center;
-            justify-content: center;
-            width: 80%;
+            width: 90%;
             max-width: 600px;
             min-height: 200px;
-            border: 2px solid #3c5376;
-            border-radius: 10px;
+            border: 2px solid #4e73df;
+            border-radius: 12px;
             padding: 20px;
-            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+            box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.1);
             margin-bottom: 20px;
             background-color: white;
+            transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+        }
+
+        .event-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0px 12px 20px rgba(0, 0, 0, 0.2);
         }
 
         .event-card .col-md-8, .event-card .col-md-4 {
@@ -67,27 +52,9 @@
         /* Event Image */
         .event-card img {
             width: 100%;
-            height: auto;
             max-height: 150px;
             object-fit: contain;
             border-radius: 10px;
-        }
-
-        /* Responsive adjustments */
-        @media (max-width: 768px) {
-            .event-card {
-                flex-direction: column;
-                width: 90%;
-            }
-
-            .event-card .col-md-8, .event-card .col-md-4 {
-                width: 100%;
-                text-align: center;
-            }
-
-            .event-card img {
-                max-height: 200px;
-            }
         }
 
         /* Popup Styling */
@@ -102,17 +69,20 @@
             width: 100%;
             height: 100%;
             z-index: 999;
+            animation: fadeIn 0.3s ease-out;
         }
 
         .popup {
             background-color: white;
             padding: 30px;
-            border-radius: 10px;
-            width: 60%;
-            max-width: 600px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 12px;
+            width: 75%;
+            max-width: 700px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
             text-align: center;
             position: relative;
+            transform: translateY(50px);
+            animation: slideIn 0.5s ease-out forwards;
         }
 
         .popup-close {
@@ -123,23 +93,64 @@
             background: none;
             border: none;
             cursor: pointer;
-            color: #888;
+            color: #4e73df;
+        }
+
+        .popup-close:hover {
+            color: #1e4c9b;
         }
 
         /* Register Button */
         .register-btn {
-            background-color: #0d6efd !important;
+            background-color: #4e73df !important;
             color: white !important;
-            padding: 10px 20px;
+            padding: 12px 25px;
             border: none;
-            border-radius: 5px;
+            border-radius: 8px;
             cursor: pointer;
-            font-size: 16px;
-            margin-top: 15px;
+            font-size: 18px;
+            margin-top: 20px;
+            transition: background-color 0.3s;
         }
 
         .register-btn:hover {
-            background-color: #0056b3 !important;
+            background-color: #1e4c9b !important;
+        }
+
+        /* Popup Animations */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateY(50px);
+            }
+            to {
+                transform: translateY(0);
+            }
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .event-card {
+                flex-direction: column;
+                width: 95%;
+            }
+
+            .event-card .col-md-8, .event-card .col-md-4 {
+                width: 100%;
+                text-align: center;
+            }
+
+            .event-card img {
+                max-height: 200px;
+            }
         }
     </style>
 </head>
@@ -164,7 +175,7 @@
     {% for event in events %}
         <div class="event-card" onclick="showPopup('{{ forloop.counter }}')">
             <div class="col-md-8" style="width: 50%;">
-                <h2 style="color: #0d6efd;">{{ event.name }}</h2>
+                <h2 style="color: #4e73df;">{{ event.name }}</h2>
                 <p class="mb-2"><strong>Date:</strong> {{ event.date }}</p>
                 <p class="mb-2"><strong>Society:</strong> {{ event.organiser.society_name }}</p>
                 <p>{{ event.description }}</p>
@@ -182,16 +193,18 @@
         <div class="popup-container" id="popup{{ forloop.counter }}">
             <div class="popup">
                 <button class="popup-close" onclick="exitPopup('{{ forloop.counter }}')">X</button>
-                <h2 class="popup-title" style="color: #0d6efd;">{{ event.name }}</h2>
+                <h2 class="popup-title" style="color: #4e73df;">{{ event.name }}</h2>
                 <p class="popup-date"><strong>Date:</strong> {{ event.date }}</p>
                 <p class="popup-date"><strong>Society:</strong> {{ event.organiser.society_name }}</p>
                 <p class="popup-description">{{ event.description }}</p>
-                <div class="popup-image">
-                    <img src="{{ event.image.url }}" alt="Event Image" class="img-fluid" style="max-height: 50%; max-width: 50%;" onerror="this.src='/static/default-event.jpg';">
-                </div>
+                <img src="{{ event.image.url }}" alt="Event Image" class="img-fluid" style="height:200px;" onerror="this.src='/static/default-event.jpg';">
                 <form id="approveForm{{ forloop.counter }}" method="POST" action="{% url 'approve_event' event.id %}">
                     {% csrf_token %}
                     <button type="submit" class="btn register-btn">Approve</button>
+                </form>
+                <form id="rejectionForm{{ forloop.counter }}" method="POST" action="{% url 'reject_event' event.id %}">
+                    {% csrf_token %}
+                    <button type="submit" class="btn register-btn">Reject</button>
                 </form>
             </div>
         </div>
