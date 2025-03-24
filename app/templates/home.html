@@ -15,7 +15,7 @@
         <p class="lead text-muted">Find exciting campus events while supporting our Carbon Zero 2030 goal! 🌍</p>
 
         <!-- Event Categories (Sustainability Focused) -->
-        <div class="d-flex flex-wrap justify-content-center gap-3">
+        <div class="d-flex flex-row gap-3" id="category-container" style="overflow-x: auto; white-space: nowrap; max-width: 100%; scroll-behavior: smooth;">
             {% for emoji, category in categories %}
                 <a href="{% url "category_shortcut" category=category %}" class="text-decoration-none">
                     <button class="btn btn-outline-primary">
@@ -23,6 +23,7 @@
                     </button>
                 </a>
             {% endfor %}
+        </div>
     </div>
 
     <div class="mt-4 text-center">
@@ -46,11 +47,11 @@
         {% else %}
             <h3 class="mb-3">Join us today and start exploring exciting events!</h3>
             <div class="d-flex justify-content-center gap-3">
-                <a href="{% url 'discover' %}" class="btn btn-primary btn-lg">
-                    <i class="bi bi-search"></i> Discover Events
-                </a>
                 <a href="{% url 'sign-in' %}" class="btn btn-outline-dark btn-lg">
                     <i class="bi bi-box-arrow-in-right"></i> Sign In
+                </a>
+                <a href="{% url 'discover' %}" class="btn btn-primary btn-lg">
+                    <i class="bi bi-search"></i> Discover Events
                 </a>
                 <a href="{% url 'sign-up' %}" class="btn btn-dark btn-lg">
                     <i class="bi bi-person-plus"></i> Sign Up
@@ -68,7 +69,7 @@
 
     <!-- Featured Sustainable Events -->
     <div class="mt-5">
-        <h2 class="fw-bold text-primary" style="margin-bottom: 10px;">♻️ Sustainable Event Highlights</h2>
+        <h2 class="fw-bold text-primary text-center" style="margin-bottom: 10px;">♻️ Sustainable Event Highlights</h2>
 
         <div class="row">
             {% for event in events %}
@@ -85,7 +86,7 @@
                 </div>
             </div>
             {% empty %}
-                <p class="text-muted">No sustainable events found. Check back soon!</p>
+                <p class="text-muted text-center">No sustainable events found. Check back soon!</p>
             {% endfor %}
         </div>
     </div>
@@ -179,7 +180,33 @@
         from { opacity: 0; transform: scale(0.9); }
         to { opacity: 1; transform: scale(1); }
     }
+
+    #category-container {
+    -ms-overflow-style: none; /* Hide scrollbar for IE and Edge */
+    scrollbar-width: none; /* Hide scrollbar for Firefox */
+    }
+
+    #category-container::-webkit-scrollbar {
+        display: none; /* Hide scrollbar for Chrome, Safari, and Opera */
+    }
 </style>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        let container = document.getElementById("category-container");
+
+        function autoScroll() {
+            if (container.scrollLeft + container.clientWidth >= container.scrollWidth) {
+                container.scrollLeft = 0; // Reset scroll when reaching the end
+            } else {
+                container.scrollLeft += 1; // Adjust speed if needed
+            }
+        }
+
+        setInterval(autoScroll, 50); // Adjust speed by changing interval
+    });
+
+</script>
 
 
 {% endblock %}
