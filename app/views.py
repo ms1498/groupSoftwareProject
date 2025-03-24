@@ -243,7 +243,7 @@ def approval_page(request: HttpRequest) -> HttpResponse:
     @author  Tilly Searle
     """
     events = Event.objects.all()
-    events = events.filter(approved="0")
+    events = events.filter(approved="0", rejected="0")
 
     return render(request, "approval.html", {"events": events})
 
@@ -261,7 +261,25 @@ def approve_event(request: HttpRequest, event_id: int) -> HttpResponse:
 
     event.approved = "1"
     event.save()
-    events = Event.objects.filter(approved="0")
+    events = Event.objects.filter(approved="0", rejected="0")
+
+    return render(request, "approval.html", {"events": events})
+
+@login_required
+@permission_required("app.approve_events", raise_exception=True)
+def reject_event(request: HttpRequest, event_id: int) -> HttpResponse:
+    """Approve an event.
+
+    Only moderators may approve events.
+
+    @author Tilly Searle
+    """
+    # Get the event
+    event = get_object_or_404(Event, id=event_id)
+
+    event.rejected = "1"
+    event.save()
+    events = Event.objects.filter(approved="0", rejected="0")
 
     return render(request, "approval.html", {"events": events})
 

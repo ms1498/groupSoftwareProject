@@ -15,6 +15,7 @@ urlpatterns = [
     path("discover/<str:category>/", views.category_shortcut, name="category_shortcut"),
     path("approval", views.approval_page, name="approval"),
     path("approve_event/<int:event_id>/", views.approve_event, name="approve_event"),
+    path("reject_event/<int:event_id>/", views.reject_event, name="reject_event"),
     path("my-events", views.my_events, name="my-events"),
     path("organise", views.organise, name="organise"),
     path("edit_event/<int:event_id>/", views.edit_event, name="edit_event"),
