@@ -12,9 +12,9 @@
                 <div class="col-md-6 mb-4">
                     <div class="card shadow-sm">
                         {% if booking.event.image %}
-                            <img src="{{ booking.event.image.url }}" alt="Event Image" class="img-fluid" onerror="this.src='/static/default-event.jpg';">
+                            <img src="{{ booking.event.image.url }}" alt="Event Image" class="img-fluid" onerror="this.src='/../../resources/event_images/default-event.jpg';">
                         {% else %}
-                            <img src="/static/default-event.jpg" alt="Default Event Image" class="img-fluid">
+                            <img src="/../../resources/event_images/default-event.jpg" alt="Default Event Image" class="img-fluid">
                         {% endif %}
 
                         <div class="card-body">
