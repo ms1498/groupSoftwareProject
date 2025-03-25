@@ -37,12 +37,12 @@ class SignUpForm(UserCreationForm): # pylint: disable=too-many-ancestors
 class CreateEventForm(forms.ModelForm):
     """Form for creating events.
 
-    @param name:        The name of the event
-    @param date:        The date and time of the event
-    @param category:    The category of the event
-    @param description: A description of the event
-    @param image:       An image to display representing the event
-    @param location:    The location of the event
+    @param name         The name of the event
+    @param date         The date and time of the event
+    @param category     The category of the event
+    @param description  A description of the event
+    @param image        An image to display representing the event
+    @param location     The location of the event
     @author             Tricia Sibley
     """
 
@@ -55,6 +55,32 @@ class CreateEventForm(forms.ModelForm):
     location = forms.ModelChoiceField(
         queryset=Location.objects.all(),
         empty_label="Choose a location",
+    )
+
+class EditEventForm(forms.ModelForm):
+    """Form for editing events.
+
+    @param name         The name of the event
+    @param date         The date and time of the event
+    @param category     The category of the event
+    @param description  A description of the event
+    @param image        An image to display representing the event
+    @param location     The location of the event
+    @author             Tricia Sibley
+    """
+
+    class Meta:
+        model = Event
+        fields = ("name", "date", "category", "description", "location")
+
+    name = forms.CharField(max_length=23, required=False)
+    category = forms.CharField(max_length=50, required=False)
+    date = forms.DateTimeField(required=False)
+    description = forms.CharField(max_length=300, required=False)
+    location = forms.ModelChoiceField(
+        queryset=Location.objects.all(),
+        empty_label="Choose a location",
+        required=False,
     )
 
 class BookingForm(forms.ModelForm):
