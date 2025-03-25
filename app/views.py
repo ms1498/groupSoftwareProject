@@ -409,9 +409,7 @@ def edit_event(request: HttpRequest, event_id: int) -> HttpResponse:
             "event": event,
             "events": valid_events,
         })
-    print(event.location)
     form = EditEventForm(instance=event)
-    print(form)
     return render(request, "edit_event.html", {
         "form": form,
         "locations": locations,
