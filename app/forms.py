@@ -3,6 +3,8 @@ from django.contrib.auth.forms import UserCreationForm
 # pylint: disable=imported-auth-user
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
+from django.forms.widgets import NumberInput, Select
+from django.forms import ModelChoiceField
 from django import forms
 from .models import Event, Booking, Location
 
@@ -56,6 +58,30 @@ class CreateEventForm(forms.ModelForm):
         queryset=Location.objects.all(),
         empty_label="Choose a location",
     )
+
+class UpdateEventForm(forms.ModelForm):
+    """Form for updating events.
+
+    @param name:        The name of the event
+    @param date:        The date and time of the event
+    @param category:    The category of the event
+    @param description: A description of the event
+    @param image:       An image to display representing the event
+    @param location:    The location of the event
+    @author             Tricia Sibley
+    """
+
+    class Meta:
+        model = Event
+        fields = ("name", "date", "category", "description",
+                  "location", "image", "maximum_attendance")
+
+    # Ensure location field uses a ModelChoiceField
+    location = forms.ModelChoiceField(
+        queryset=Location.objects.all(),
+        empty_label="Choose a location",
+    )
+    maximum_attendance = forms.IntegerField(required=False)
 
 class BookingForm(forms.ModelForm):
     """Form for booking a place at an event.
