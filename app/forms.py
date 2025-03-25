@@ -3,8 +3,6 @@ from django.contrib.auth.forms import UserCreationForm
 # pylint: disable=imported-auth-user
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
-from django.forms.widgets import NumberInput, Select
-from django.forms import ModelChoiceField
 from django import forms
 from .models import Event, Booking, Location
 
