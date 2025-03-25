@@ -68,6 +68,8 @@ class Location(models.Model):
 
     name = models.CharField(max_length=50, primary_key=True)
     address = models.CharField(max_length=255)
+    def __str__(self):
+        return self.name
 
 class Event(models.Model):
     """Model for an Event, which students can register for and attend."""
