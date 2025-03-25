@@ -154,7 +154,7 @@
                 <!-- Event location -->
                 <div class="mb-3 text-center">
                   <label for="location" class="form-label"><strong>Select location:</strong></label>
-                  <div class="editable-text" id="event-location" onclick="editField('event-location')">{{ event.location }}</div>
+                  <div class="editable-text" id="event-location" onclick="editField('event-location')">{{ event.location.name }}</div>
                   <select class="form-select" id="event-location-input" name="location" style="display:none;">
                     <option selected disabled value="">Choose a location</option>
                     {% for location in locations %}
