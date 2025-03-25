@@ -1,0 +1,184 @@
+<head>
+    <!-- Displays a leaderboard of students and their points 
+
+        @author Lia Fisher
+    -->
+</head>
+
+<style>
+    .leaderboard {
+        margin: 3% auto;
+        width: 70%;
+        text-align: center;
+        background: #a9d8ff; /* Ocean blue */
+        border-radius: 15px;
+        padding: 20px;
+        border: 5px solid #00327b; /* Deep blue */
+        box-shadow: 0px 0px 15px rgba(13, 71, 161, 0.5);
+    }
+
+    h3 {
+        color: white;
+        text-shadow: 2px 2px 2px rgba(0, 0, 255, 0.3);
+        font-size: 1.8rem;
+    }
+
+    .table {
+        border-collapse: collapse;
+        width: 100%;
+        box-shadow: 0px 0px 8px rgba(33, 150, 243, 0.4);
+    }
+
+    .table th, .table td {
+        padding: 12px;
+        border: 2px solid #64b5f6; /* Light blue */
+        text-align: center;
+    }
+
+    .table tbody tr {
+        transition: 0.3s ease-in-out;
+    }
+
+    .table tbody tr:hover {
+        background-color: rgba(33, 150, 243, 0.3);
+        transform: scale(1.05);
+        box-shadow: 0px 0px 15px rgba(33, 150, 243, 0.5);
+    }
+
+    /* Styled Popups */
+    .popup {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%) scale(0);
+        width: 50%;
+        max-width: 90%;
+        background: #e3f2fd; /* Soft sky blue */
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 20px;
+        border-radius: 15px;
+        text-align: center;
+        box-shadow: 0px 0px 15px rgba(33, 150, 243, 0.5);
+        transition: transform 0.3s ease-in-out;
+        z-index: 1000;
+        border: 3px solid #0d47a1;
+    }
+
+    .popup.show {
+        transform: translate(-50%, -50%) scale(1);
+    }
+
+    .popup h4 {
+        color: #1565c0;
+        font-size: 1.4rem;
+    }
+
+    .popup p {
+        font-size: 1rem;
+        color: #0d47a1;
+    }
+
+    .popup-close {
+        position: absolute;
+        top: 10px;
+        right: 15px;
+        font-size: 20px;
+        background: none;
+        border: none;
+        color: #000000;
+        cursor: pointer;
+    }
+
+    .popup-close:hover {
+        color: #b71c1c;
+    }
+
+    .badge-container {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 15px;
+        margin-top: 10px;
+    }
+
+    .badge_image {
+        width: 80px; /* Adjust size */
+        height: 80px; /* Keep consistent shape */
+        border-radius: 50%; /* Circular badges */
+        object-fit: cover; /* Prevent distortion */
+        box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2); /* Add depth */
+        transition: transform 0.3s ease-in-out;
+    }
+
+    .badge_image:hover {
+        transform: scale(1.2); /* Subtle zoom effect */
+        box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.3);
+    }
+</style>
+
+<script>
+    function showPopup(row) {
+        document.getElementById("popup" + row).classList.add("show");
+    }
+
+    function exitPopup(row) {
+        document.getElementById("popup" + row).classList.remove("show");
+    }
+</script>
+
+{% extends "base.html" %}
+{% block title %}Leaderboard - Wave Challenge{% endblock %}
+{% block content %}
+<body>
+    <div class="leaderboard">
+        <h3>🏆  Challenge Leaderboard  🏆</h3>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Player</th>
+                    <th>Points</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for student in students %}
+                    {% if forloop.counter == 1 %} <tr class="warning" onclick="showPopup('{{ forloop.counter }}')">
+                    {% elif forloop.counter == 2 %} <tr class="active" onclick="showPopup('{{ forloop.counter }}')">
+                    {% elif forloop.counter == 3 %} <tr class="danger" onclick="showPopup('{{ forloop.counter }}')">
+                    {% endif %}
+                        <td>
+                            {% if forloop.counter == 1 %} 🥇
+                            {% elif forloop.counter == 2 %} 🥈
+                            {% elif forloop.counter == 3 %} 🥉
+                            {% else %} {{ forloop.counter }}
+                            {% endif %}
+                        </td>
+                        <td>{{ student.user.username }}</td>
+                        <td>{{ student.points }}</td>
+                    </tr>
+
+                    <!-- Popups -->
+                    <div class="popup" id="popup{{ forloop.counter }}">
+                        <button class="popup-close" onclick="exitPopup('{{ forloop.counter }}')">X</button>
+                        <h4>{{ student.user.username }}</h4>
+                        <p> Rank: {{ forloop.counter }}</p>
+                        <p> Points: {{ student.points }}</p>
+                        <div class="badge-container">
+                            {% for badge_link in badge_links%}
+                                {% if badge_link.student == student%}
+                                    <div style = "display:block;">
+                                        <img class="badge_image" src = "media/{{badge_link.badge_name.badge_image}}">
+                                        <p>{{badge_link.badge_name.badge_name}}</p>
+                                    </div>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                    </div>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</body>
+{% endblock %}

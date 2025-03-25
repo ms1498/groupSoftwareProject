@@ -1,0 +1,255 @@
+<head>
+    <!-- Shows a list of events a student can book
+
+    @author Tilly Searle
+    -->
+    <style>
+        /* Navbar Styling */
+        .navbar-custom {
+            background-color: #3c5376 !important;
+            padding: 10px 20px;
+            border-radius: 0 0 10px 10px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Search Button Styling */
+        .searcher {
+            color: #ffffff !important;
+            background-color: #0d6efd !important;
+            border: none;
+            border-radius: 6px !important;
+            transition: background-color 0.3s ease-in-out !important;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1) !important;
+            padding: 8px 15px;
+        }
+
+        .searcher:hover {
+            background-color: #0056b3;
+        }
+
+        /* Event Card Styling */
+        .event-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .event-card {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: center;
+            width: 80%;
+            max-width: 600px;
+            min-height: 200px;
+            border: 2px solid #3c5376;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+            background-color: white;
+        }
+
+        .event-card .col-md-8, .event-card .col-md-4 {
+            flex: 1;
+            text-align: center;
+        }
+
+        /* Event Image */
+        .event-card img {
+            width: 100%;
+            height: auto;
+            max-height: 150px;
+            object-fit: contain;
+            border-radius: 10px;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .event-card {
+                flex-direction: column;
+                width: 90%;
+            }
+
+            .event-card .col-md-8, .event-card .col-md-4 {
+                width: 100%;
+                text-align: center;
+            }
+
+            .event-card img {
+                max-height: 200px;
+            }
+        }
+
+        /* Popup Styling */
+        .popup-container {
+            display: none;
+            justify-content: center;
+            align-items: center;
+            background-color: rgba(0, 0, 0, 0.7);
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 999;
+        }
+
+        .popup {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            width: 80%;
+            height: 90%;
+            max-width: 600px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            position: relative;
+        }
+
+        .popup-close {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 20px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: #888;
+        }
+
+        /* Register Button */
+        .register-btn {
+            background-color: #0d6efd !important;
+            color: white !important;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 15px;
+            margin: auto;
+        }
+
+        .register-btn:hover {
+            background-color: #0056b3 !important;
+        }
+
+        .booked-label {
+            position: flex;
+            transform: rotate(-90deg) translateY(-50%);
+            color: #000;
+            padding: 5px 1px;
+            font-weight: bold;
+            border-radius: 5px;
+            white-space: nowrap;
+        }
+
+    </style>
+</head>
+
+<script>
+    function showPopup(card) {
+        document.getElementById("popup" + card).style.display = "flex";
+    }
+
+    function exitPopup(card) {
+        document.getElementById("popup" + card).style.display = "none";
+    }
+</script>
+
+{% extends "base.html" %}
+{% block title %}Discover - UWeave{% endblock %}
+{% block content %}
+<body>
+    <!-- Navbar -->
+    <form method="GET" action="{% url 'discover' %}" class="container-fluid navbar-custom">
+        <div class="d-flex flex-nowrap justify-content-between align-items-center">
+            {% csrf_token %}
+            <input type="text" name="search_query" placeholder="Search events..." class="form-control flex-grow-1 mx-2">
+            <input type="date" name="event_date" class="form-control flex-grow-1 mx-2">
+            <select class="form-select searcher mx-2" name="category">
+                <option value="">All Categories</option>
+                <option value="End Poverty">End Poverty</option>
+                <option value="End Hunger">End Hunger</option>
+                <option value="Good Health">Good Health</option>
+                <option value="Quality Education">Quality Education</option>
+                <option value="Gender Equality">Gender Equality</option>
+                <option value="Clean Water and Sanitation">Clean Water and Sanitation</option>
+                <option value="Clean Energy">Clean Energy</option>
+                <option value="Economic Growth">Economic Growth</option>
+                <option value="Reducing Inequalities">Reducing Inequalities</option>
+                <option value="Sustainable Cities and Communities">Sustainable Cities and Communities</option>
+                <option value="Responsible Consumption">Responsible Consumption</option>
+                <option value="Protect the Planet">Protect the Planet</option>
+                <option value="Peace and Justice">Peace and Justice</option>
+                <option value="Other">Other</option>
+            </select>
+            <select class="form-select searcher mx-2" name="society">
+                <option value="">All Societies</option>
+                {% for society in societies %}
+                    <option value="{{ society.society_name }}">{{ society.society_name}}</option>
+                {% endfor %}
+            </select>
+            <button type="submit" class="btn searcher">Search</button>
+        </div>
+    </form>
+    
+    <!-- Event Cards -->
+    <div class="event-container">
+    {% for event in events %}
+        <div class="event-card" onclick="showPopup('{{ forloop.counter }}')">
+            {% if user.is_authenticated and event.id in booked_events %}
+                <p class="booked-label text-muted text-center"><strong>Booked</strong></p>
+            {%endif%}
+            <div class="col-md-8 text-left" style="width: 50%;">
+                <h2 style="color: #0d6efd; word-break: break-word;">{{ event.name }}</h2>
+                <p class="mb-2"><strong>Date:</strong> {{ event.date }}</p>
+                <p class="mb-2"><strong>Society:</strong> {{ event.organiser.society_name }}</p>
+                <p style="word-break: break-word;">{{ event.description }}</p>
+            </div>
+            <div class="col-md-3">
+                <img src="{{ event.image.url }}" alt="Event Image" class="img-fluid" onerror="this.src='/static/default-event.jpg';">
+
+            </div>
+        </div>
+        
+        <!-- Popup -->
+        <div class="popup-container" id="popup{{ forloop.counter }}">
+            <div class="popup">
+                <button class="popup-close" onclick="exitPopup('{{ forloop.counter }}')">X</button>
+                <h2 class="popup-title" style="color: #0d6efd; word-break: break-word; font-size: 20px;">{{ event.name }}</h2>
+                <p class="popup-date"><strong>Date:</strong> {{ event.date }}</p>
+                <p class="popup-date"><strong>Society:</strong> {{ event.organiser.society_name }}</p>
+                <p class="popup-description" style="word-break: break-word; font-size: 14px;">{{ event.description }}</p>
+                <div style="display: grid; grid-template-columns: repeat(10, minmax(0, 1fr))">
+                    <div class="popup-image" style="height: 50%; grid-row: 1; grid-column: 1 / span 7;">
+                        <img src="{{ event.image.url }}" alt="Event Image" class="img-fluid" style="height: 100%; object-fit: contain;" onerror="this.src='/static/default-event.jpg';">
+                    </div>
+                    <div style="grid-column: 8 / span 3; grid-row: 1; margin-top: 20%;">
+                        {% if user.is_authenticated and event.id in booked_events %}
+                            <p class="text-muted text-center"><strong>Event Booked</strong></p>
+                            {% if event in can_be_unbooked %}
+                              <form id="registerForm{{ forloop.counter }}" method="POST" action="{% url 'unregister_event' event.id %}">
+                                  {% csrf_token %}
+                                  <button type="submit" class="btn register-btn">Unregister Here</button>
+                              </form>
+                            {% endif %}
+                        {%elif user.is_authenticated %}
+                          <form id="registerForm{{ forloop.counter }}" method="POST" action="{% url 'register_event' event.id %}">
+                              {% csrf_token %}
+                              <button type="submit" class="btn register-btn">Register Here</button>
+                          </form>
+                        {%else%}
+                            <p class="text-muted text-center">Sign in to register!</p>
+                        {%endif%}
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% empty %}
+        <p class="text-muted text-center">No sustainable events found. Check back soon!</p>
+    {% endfor %}
+    </div>
+</body>
+{% endblock %}

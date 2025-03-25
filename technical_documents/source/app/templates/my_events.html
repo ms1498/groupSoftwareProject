@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+
+{% block title %}My Events - UWeave{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <!-- Header -->
+    <h3 class="text-center text-primary fw-bold mb-4">My Booked Events</h3>
+    
+    <div class="row g-4">
+        {% for booking in bookings %}
+            <div class="col-md-6 col-lg-4">
+                <div class="card shadow-sm border-0 h-100">
+                    <!-- Event Image -->
+                    {% if booking.event.image %}
+                        <img src="{{ booking.event.image.url }}" 
+                             alt="Event Image" 
+                             class="card-img-top rounded-top" 
+                             style="height: 180px; object-fit: cover;"
+                             onerror="this.src='/static/default-event.jpg';">
+                    {% else %}
+                        <img src="/static/default-event.jpg" 
+                             alt="Default Event Image" 
+                             class="card-img-top rounded-top"
+                             style="height: 180px; object-fit: cover;">
+                    {% endif %}
+
+                    <!-- Event Details -->
+                    <div class="card-body">
+                        <h5 class="card-title text-primary fw-bold">{{ booking.event.name }}</h5>
+                        <p class="mb-1"><strong>Date:</strong> {{ booking.event.date }}</p>
+                        <p class="mb-1"><strong>Society:</strong> {{ booking.event.organiser.society_name }}</p>
+                        <p class="text-muted">{{ booking.event.description }}</p>
+                    </div>
+                </div>
+            </div>
+        {% empty %}
+            <div class="col-12 text-center">
+                {% if user.is_authenticated %}
+                    <p class="text-muted">You are not registered for any sustainable events.</p>
+                {% else %}
+                    <p class="text-muted">Sign in to see the events you have registered for.</p>
+                {% endif %}
+            </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
