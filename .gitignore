@@ -61,7 +61,8 @@ local_settings.py
 /db.sqlite3
 db.sqlite3-journal
 app/migrations/
-media/event_images/
+media/event_images
+.DS_Store
 
 # Flask stuff:
 instance/
