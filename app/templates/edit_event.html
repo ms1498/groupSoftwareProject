@@ -110,12 +110,16 @@
         <div class="form-section col-md-9 pb-3">
             <div class="card p-4 main-container">
                 <h2>Edit Event: <strong class="text-primary">{{ event.name }}</strong></h2>
-
                 <!-- Form -->
                 <form method="POST" enctype="multipart/form-data" action="{% url 'edit_event' event.id %}">
                     {% csrf_token %}
-
-                <!-- Event Name -->
+                    
+                    <!-- Event Name -->
+                {% if errors.name %}
+                  {% for error in errors.name %}
+                    <p style="color:red;fontsize:12;">{{ error }}</p>
+                  {% endfor %}
+                {% endif %}
                 <div class="mb-3 text-center" >
                   <label for="event-name" class="form-label"><strong>Event Name:</strong></label>
                     <div class="editable-text" id="event-name" onclick="editField('event-name')">{{ event.name }}</div>
@@ -123,6 +127,11 @@
                 </div>
 
                 <!-- Event Date -->
+                 {% if errors.date %}
+                  {% for error in errors.date %}
+                    <p style="color:red;fontsize:12;">{{ error }}</p>
+                  {% endfor %}
+                {% endif %}
                 <div class="mb-3 text-center" >
                   <label for="event-date" class="form-label"><strong>Event Date:</strong></label>
                   <div class="editable-text" id="event-date" onclick="editField('event-date')">{{ event.date }}</div>
@@ -130,6 +139,11 @@
                 </div>
 
                 <!-- Event Category -->
+                {% if errors.category %}
+                  {% for error in errors.category %}
+                    <p style="color:red;fontsize:12;">{{ error }}</p>
+                  {% endfor %}
+                {% endif %}
                 <div class="mb-3 text-center" >
                   <label for="category" class="form-label"><strong>Category:</strong></label>
                   <div class="editable-text" id="event-category" onclick="editField('event-category')">{{ event.category }}</div>
@@ -152,6 +166,11 @@
                 </div>
 
                 <!-- Event location -->
+                {% if errors.location %}
+                  {% for error in errors.location %}
+                    <p style="color:red;fontsize:12;">{{ error }}</p>
+                  {% endfor %}
+                {% endif %}
                 <div class="mb-3 text-center">
                   <label for="location" class="form-label"><strong>Select location:</strong></label>
                   <div class="editable-text" id="event-location" onclick="editField('event-location')">{{ event.location.name }}</div>
@@ -165,6 +184,11 @@
 
 
                   <!-- Event Description -->
+                  {% if errors.description %}
+                    {% for error in errors.description %}
+                      <p style="color:red;fontsize:12;">{{ error }}</p>
+                    {% endfor %}
+                  {% endif %}
                   <div class="mb-3 text-center">
                     <label for="event-description" class="form-label"><strong>Event Description:</strong></label>
                       <div class="editable-text" id="event-description" onclick="editField('event-description')">{{ event.description }}</div>
@@ -172,6 +196,11 @@
                   </div>
 
                     <!-- Upload Image -->
+                    {% if errors.image %}
+                      {% for error in errors.image %}
+                        <p style="color:red;fontsize:12;">{{ error }}</p>
+                      {% endfor %}
+                    {% endif %}
                     <div class="mb-3 text-center">
                         <label for="event-image" class="form-label">Event Image:</label><br>
                         <img src = "{{event.image.url}}" height="100px" id ="image" onclick="editField('image')">
@@ -200,11 +229,6 @@
       textField.style.display = "none";
       inputField.style.display = "block";
     }
-
-  eventStartURL = "http://" + window.location.host + "/qrgen?url=" + encodeURIComponent(window.location.host + "/home?id=" + "{{ event.id }}" + "&end=0&key=" + "{{ event.start_key }}");
-  document.getElementById("qrcode-container-start").setAttribute("src", eventStartURL);
-  eventEndURL = "http://" + window.location.host + "/qrgen?url=" + encodeURIComponent(window.location.host + "/home?id=" + "{{ event.id }}" + "&end=1&key=" + "{{ event.end_key }}");
-  document.getElementById("qrcode-container-end").setAttribute("src", eventEndURL);
 </script>
 
 {% endblock %}

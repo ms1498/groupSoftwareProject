@@ -19,7 +19,7 @@ from mysite.algorithms import (
     process_qrcode_scan, delete_account,
     apply_awards_after_attendance
 )
-from .forms import SignInForm, SignUpForm, CreateEventForm, DeleteAccountForm
+from .forms import SignInForm, SignUpForm, CreateEventForm, UpdateEventForm, DeleteAccountForm
 
 def index(request: HttpRequest) -> HttpResponse:
     """Display the home page."""
@@ -326,7 +326,7 @@ def organise(request: HttpRequest) -> HttpResponse:
 @login_required
 @permission_required("app.create_events", raise_exception=True)
 def event_analytics(request: HttpRequest, event_id: int) -> HttpResponse:
-    """Display a page for editing events.
+    """Display a page for viewing event analytics.
 
     @author    Tilly Searle
     """
@@ -388,13 +388,10 @@ def edit_event(request: HttpRequest, event_id: int) -> HttpResponse:
     event = event[0]
     # If the request method is POST, process the form data
     if request.method == "POST":
-        form = CreateEventForm(request.POST, request.FILES, instance=event)
+        form = UpdateEventForm(request.POST, request.FILES, instance=event)
         if form.is_valid():
-            location = Location.objects.get(name=request.POST["location"])
-            event.location = location
             event.approved = False
             event.save()
-
             return redirect("organise")
         print("Form errors:", form.errors)
         return render(request, "edit_event.html", {
@@ -404,7 +401,7 @@ def edit_event(request: HttpRequest, event_id: int) -> HttpResponse:
             "event": event,
             "events": valid_events,
         })
-    form = CreateEventForm(instance=event)
+    form = UpdateEventForm(instance=event)
     return render(request, "edit_event.html", {
         "form": form,
         "locations": locations,
