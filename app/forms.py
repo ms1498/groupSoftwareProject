@@ -21,10 +21,10 @@ class SignInForm(forms.Form):
 class SignUpForm(UserCreationForm): # pylint: disable=too-many-ancestors
     """The template for the sign-up form.
 
-    @param username:   The username
-    @param email:      The email address
-    @param password1:  The password
-    @param password2:  The password again for further validation
+    @param username    The username
+    @param email       The email address
+    @param password1   The password
+    @param password2   The password again for further validation
     @return            The form for the sign up template
     @author            Maisie Marks
     """
@@ -37,12 +37,12 @@ class SignUpForm(UserCreationForm): # pylint: disable=too-many-ancestors
 class CreateEventForm(forms.ModelForm):
     """Form for creating events.
 
-    @param name:        The name of the event
-    @param date:        The date and time of the event
-    @param category:    The category of the event
-    @param description: A description of the event
-    @param image:       An image to display representing the event
-    @param location:    The location of the event
+    @param name         The name of the event
+    @param date         The date and time of the event
+    @param category     The category of the event
+    @param description  A description of the event
+    @param image        An image to display representing the event
+    @param location     The location of the event
     @author             Tricia Sibley
     """
 
@@ -60,13 +60,13 @@ class CreateEventForm(forms.ModelForm):
 class UpdateEventForm(forms.ModelForm):
     """Form for updating events.
 
-    @param name:        The name of the event
-    @param date:        The date and time of the event
-    @param category:    The category of the event
-    @param description: A description of the event
-    @param image:       An image to display representing the event
-    @param location:    The location of the event
-    @author             Tricia Sibley
+    @param name        The name of the event
+    @param date        The date and time of the event
+    @param category    The category of the event
+    @param description A description of the event
+    @param image       An image to display representing the event
+    @param location    The location of the event
+    @author            Tricia Sibley
     """
 
     class Meta:
@@ -97,8 +97,8 @@ class BookingForm(forms.ModelForm):
 class DeleteAccountForm(forms.Form):
     """Form for the user to provide confirmation of an account deletion.
     
-    @param input:   the text input by the user
-    @author         Seth Mallinson
+    @param input   the text input by the user
+    @author        Seth Mallinson
     """
 
     user_input = forms.CharField(label="user_input", max_length=200)

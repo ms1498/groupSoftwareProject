@@ -326,7 +326,7 @@ def organise(request: HttpRequest) -> HttpResponse:
 @login_required
 @permission_required("app.create_events", raise_exception=True)
 def event_analytics(request: HttpRequest, event_id: int) -> HttpResponse:
-    """Display a page for editing events.
+    """Display a page for viewing event analytics.
 
     @author    Tilly Searle
     """
@@ -401,7 +401,7 @@ def edit_event(request: HttpRequest, event_id: int) -> HttpResponse:
             "event": event,
             "events": valid_events,
         })
-    form = CreateEventForm(instance=event)
+    form = UpdateEventForm(instance=event)
     return render(request, "edit_event.html", {
         "form": form,
         "locations": locations,
